@@ -15,25 +15,32 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
-    const lib = b.addStaticLibrary(.{
-        .name = "wgpu-native-zig",
-        // In this case the main source file is merely a path, however, in more
-        // complicated build scripts, this could be a generated file.
+    // const lib = b.addStaticLibrary(.{
+    //     .name = "wgpu-native-zig",
+    //     // In this case the main source file is merely a path, however, in more
+    //     // complicated build scripts, this could be a generated file.
+    //     .root_source_file = b.path("src/root.zig"),
+    //     .target = target,
+    //     .optimize = optimize,
+    // });
+
+    const mod = b.addModule("wgpu", .{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libcpp = true,
     });
 
     const wgpu_dep = b.dependency("wgpu_linux", .{});
 
-    lib.addIncludePath(wgpu_dep.path(""));
-    lib.addObjectFile(wgpu_dep.path("libwgpu_native.a"));
-    lib.linkLibCpp();
+    mod.addIncludePath(wgpu_dep.path(""));
+    mod.addObjectFile(wgpu_dep.path("libwgpu_native.a"));
+    // lib.linkLibCpp();
 
     // This declares intent for the library to be installed into the standard
     // location when the user invokes the "install" step (the default step when
     // running `zig build`).
-    b.installArtifact(lib);
+    // b.installArtifact(lib);
 
     // const exe = b.addExecutable(.{
     //     .name = "wgpu-native-zig",
@@ -72,17 +79,19 @@ pub fn build(b: *std.Build) void {
 
     // Creates a step for unit testing. This only builds the test executable
     // but does not run it.
-    const lib_unit_tests = b.addTest(.{
-        .root_source_file = b.path("src/root.zig"),
+    const compute_test = b.addTest(.{
+        .name = "compute-test",
+        .root_source_file = b.path("tests/compute.zig"),
         .target = target,
         .optimize = optimize,
     });
+    compute_test.root_module.addImport("wgpu", mod);
 
-    lib_unit_tests.addIncludePath(wgpu_dep.path(""));
-    lib_unit_tests.addObjectFile(wgpu_dep.path("libwgpu_native.a"));
-    lib_unit_tests.linkLibCpp();
+    // lib_unit_tests.addIncludePath(wgpu_dep.path(""));
+    // lib_unit_tests.addObjectFile(wgpu_dep.path("libwgpu_native.a"));
+    // lib_unit_tests.linkLibCpp();
 
-    const run_lib_unit_tests = b.addRunArtifact(lib_unit_tests);
+    const run_compute_test = b.addRunArtifact(compute_test);
 
     // const exe_unit_tests = b.addTest(.{
     //     .root_source_file = b.path("src/main.zig"),
@@ -96,6 +105,6 @@ pub fn build(b: *std.Build) void {
     // the `zig build --help` menu, providing a way for the user to request
     // running the unit tests.
     const test_step = b.step("test", "Run unit tests");
-    test_step.dependOn(&run_lib_unit_tests.step);
+    test_step.dependOn(&run_compute_test.step);
     // test_step.dependOn(&run_exe_unit_tests.step);
 }
