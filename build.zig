@@ -25,7 +25,8 @@ pub fn build(b: *std.Build) void {
     const wgpu_dep = b.dependency("wgpu_linux", .{});
 
     mod.addIncludePath(wgpu_dep.path(""));
-    mod.addObjectFile(wgpu_dep.path("libwgpu_native.a"));
+    const libwgpu_path = wgpu_dep.path("libwgpu_native.a");
+    mod.addObjectFile(libwgpu_path);
 
     // Creates a step for unit testing. This only builds the test executable
     // but does not run it.
@@ -43,4 +44,25 @@ pub fn build(b: *std.Build) void {
     // providing a way for the user to request running the unit tests.
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_compute_test.step);
+
+    const test_files = [_] [:0]const u8 {"src/instance.zig"};
+    comptime var test_names: [test_files.len] [:0]const u8 = test_files;
+    comptime for (test_files, 0..) |test_file, idx| {
+        const test_name = test_file[4..(test_file.len - 4)] ++ "-test";
+        test_names[idx] = test_name;
+    };
+
+    for (test_files, test_names) |test_file, test_name| {
+        const t = b.addTest(.{
+            .name = test_name,
+            .root_source_file = b.path(test_file),
+            .target = target,
+            .optimize = optimize,
+        });
+        t.addObjectFile(libwgpu_path);
+        t.linkLibCpp();
+
+        const run_test = b.addRunArtifact(t);
+        test_step.dependOn(&run_test.step);
+    }
 }
