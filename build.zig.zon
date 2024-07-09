@@ -43,6 +43,10 @@
         //    // actually used.
         //    .lazy = false,
         //},
+        .wgpu_linux = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-linux-x86_64-debug.zip",
+            .hash = "12207e9485f4e55fd7861d03ab0f5ad519d8d677683b015c49403c787c5d2e860462",
+        },
     },
 
     // Specifies the set of files and directories that are included in this package.
