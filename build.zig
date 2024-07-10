@@ -1,5 +1,31 @@
 const std = @import("std");
 
+const TargetQuery = std.Target.Query;
+
+// All the targets for which a pre-compiled build of wgpu-native is currently (as of July 9, 2024) available
+const target_whitelist = [_] TargetQuery {
+    TargetQuery {
+        .cpu_arch = .aarch64,
+        .os_tag = .linux
+    },
+    TargetQuery {
+        .cpu_arch = .aarch64,
+        .os_tag = .macos,
+    },
+    TargetQuery {
+        .cpu_arch = .x86_64,
+        .os_tag = .linux,
+    },
+    TargetQuery {
+        .cpu_arch = .x86_64,
+        .os_tag = .macos,
+    },
+    TargetQuery {
+        .cpu_arch = .x86,
+        .os_tag = .windows,
+    }
+};
+
 // Although this function looks imperative, note that its job is to
 // declaratively construct a build graph that will be executed by an external
 // runner.
@@ -8,12 +34,22 @@ pub fn build(b: *std.Build) void {
     // what target to build for. Here we do not override the defaults, which
     // means any target is allowed, and the default is native. Other options
     // for restricting supported target set are available.
-    const target = b.standardTargetOptions(.{});
+    const target = b.standardTargetOptions(.{
+        .whitelist = &target_whitelist,
+    });
 
     // Standard optimization options allow the person running `zig build` to select
     // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
+
+    const target_res = target.result;
+    const os_str = @tagName(target_res.os.tag);
+    const arch_str = @tagName(target_res.cpu.arch);
+    const mode_str = @tagName(optimize);
+    const target_name_slices = [_] [:0]const u8 {"wgpu_", os_str, "_", arch_str, "_", mode_str};
+    const maybe_target_name = std.mem.concatWithSentinel(b.allocator, u8, &target_name_slices, 0);
+    const target_name = maybe_target_name catch "wgpu_linux_x86_64_Debug";
 
     const mod = b.addModule("wgpu", .{
         .root_source_file = b.path("src/root.zig"),
@@ -22,10 +58,20 @@ pub fn build(b: *std.Build) void {
         .link_libcpp = true,
     });
 
-    const wgpu_dep = b.dependency("wgpu_linux", .{});
+    const wgpu_dep = b.lazyDependency(target_name, .{}).?;
 
     mod.addIncludePath(wgpu_dep.path(""));
-    const libwgpu_path = wgpu_dep.path("libwgpu_native.a");
+    const lib_name = switch (target_res.os.tag) {
+        // There's also some sorf of .pdb file available, which I think is a database of debugging symbols.
+        // I don't even have a Windows machine though,
+        // so I'll let somebody who does tell me what it is and if I need it.
+        .windows => "wgpu_native.lib",
+
+        // This only tries to account for linux/macos since we're using pre-compiled wgpu-native;
+        // need to think harder about this if I get custom builds working.
+        else => "libwgpu_native.a",
+    }; // Also these don't even try to account for dynamic linking; that's a problem for future me.
+    const libwgpu_path = wgpu_dep.path(lib_name);
     mod.addObjectFile(libwgpu_path);
 
     // Creates a step for unit testing. This only builds the test executable

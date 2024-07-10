@@ -43,9 +43,50 @@
         //    // actually used.
         //    .lazy = false,
         //},
-        .wgpu_linux = .{
+        .wgpu_linux_aarch64_Debug = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-linux-aarch64-debug.zip",
+            .hash = "1220c5c60367d517cf903af0d7069341c47bc9480745ab1b2eb79215f824e3ae5415",
+            .lazy = true,
+        },
+        .wgpu_linux_aarch64_Release = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-linux-aarch64-release.zip",
+            .hash = "1220a5b5a646335dd7eb574c1651b834bdacb0f0d9ded73d20d98ec51c0799fd6e39",
+            .lazy = true,
+        },
+        .wgpu_linux_x86_64_Debug = .{
             .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-linux-x86_64-debug.zip",
             .hash = "12207e9485f4e55fd7861d03ab0f5ad519d8d677683b015c49403c787c5d2e860462",
+            .lazy = true,
+        },
+        .wgpu_linux_x86_64_Release = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-linux-x86_64-release.zip",
+            .hash = "12203b428e491c4c4bc118546a82677a2fd22a54e4c4d946a5550af0bb9516981acd",
+            .lazy = true,
+        },
+        .wgpu_macos_aarch64_Debug = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-macos-aarch64-debug.zip",
+            .hash = "12208be7ee935c715c51c3e5c5f6ca8a5c321b9d48c7023acc8ee080ffc684156b07",
+            .lazy = true,
+        },
+        .wgpu_macos_aarch64_Release = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-macos-aarch64-release.zip",
+            .hash = "1220023318449ce4d30df22ee74b86e6a8dbb14f7f94adda1d67fbfafd73b47f1537",
+            .lazy = true,
+        },
+        .wgpu_macos_x86_64_Debug = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-macos-x86_64-debug.zip",
+            .hash = "12200bbcc01f1da81be8ad46576cc9050f0ae0a373dc3c25a49209da388146044319",
+            .lazy = true,
+        },
+        .wgpu_macos_x86_64_Release = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-macos-x86_64-release.zip",
+            .hash = "122031ddd3bf08247a0c99fc7184c864b90c222ca3727f312638d088697cd4b209c9",
+            .lazy = true,
+        },
+        .wgpu_windows_x86_Debug = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-windows-i686-debug.zip",
+            .hash = "1220236e1f3582750dc29df88453e5ced071cef6c7b99bb9c4fa8c0768b598810327",
+            .lazy = true,
         },
     },
 
