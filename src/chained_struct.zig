@@ -17,3 +17,8 @@ pub const ChainedStruct = extern struct {
     next: ?*const ChainedStruct = null,
     s_type: SType,
 };
+
+pub const ChainedStructOut = extern struct {
+    next: ?*ChainedStructOut = null,
+    s_type: SType,
+};
