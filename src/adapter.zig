@@ -35,11 +35,6 @@ pub const RequestAdapterStatus = enum(u32) {
     Unknown     = 0x00000003,
 };
 pub const RequestAdapterCallback = *const fn(status: RequestAdapterStatus, adapter: ?*Adapter, message: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void;
-pub const RequestAdapterResponse = struct {
-    status: RequestAdapterStatus,
-    adapter: ?*Adapter,
-    message: []const u8,
-};
 
 pub const Adapter = opaque{
     // TODO: fill in methods
