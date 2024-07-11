@@ -1,4 +1,4 @@
-const WGPUSType = enum(u32) {
+pub const SType = enum(u32) {
     Invalid                                  = 0x00000000,
     SurfaceDescriptorFromMetalLayer          = 0x00000001,
     SurfaceDescriptorFromWindowsHWND         = 0x00000002,
@@ -12,10 +12,8 @@ const WGPUSType = enum(u32) {
     SurfaceDescriptorFromXcbWindow           = 0x0000000A,
     RenderPassDescriptorMaxDrawCount         = 0x0000000F,
 };
-pub const SType = WGPUSType;
 
-const WGPUChainedStruct = extern struct {
-    next: ?*const ChainedStruct,
+pub const ChainedStruct = extern struct {
+    next: ?*const ChainedStruct = null,
     s_type: SType,
 };
-pub const ChainedStruct = WGPUChainedStruct;
