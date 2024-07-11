@@ -18,14 +18,14 @@ const WGPUBool = @import("misc.zig").WGPUBool;
 
 pub const SurfaceDescriptor = extern struct {
     next_in_chain: *ChainedStruct,
-    label: [*c]const u8 = "",
+    label: ?[*:0]const u8 = null,
 };
 
 pub const SurfaceDescriptorFromAndroidNativeWindow = extern struct {
     chain: ChainedStruct,
     window: *anyopaque,
 };
-pub inline fn surfaceDescriptorFromAndroidNativeWindow(label: []const u8, window: *anyopaque) SurfaceDescriptor {
+pub inline fn surfaceDescriptorFromAndroidNativeWindow(label: ?[:0]const u8, window: *anyopaque) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromAndroidNativeWindow {
             .chain = ChainedStruct {
@@ -39,9 +39,9 @@ pub inline fn surfaceDescriptorFromAndroidNativeWindow(label: []const u8, window
 
 pub const SurfaceDescriptorFromCanvasHTMLSelector = extern struct {
     chain: ChainedStruct,
-    selector: [*c]const u8,
+    selector: [*:0]const u8,
 };
-pub inline fn surfaceDescriptorFromCanvasHTMLSelector(label: []const u8, selector: []const u8) SurfaceDescriptor {
+pub inline fn surfaceDescriptorFromCanvasHTMLSelector(label: ?[:0]const u8, selector: [:0]const u8) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromCanvasHTMLSelector {
             .chain = ChainedStruct {
@@ -57,7 +57,7 @@ pub const SurfaceDescriptorFromMetalLayer = extern struct {
     chain: ChainedStruct,
     layer: *anyopaque,
 };
-pub inline fn surfaceDescriptorFromMetalLayer(label: []const u8, layer: *anyopaque) SurfaceDescriptor {
+pub inline fn surfaceDescriptorFromMetalLayer(label: ?[:0]const u8, layer: *anyopaque) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromMetalLayer {
             .chain = ChainedStruct {
@@ -74,7 +74,7 @@ pub const SurfaceDescriptorFromWaylandSurface = extern struct {
     display: *anyopaque,
     surface: *anyopaque,
 };
-pub inline fn surfaceDescriptorFromWaylandSurface(label: []const u8, display: *anyopaque, surface: *anyopaque) SurfaceDescriptor {
+pub inline fn surfaceDescriptorFromWaylandSurface(label: ?[:0]const u8, display: *anyopaque, surface: *anyopaque) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromWaylandSurface {
             .chain = ChainedStruct {
@@ -92,7 +92,7 @@ pub const SurfaceDescriptorFromWindowsHWND = extern struct {
     hinstance: *anyopaque,
     hwnd: *anyopaque,
 };
-pub inline fn surfaceDescriptorFromWindowsHWND(label: []const u8, hinstance: *anyopaque, hwnd: *anyopaque) SurfaceDescriptor {
+pub inline fn surfaceDescriptorFromWindowsHWND(label: ?[:0]const u8, hinstance: *anyopaque, hwnd: *anyopaque) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromWindowsHWND {
             .chain = ChainedStruct {
@@ -110,7 +110,7 @@ pub const SurfaceDescriptorFromXcbWindow = extern struct {
     connection: *anyopaque,
     window: u32,
 };
-pub inline fn surfaceDescriptorFromXcbWindow(label: []const u8, connection: *anyopaque, window: u32) SurfaceDescriptor {
+pub inline fn surfaceDescriptorFromXcbWindow(label: ?[:0]const u8, connection: *anyopaque, window: u32) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromXcbWindow {
             .chain = ChainedStruct {
@@ -128,7 +128,7 @@ pub const SurfaceDescriptorFromXlibWindow = extern struct {
     display: *anyopaque,
     window: u64,
 };
-pub inline fn surfaceDescriptorFromXlibWindow(label: []const u8, display: *anyopaque, window: u64) SurfaceDescriptor {
+pub inline fn surfaceDescriptorFromXlibWindow(label: ?[:0]const u8, display: *anyopaque, window: u64) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromXlibWindow {
             .chain = ChainedStruct {
@@ -162,7 +162,7 @@ pub const SurfaceConfiguration = extern struct {
     format: TextureFormat,
     usage: TextureUsageFlags,
     view_format_count: usize,
-    view_formats: [*c]const TextureFormat,
+    view_formats: [*]const TextureFormat,
     alpha_mode: CompositeAlphaMode,
     width: u32,
     height: u32,
@@ -176,11 +176,11 @@ extern fn wgpuSurfaceCapabilitiesFreeMembers(capabilities: *SurfaceCapabilities)
 pub const SurfaceCapabilities = extern struct {
     next_in_chain: ?*ChainedStructOut = null,
     format_count: usize,
-    formats: [*c] TextureFormat,
+    formats: [*]TextureFormat,
     present_mode_count: usize,
-    present_modes: [*c] PresentMode,
+    present_modes: [*]PresentMode,
     alpha_mode_count: usize,
-    alpha_modes: [*c] CompositeAlphaMode,
+    alpha_modes: [*]CompositeAlphaMode,
 
     pub inline fn FreeMembers(self: *SurfaceCapabilities) void {
         wgpuSurfaceCapabilitiesFreeMembers(self);

@@ -3,12 +3,12 @@ const testing = std.testing;
 
 const wgpu = @import("wgpu");
 
-fn handle_request_adapter(_: wgpu.WGPURequestAdapterStatus, adapter: wgpu.WGPUAdapter, _: [*c]const u8, userdata: ?*anyopaque) callconv(.C) void {
+fn handle_request_adapter(_: wgpu.WGPURequestAdapterStatus, adapter: wgpu.WGPUAdapter, _: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void {
     const ud: *wgpu.WGPUAdapter = @ptrCast(@alignCast(userdata));
     ud.* = adapter.?;
 }
 
-fn handle_request_device(_: wgpu.WGPURequestDeviceStatus, device: wgpu.WGPUDevice, _: [*c]const u8, userdata: ?*anyopaque) callconv(.C) void {
+fn handle_request_device(_: wgpu.WGPURequestDeviceStatus, device: wgpu.WGPUDevice, _: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void {
     const ud: *wgpu.WGPUDevice = @ptrCast(@alignCast(userdata));
     ud.* = device.?;
 }

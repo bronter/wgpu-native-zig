@@ -46,7 +46,7 @@ const Instance = opaque {
         wgpuInstanceProcessEvents(self);
     }
 
-    fn defaultAdapterCallback(status: RequestAdapterStatus, adapter: ?*Adapter, message: [*c]const u8, userdata: ?*anyopaque) callconv(.C) void {
+    fn defaultAdapterCallback(status: RequestAdapterStatus, adapter: ?*Adapter, message: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void {
         switch(status) {
             .Success => {
                 const ud_adapter: **Adapter = @ptrCast(@alignCast(userdata));

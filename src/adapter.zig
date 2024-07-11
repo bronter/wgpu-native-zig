@@ -34,7 +34,7 @@ pub const RequestAdapterStatus = enum(u32) {
     Error       = 0x00000002,
     Unknown     = 0x00000003,
 };
-pub const RequestAdapterCallback = *const fn(status: RequestAdapterStatus, adapter: ?*Adapter, message: [*c]const u8, userdata: ?*anyopaque) callconv(.C) void;
+pub const RequestAdapterCallback = *const fn(status: RequestAdapterStatus, adapter: ?*Adapter, message: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void;
 pub const RequestAdapterResponse = struct {
     status: RequestAdapterStatus,
     adapter: ?*Adapter,
