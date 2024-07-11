@@ -29,7 +29,7 @@ pub inline fn surfaceDescriptorFromAndroidNativeWindow(label: ?[:0]const u8, win
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromAndroidNativeWindow {
             .chain = ChainedStruct {
-                .s_type = SType.SurfaceDescriptorFromAndroidNativeWindow,
+                .s_type = SType.surface_descriptor_from_android_native_window,
             },
             .window = window,
         }),
@@ -45,7 +45,7 @@ pub inline fn surfaceDescriptorFromCanvasHTMLSelector(label: ?[:0]const u8, sele
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromCanvasHTMLSelector {
             .chain = ChainedStruct {
-                .s_type = SType.SurfaceDescriptorFromCanvasHTMLSelector,
+                .s_type = SType.surface_descriptor_from_canvas_html_selector,
             },
             .selector = selector,
         }),
@@ -61,7 +61,7 @@ pub inline fn surfaceDescriptorFromMetalLayer(label: ?[:0]const u8, layer: *anyo
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromMetalLayer {
             .chain = ChainedStruct {
-                .s_type = SType.SurfaceDescriptorFromMetalLayer,
+                .s_type = SType.surface_descriptor_from_metal_layer,
             },
             .layer = layer,
         }),
@@ -78,7 +78,7 @@ pub inline fn surfaceDescriptorFromWaylandSurface(label: ?[:0]const u8, display:
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromWaylandSurface {
             .chain = ChainedStruct {
-                .s_type = SType.SurfaceDescriptorFromWaylandSurface,
+                .s_type = SType.surface_descriptor_from_wayland_surface,
             },
             .display = display,
             .surface = surface,
@@ -96,7 +96,7 @@ pub inline fn surfaceDescriptorFromWindowsHWND(label: ?[:0]const u8, hinstance: 
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromWindowsHWND {
             .chain = ChainedStruct {
-                .s_type = SType.SurfaceDescriptorFromWindowsHWND,
+                .s_type = SType.surface_descriptor_from_windows_hwnd,
             },
             .hinstance = hinstance,
             .hwnd = hwnd,
@@ -114,7 +114,7 @@ pub inline fn surfaceDescriptorFromXcbWindow(label: ?[:0]const u8, connection: *
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromXcbWindow {
             .chain = ChainedStruct {
-                .s_type = SType.SurfaceDescriptorFromXcbWindow,
+                .s_type = SType.surface_descriptor_from_xcb_window,
             },
             .connection = connection,
             .window = window,
@@ -132,7 +132,7 @@ pub inline fn surfaceDescriptorFromXlibWindow(label: ?[:0]const u8, display: *an
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromXlibWindow {
             .chain = ChainedStruct {
-                .s_type = SType.SurfaceDescriptorFromXlibWindow,
+                .s_type = SType.surface_descriptor_from_xlib_window,
             },
             .display = display,
             .window = window,
@@ -143,17 +143,17 @@ pub inline fn surfaceDescriptorFromXlibWindow(label: ?[:0]const u8, display: *an
 
 // CompositeAlphaMode and PresentMode only seem to be used by surface-related things, so I'm putting them here.
 pub const CompositeAlphaMode = enum(u32) {
-    Auto            = 0x00000000,
-    Opaque          = 0x00000001,
-    Premultiplied   = 0x00000002,
-    Unpremultiplied = 0x00000003,
-    Inherit         = 0x00000004,
+    auto            = 0x00000000,
+    @"opaque"       = 0x00000001,
+    premultiplied   = 0x00000002,
+    unpremultiplied = 0x00000003,
+    inherit         = 0x00000004,
 };
 pub const PresentMode = enum(u32) {
-    Fifo        = 0x00000000,
-    FifoRelaxed = 0x00000001,
-    Immediate   = 0x00000002,
-    Mailbox     = 0x00000003,
+    fifo         = 0x00000000,
+    fifo_relaxed = 0x00000001,
+    immediate    = 0x00000002,
+    mailbox      = 0x00000003,
 };
 
 pub const SurfaceConfiguration = extern struct {
@@ -188,12 +188,12 @@ pub const SurfaceCapabilities = extern struct {
 };
 
 pub const GetCurrentTextureStatus = enum(u32) {
-    Success     = 0x00000000,
-    Timeout     = 0x00000001,
-    Outdated    = 0x00000002,
-    Lost        = 0x00000003,
-    OutOfMemory = 0x00000004,
-    DeviceLost  = 0x00000005,
+    success       = 0x00000000,
+    timeout       = 0x00000001,
+    outdated      = 0x00000002,
+    lost          = 0x00000003,
+    out_of_memory = 0x00000004,
+    device_lost   = 0x00000005,
 };
 
 pub const SurfaceTexture = extern struct {

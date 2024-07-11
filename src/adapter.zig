@@ -3,21 +3,21 @@ const WGPUBool = @import("misc.zig").WGPUBool;
 const Surface = @import("surface.zig").Surface;
 
 pub const PowerPreference = enum(u32) {
-    Undefined       = 0x00000000,
-    LowPower        = 0x00000001,
-    HighPerformance = 0x00000002,
+    undefined        = 0x00000000,
+    low_power        = 0x00000001,
+    high_performance = 0x00000002,
 };
 
 pub const BackendType = enum(u32) {
-    Undefined = 0x00000000,
-    Null      = 0x00000001,
-    WebGPU    = 0x00000002,
-    D3D11     = 0x00000003,
-    D3D12     = 0x00000004,
-    Metal     = 0x00000005,
-    Vulkan    = 0x00000006,
-    OpenGL    = 0x00000007,
-    OpenGLES  = 0x00000008,
+    undefined = 0x00000000,
+    null      = 0x00000001,
+    webgpu    = 0x00000002,
+    d3d11     = 0x00000003,
+    d3d12     = 0x00000004,
+    metal     = 0x00000005,
+    vulkan    = 0x00000006,
+    opengl    = 0x00000007,
+    opengles  = 0x00000008,
 };
 
 pub const RequestAdapterOptions = extern struct {
@@ -29,10 +29,10 @@ pub const RequestAdapterOptions = extern struct {
 };
 
 pub const RequestAdapterStatus = enum(u32) {
-    Success     = 0x00000000,
-    Unavailable = 0x00000001,
-    Error       = 0x00000002,
-    Unknown     = 0x00000003,
+    success     = 0x00000000,
+    unavailable = 0x00000001,
+    @"error"    = 0x00000002,
+    unknown     = 0x00000003,
 };
 pub const RequestAdapterCallback = *const fn(status: RequestAdapterStatus, adapter: ?*Adapter, message: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void;
 
