@@ -1,6 +1,3 @@
-const std = @import("std");
-const testing = std.testing;
-
 const ChainedStruct = @import("chained_struct.zig").ChainedStruct;
 
 const _adapter = @import("adapter.zig");
@@ -8,6 +5,7 @@ const Adapter = _adapter.Adapter;
 const RequestAdapterOptions = _adapter.RequestAdapterOptions;
 const RequestAdapterCallback = _adapter.RequestAdapterCallback;
 const RequestAdapterStatus = _adapter.RequestAdapterStatus;
+const RequestAdapterResponse = _adapter.RequestAdapterResponse;
 
 const _surface = @import("surface.zig");
 const Surface = _surface.Surface;
@@ -33,7 +31,7 @@ extern fn wgpuInstanceRequestAdapter(instance: *Instance, options: ?*const Reque
 extern fn wgpuInstanceReference(instance: *Instance) void;
 extern fn wgpuInstanceRelease(instance: *Instance) void;
 
-const Instance = opaque {
+pub const Instance = opaque {
     pub inline fn create(descriptor: ?*const InstanceDescriptor) ?*Instance {
         return wgpuCreateInstance(descriptor);
     }
@@ -47,24 +45,18 @@ const Instance = opaque {
     }
 
     fn defaultAdapterCallback(status: RequestAdapterStatus, adapter: ?*Adapter, message: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void {
-        switch(status) {
-            .Success => {
-                const ud_adapter: **Adapter = @ptrCast(@alignCast(userdata));
-                ud_adapter.* = adapter.?;
-            },
-            else => {
-                std.log.err("requestAdapter returned status {s}; message:\n    {s}", .{
-                    @tagName(status),
-                    message,
-                });
-            }
-        }
+        const ud_response: *RequestAdapterResponse = @ptrCast(@alignCast(userdata));
+        ud_response.* = RequestAdapterResponse {
+            .status = status,
+            .message = message,
+            .adapter = adapter,
+        };
     }
 
-    pub fn requestAdapter(self: *Instance, options: ?*const RequestAdapterOptions) ?*Adapter {
-        var adapter_ptr: ?*Adapter = null;
-        wgpuInstanceRequestAdapter(self, options, defaultAdapterCallback, @ptrCast(&adapter_ptr));
-        return adapter_ptr;
+    pub fn requestAdapter(self: *Instance, options: ?*const RequestAdapterOptions) RequestAdapterResponse {
+        var response: RequestAdapterResponse = undefined;
+        wgpuInstanceRequestAdapter(self, options, defaultAdapterCallback, @ptrCast(&response));
+        return response;
     }
 
     pub inline fn requestAdapterWithCallback(self: *Instance, options: ?*const RequestAdapterOptions, callback: RequestAdapterCallback, userdata: ?*anyopaque) void {
@@ -83,6 +75,8 @@ const Instance = opaque {
 };
 
 test "can create instance (and release it afterwards)" {
+    const testing = @import("std").testing;
+
     const instance = Instance.create(null);
     try testing.expect(instance != null);
     instance.?.release();

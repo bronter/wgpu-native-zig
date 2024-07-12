@@ -91,7 +91,10 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_compute_test.step);
 
-    const test_files = [_] [:0]const u8 {"src/instance.zig"};
+    const test_files = [_] [:0]const u8 {
+        "src/instance.zig",
+        "src/adapter.zig",
+    };
     comptime var test_names: [test_files.len] [:0]const u8 = test_files;
     comptime for (test_files, 0..) |test_file, idx| {
         const test_name = test_file[4..(test_file.len - 4)] ++ "-test";
