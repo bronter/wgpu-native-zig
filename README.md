@@ -51,9 +51,10 @@ Then, in `build.zig` add:
             .success => {
                 const ud_adapter: **Adapter = @ptrCast(@alignCast(userdata));
                 ud_adapter.* = adapter.?;
+            },
+            else => {
+              std.log.err("{s}\n", .{message});
             }
-        } else => {
-            std.log.err("{s}\n", .{message});
         }
     }
     var adapter_ptr: ?*Adapter = null;
@@ -72,6 +73,24 @@ Then, in `build.zig` add:
             break :blk null;
         }
     };
+    ```
+* Chained structs are provided with inline functions for constructing them.
+  * For example, you can either do:
+    ```zig
+    SurfaceDescriptor{
+        .next_in_chain = @ptrCast(&SurfaceDescriptorFromXlibWindow {
+            .chain = ChainedStruct {
+                .s_type = SType.surface_descriptor_from_xlib_window,
+            },
+            .display = display,
+            .window = window,
+        }),
+        .label = "xlib_surface_descriptor",
+    };
+    ```
+    or more simply:
+    ```zig
+    surfaceDescriptorFromXlibWindow("xlib_surface_descriptor", display, window);
     ```
 * `WGPUBool` is replaced with `bool` whenever possible.
   * This pretty much means, it is replaced with `bool` in the parameters and return values of methods, but not in structs or the parameters/return values of procs (which are supposed to be function pointers to things returned by `wgpuGetProcAddress`).
