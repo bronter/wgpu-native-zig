@@ -131,15 +131,20 @@ pub const Adapter = opaque{
     }
 };
 
-test "can request adapter" {
+test "can request device" {
     const testing = @import("std").testing;
 
     const Instance = @import("instance.zig").Instance;
     const instance = Instance.create(null);
-    const response = instance.?.requestAdapterSync(null);
-    const adapter: ?*Adapter = switch(response.status) {
-        .success => response.adapter,
+    const adapter_response = instance.?.requestAdapterSync(null);
+    const adapter: ?*Adapter = switch(adapter_response.status) {
+        .success => adapter_response.adapter,
         else => null,
     };
-    try testing.expect(adapter != null);
+    const device_response = adapter.?.requestDeviceSync(null);
+    const device: ?*Device = switch(device_response.status) {
+        .success => device_response.device,
+        else => null
+    };
+    try testing.expect(device != null);
 }

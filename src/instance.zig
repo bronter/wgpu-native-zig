@@ -81,3 +81,15 @@ test "can create instance (and release it afterwards)" {
     try testing.expect(instance != null);
     instance.?.release();
 }
+
+test "can request adapter" {
+    const testing = @import("std").testing;
+
+    const instance = Instance.create(null);
+    const response = instance.?.requestAdapterSync(null);
+    const adapter: ?*Adapter = switch(response.status) {
+        .success => response.adapter,
+        else => null,
+    };
+    try testing.expect(adapter != null);
+}
