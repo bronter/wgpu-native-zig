@@ -43,7 +43,7 @@ Then, in `build.zig` add:
     ```zig
     Instance.createSurface(self: *Instance, descriptor: *const SurfaceDescriptor) ?*Surface
     ```
-* Methods that would normally require a callback are named like `methodNameWithCallback`, and a non-callback wrapper method is provided for convenience.
+* Certain methods that require a callback such as requestAdapter and requestDevice are provided with wrapper methods.
   * For example, requesting an adapter with a callback looks something like
     ```zig
     fn handleRequestAdapter(status: RequestAdapterStatus, adapter: ?*Adapter, message: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void {
@@ -58,11 +58,11 @@ Then, in `build.zig` add:
         }
     }
     var adapter_ptr: ?*Adapter = null;
-    instance.requestAdapterWithCallback(null, handleRequestAdapter, @ptrCast(&adapter_ptr));
+    instance.requestAdapter(null, handleRequestAdapter, @ptrCast(&adapter_ptr));
     ```
     whereas the non-callback version looks like
     ```zig
-    const response = instance.requestAdapter(null);
+    const response = instance.requestAdapterSync(null);
 
     // Unfortunately propagating anything more than status codes is ugly in Zig;
     // see https://github.com/ziglang/zig/issues/2647
