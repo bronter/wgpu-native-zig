@@ -17,9 +17,9 @@ const RequestDeviceStatus = _device.RequestDeviceStatus;
 const RequestDeviceResponse = _device.RequestDeviceResponse;
 
 pub const PowerPreference = enum(u32) {
-    undefined        = 0x00000000,
-    low_power        = 0x00000001,
-    high_performance = 0x00000002,
+    @"undefined"        = 0x00000000,
+    low_power           = 0x00000001,
+    high_performance    = 0x00000002,
 };
 
 pub const AdapterType = enum(u32) {
@@ -30,20 +30,20 @@ pub const AdapterType = enum(u32) {
 };
 
 pub const BackendType = enum(u32) {
-    undefined = 0x00000000,
-    null      = 0x00000001,
-    webgpu    = 0x00000002,
-    d3d11     = 0x00000003,
-    d3d12     = 0x00000004,
-    metal     = 0x00000005,
-    vulkan    = 0x00000006,
-    opengl    = 0x00000007,
-    opengl_es  = 0x00000008,
+    @"undefined" = 0x00000000,
+    null         = 0x00000001,
+    webgpu       = 0x00000002,
+    d3d11        = 0x00000003,
+    d3d12        = 0x00000004,
+    metal        = 0x00000005,
+    vulkan       = 0x00000006,
+    opengl       = 0x00000007,
+    opengl_es    = 0x00000008,
 };
 
 pub const RequestAdapterOptions = extern struct {
-    next_in_chain: ?*const ChainedStruct,
-    compatible_surface: ?*Surface,
+    next_in_chain: ?*const ChainedStruct = null,
+    compatible_surface: ?*Surface = null,
     power_preference: PowerPreference,
     backend_type: BackendType,
     force_fallback_adapter: WGPUBool,
@@ -94,7 +94,6 @@ extern fn wgpuAdapterReference(adapter: *Adapter) void;
 extern fn wgpuAdapterRelease(adapter: *Adapter) void;
 
 pub const Adapter = opaque{
-    // TODO: fill in methods
     pub inline fn enumerateFeatures(self: *Adapter, features: [*]FeatureName) usize {
         return wgpuAdapterEnumerateFeatures(self, features);
     }

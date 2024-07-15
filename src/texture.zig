@@ -1,5 +1,11 @@
+const ChainedStruct = @import("chained_struct.zig").ChainedStruct;
+
+const _misc = @import("misc.zig");
+const WGPUFlags = _misc.WGPUFlags;
+const WGPUBool = _misc.WGPUBool;
+
 pub const TextureFormat = enum(u32) {
-    undefined               = 0x00000000,
+    @"undefined"            = 0x00000000,
     r8_unorm                = 0x00000001,
     r8_snorm                = 0x00000002,
     r8_uint                 = 0x00000003,
@@ -96,11 +102,87 @@ pub const TextureFormat = enum(u32) {
     astc12x12_unorm         = 0x0000005E,
     astc12x12_unorm_srgb    = 0x0000005F,
 };
-pub const TextureUsageFlags = enum(u32) {
-    none              = 0x00000000,
-    copy_src          = 0x00000001,
-    copy_dst          = 0x00000002,
-    texture_binding   = 0x00000004,
-    storage_binding   = 0x00000008,
-    render_attachment = 0x00000010,
+
+pub const TextureUsageFlags = WGPUFlags;
+pub const TextureUsage = struct {
+    pub const none              = @as(TextureUsageFlags, 0x00000000);
+    pub const copy_src          = @as(TextureUsageFlags, 0x00000001);
+    pub const copy_dst          = @as(TextureUsageFlags, 0x00000002);
+    pub const texture_binding   = @as(TextureUsageFlags, 0x00000004);
+    pub const storage_binding   = @as(TextureUsageFlags, 0x00000008);
+    pub const render_attachment = @as(TextureUsageFlags, 0x00000010);
+};
+
+pub const TextureView = opaque {
+    // TODO: fill in methods
+};
+
+// TODO: Should this maybe go in sampler.zig instead?
+pub const SampleType = enum(u32) {
+    @"undefined"       = 0x00000000,
+    float              = 0x00000001,
+    unfilterable_float = 0x00000002,
+    depth              = 0x00000003,
+    s_int              = 0x00000004,
+    u_int              = 0x00000005,
+};
+
+pub const ViewDimension = enum(u32) {
+    @"undefined" = 0x00000000,
+    @"1d"        = 0x00000001,
+    @"2d"        = 0x00000002,
+    @"2d_array"  = 0x00000003,
+    cube         = 0x00000004,
+    cube_array   = 0x00000005,
+    @"3d"        = 0x00000006,
+};
+
+pub const TextureBindingLayout = extern struct {
+    next_in_chain: ?*const ChainedStruct = null,
+    sample_type: SampleType,
+    view_dimension: ViewDimension,
+    multisampled: WGPUBool,
+};
+
+pub const StorageTextureAccess = enum(u32) {
+    @"undefined" = 0x00000000,
+    write_only   = 0x00000001,
+    read_only    = 0x00000002,
+    read_write   = 0x00000003,
+};
+
+pub const StorageTextureBindingLayout = extern struct {
+    next_in_chain: ?*const ChainedStruct = null,
+    access: StorageTextureAccess,
+    format: TextureFormat,
+    view_dimension: ViewDimension,
+};
+
+pub const TextureDimension = enum(u32) {
+    @"1d" = 0x00000000,
+    @"2d" = 0x00000001,
+    @"3d" = 0x00000002,
+};
+
+pub const Extent3D = extern struct {
+    width: u32,
+    height: u32,
+    depth_or_array_layers: u32,
+};
+
+pub const TextureDescriptor = extern struct {
+    next_in_chain: ?*const ChainedStruct = null,
+    label: ?[*:0]const u8 = null,
+    usage: TextureUsageFlags,
+    dimension: TextureDimension,
+    size: Extent3D,
+    format: TextureFormat,
+    mip_level_count: u32,
+    sample_count: u32,
+    view_format_count: usize,
+    view_formats: [*]const TextureFormat,
+};
+
+pub const Texture = opaque {
+    // TODO: fill in methods
 };

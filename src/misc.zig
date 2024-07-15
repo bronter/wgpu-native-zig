@@ -1,24 +1,25 @@
 const ChainedStructOut = @import("chained_struct.zig").ChainedStructOut;
 
 pub const WGPUBool = u32;
+pub const WGPUFlags = u32;
 
 // Used by both device and adapter
 // FeatureName, Limits, and SupportedLimits are clearly related
 // but idk if they should go in device.zig, adapter.zig, or their own separate file.
 // So they're going in the "miscellaneous" pile for now.
 pub const FeatureName = enum(u32) {
-    undefined                  = 0x00000000,
-    depth_clip_control         = 0x00000001,
-    depth32_float_stencil8     = 0x00000002,
-    timestamp_query            = 0x00000003,
-    texture_compression_bc     = 0x00000004,
-    texture_compression_etc2   = 0x00000005,
-    texture_compression_astc   = 0x00000006,
-    indirect_first_instance    = 0x00000007,
-    shader_f16                 = 0x00000008,
-    rg11b10_ufloat_renderable  = 0x00000009,
-    bgra8_unorm_storage        = 0x0000000A,
-    float32_filterable         = 0x0000000B,
+    @"undefined"                  = 0x00000000,
+    depth_clip_control            = 0x00000001,
+    depth32_float_stencil8        = 0x00000002,
+    timestamp_query               = 0x00000003,
+    texture_compression_bc        = 0x00000004,
+    texture_compression_etc2      = 0x00000005,
+    texture_compression_astc      = 0x00000006,
+    indirect_first_instance       = 0x00000007,
+    shader_f16                    = 0x00000008,
+    rg11b10_ufloat_renderable     = 0x00000009,
+    bgra8_unorm_storage           = 0x0000000A,
+    float32_filterable            = 0x0000000B,
 };
 pub const Limits = extern struct {
     max_texture_dimension_1d: u32,
@@ -57,4 +58,22 @@ pub const Limits = extern struct {
 pub const SupportedLimits = extern struct {
     next_in_chain: ?*ChainedStructOut = null,
     limits: Limits,
+};
+
+pub const IndexFormat = enum(u32) {
+    @"undefined" = 0x00000000,
+    uint16       = 0x00000001,
+    uint32       = 0x00000002,
+};
+
+pub const CompareFunction = enum(u32) {
+    @"undefined"  = 0x00000000,
+    never         = 0x00000001,
+    less          = 0x00000002,
+    less_equal    = 0x00000003,
+    greater       = 0x00000004,
+    greater_equal = 0x00000005,
+    equal         = 0x00000006,
+    not_equal     = 0x00000007,
+    always        = 0x00000008,
 };
