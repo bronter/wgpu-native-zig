@@ -17,7 +17,7 @@ const Device = _device.Device;
 const WGPUBool = @import("misc.zig").WGPUBool;
 
 pub const SurfaceDescriptor = extern struct {
-    next_in_chain: *ChainedStruct,
+    next_in_chain: *const ChainedStruct,
     label: ?[*:0]const u8 = null,
 };
 
