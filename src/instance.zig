@@ -53,13 +53,13 @@ pub const Instance = opaque {
         };
     }
 
-    pub fn requestAdapter(self: *Instance, options: ?*const RequestAdapterOptions) RequestAdapterResponse {
+    pub fn requestAdapterSync(self: *Instance, options: ?*const RequestAdapterOptions) RequestAdapterResponse {
         var response: RequestAdapterResponse = undefined;
         wgpuInstanceRequestAdapter(self, options, defaultAdapterCallback, @ptrCast(&response));
         return response;
     }
 
-    pub inline fn requestAdapterWithCallback(self: *Instance, options: ?*const RequestAdapterOptions, callback: RequestAdapterCallback, userdata: ?*anyopaque) void {
+    pub inline fn requestAdapter(self: *Instance, options: ?*const RequestAdapterOptions, callback: RequestAdapterCallback, userdata: ?*anyopaque) void {
         wgpuInstanceRequestAdapter(self, options, callback, userdata);
     }
 

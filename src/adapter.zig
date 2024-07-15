@@ -115,12 +115,12 @@ pub const Adapter = opaque{
             .device = device,
         };
     }
-    pub fn requestDevice(self: *Adapter, descriptor: ?*const DeviceDescriptor) RequestDeviceResponse {
+    pub fn requestDeviceSync(self: *Adapter, descriptor: ?*const DeviceDescriptor) RequestDeviceResponse {
         var response: RequestDeviceResponse = undefined;
         wgpuAdapterRequestDevice(self, descriptor, defaultDeviceCallback, @ptrCast(&response));
         return response;
     }
-    pub inline fn requestDeviceWithCallback(self: *Adapter, descriptor: ?*const DeviceDescriptor, callback: RequestDeviceCallback, userdata: ?*anyopaque) void {
+    pub inline fn requestDevice(self: *Adapter, descriptor: ?*const DeviceDescriptor, callback: RequestDeviceCallback, userdata: ?*anyopaque) void {
         wgpuAdapterRequestDevice(self, descriptor, callback, userdata);
     }
     pub inline fn reference(self: *Adapter) void {
@@ -136,7 +136,7 @@ test "can request adapter" {
 
     const Instance = @import("instance.zig").Instance;
     const instance = Instance.create(null);
-    const response = instance.?.requestAdapter(null);
+    const response = instance.?.requestAdapterSync(null);
     const adapter: ?*Adapter = switch(response.status) {
         .success => response.adapter,
         else => null,
