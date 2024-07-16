@@ -20,8 +20,26 @@ pub const PipelineLayoutDescriptor = extern struct {
     bind_group_layouts: [*]const BindGroupLayout,
 };
 
+pub const PipelineLayoutProcs = struct {
+    pub const SetLabel = *const fn(*PipelineLayout, ?[*:0]const u8) callconv(.C) void;
+    pub const Reference = *const fn(*PipelineLayout) callconv(.C) void;
+    pub const Release = *const fn(*PipelineLayout) callconv(.C) void;
+};
+
+extern fn wgpuPipelineLayoutSetLabel(pipeline_layout: *PipelineLayout, label: ?[*:0]const u8) callconv(.C) void;
+extern fn wgpuPipelineLayoutReference(pipeline_layout: *PipelineLayout) callconv(.C) void;
+extern fn wgpuPipelineLayoutRelease(pipeline_layout: *PipelineLayout) callconv(.C) void;
+
 pub const PipelineLayout = opaque {
-    // TODO: fill in methods
+    pub inline fn setLabel(self: *PipelineLayout, label: ?[*:0]const u8) void {
+        wgpuPipelineLayoutSetLabel(self, label);
+    }
+    pub inline fn reference(self: *PipelineLayout) void {
+        wgpuPipelineLayoutReference(self);
+    }
+    pub inline fn release(self: *PipelineLayout) void {
+        wgpuPipelineLayoutRelease(self);
+    }
 };
 
 pub const ConstantEntry = extern struct {
@@ -61,8 +79,31 @@ pub const CreatComputePipelineAsyncCallback = *const fn(
     userdata: ?*anyopaque
 ) callconv(.C) void;
 
+pub const ComputePipelineProcs = struct {
+    pub const GetBindGroupLayout = *const fn(*ComputePipeline, u32) callconv(.C) ?*BindGroupLayout;
+    pub const SetLabel = *const fn(*ComputePipeline, ?[*:0]const u8) callconv(.C) void;
+    pub const Reference = *const fn(*ComputePipeline) callconv(.C) void;
+    pub const Release = *const fn(*ComputePipeline) callconv(.C) void;
+};
+
+extern fn wgpuComputePipelineGetBindGroupLayout(compute_pipeline: *ComputePipeline, group_index: u32) callconv(.C) ?*BindGroupLayout;
+extern fn wgpuComputePipelineSetLabel(compute_pipeline: *ComputePipeline, label: ?[*:0]const u8) callconv(.C) void;
+extern fn wgpuComputePipelineReference(compute_pipeline: *ComputePipeline) callconv(.C) void;
+extern fn wgpuComputePipelineRelease(compute_pipeline: *ComputePipeline) callconv(.C) void;
+
 pub const ComputePipeline = opaque {
-    // TODO: fill in methods
+    pub inline fn getBindGroupLayout(self: *ComputePipeline, group_index: u32) ?*BindGroupLayout {
+        return wgpuComputePipelineGetBindGroupLayout(self, group_index);
+    }
+    pub inline fn setLabel(self: *ComputePipeline, label: ?[*:0]const u8) void {
+        wgpuComputePipelineSetLabel(self, label);
+    }
+    pub inline fn reference(self: *ComputePipeline) void {
+        wgpuComputePipelineReference(self);
+    }
+    pub inline fn release(self: *ComputePipeline) void {
+        wgpuComputePipelineRelease(self);
+    }
 };
 
 pub const VertexStepMode = enum(u32) {
@@ -285,8 +326,31 @@ pub const RenderPipelineDescriptor = extern struct {
     fragment: ?*const FragmentState = null,
 };
 
+pub const RenderPipelineProcs = struct {
+    pub const GetBindGroupLayout = *const fn(*RenderPipeline, u32) callconv(.C) ?*BindGroupLayout;
+    pub const SetLabel = *const fn(*RenderPipeline, ?[*:0]const u8) callconv(.C) void;
+    pub const Reference = *const fn(*RenderPipeline) callconv(.C) void;
+    pub const Release = *const fn(*RenderPipeline) callconv(.C) void;
+};
+
+extern fn wgpuRenderPipelineGetBindGroupLayout(render_pipeline: *RenderPipeline, group_index: u32) callconv(.C) ?*BindGroupLayout;
+extern fn wgpuRenderPipelineSetLabel(render_pipeline: *RenderPipeline, label: ?[*:0]const u8) callconv(.C) void;
+extern fn wgpuRenderPipelineReference(render_pipeline: *RenderPipeline) callconv(.C) void;
+extern fn wgpuRenderPipelineRelease(render_pipeline: *RenderPipeline) callconv(.C) void;
+
 pub const RenderPipeline = opaque {
-    // TODO: fill in methods
+    pub inline fn getBindGroupLayout(self: *RenderPipeline, group_index: u32) ?*BindGroupLayout {
+        return wgpuRenderPipelineGetBindGroupLayout(self, group_index);
+    }
+    pub inline fn setLabel(self: *RenderPipeline, label: ?[*:0]const u8) void {
+        wgpuRenderPipelineSetLabel(self, label);
+    }
+    pub inline fn reference(self: *RenderPipeline) void {
+        wgpuRenderPipelineReference(self);
+    }
+    pub inline fn release(self: *RenderPipeline) void {
+        wgpuRenderPipelineRelease(self);
+    }
 };
 
 pub const CreateRenderPipelineAsyncCallback = *const fn(
