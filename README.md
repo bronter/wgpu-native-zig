@@ -27,7 +27,7 @@ Then, in `build.zig` add:
     lib.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu"));
 ```
 
-## How the wrapper code differs from just doing `const wgpu = @cImport({@cInclude("webgpu.h")});`
+## How the (WIP) wrapper code differs from just doing `const wgpu = @cImport({@cInclude("webgpu.h")});`
 * Names are shortened to remove redundancy.
   * For example `wgpu.WGPUSurfaceDescriptor` becomes `wgpu.SurfaceDescriptor`
 * C pointers (`[*c]`) are replaced with more specific pointer types.
