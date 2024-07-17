@@ -199,17 +199,27 @@ pub const PrimitiveState = extern struct {
     front_face: FrontFace,
     cull_mode: CullMode,
 
-    pub inline fn withDepthClipControl(self: *PrimitiveState, unclipped_depth: bool) *PrimitiveState {
-        self.next_in_chain = @ptrCast(&PrimitiveDepthClipControl {
+    pub inline fn withDepthClipControl(self: PrimitiveState, unclipped_depth: bool) PrimitiveState {
+        var ps = self;
+        ps.next_in_chain = @ptrCast(&PrimitiveDepthClipControl {
             .chain = ChainedStruct {
                 .s_type = SType.primitive_depth_clip_control,
             },
             .unclipped_depth = @intFromBool(unclipped_depth),
         });
 
-        return self;
+        return ps;
     }
 };
+
+test "chain method compiles" {
+    _ = &(PrimitiveState {
+        .topology = PrimitiveTopology.triangle_list,
+        .strip_index_format = IndexFormat.uint16,
+        .front_face = FrontFace.ccw,
+        .cull_mode = CullMode.back
+    }).withDepthClipControl(false);
+}
 
 pub const StencilOperation = enum(u32) {
     keep            = 0x00000000,

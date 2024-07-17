@@ -94,6 +94,7 @@ pub fn build(b: *std.Build) void {
     const test_files = [_] [:0]const u8 {
         "src/instance.zig",
         "src/adapter.zig",
+        "src/pipeline.zig",
     };
     comptime var test_names: [test_files.len] [:0]const u8 = test_files;
     comptime for (test_files, 0..) |test_file, idx| {

@@ -94,7 +94,7 @@ Then, in `build.zig` add:
     ```
   * For optional chained structs, you can either write them explicitely like in the example above, or you can use a method of the parent struct instance to add them, for example:
     ```zig
-    (&PrimitiveState {
+    &(PrimitiveState {
       .topology = PrimitiveTopology.triangle_list,
       .strip_index_format = IndexFormat.uint16,
       .front_face = FrontFace.ccw,
