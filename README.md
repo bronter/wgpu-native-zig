@@ -98,5 +98,6 @@ Then, in `build.zig` add:
 ## TODO
 * Test this on other machines with different OS/CPU (currently only tested on linux x86_64)
 * Create more idiomatic wrapper around `webgpu.h`/`wgpu.h` (current WIP)
+* Port [wgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples) using wrapper code, as a basic form of documentation.
 * Custom-build `wgpu-native`; provided all the necessary tools/dependencies are present.
 * Figure out dynamic linking
