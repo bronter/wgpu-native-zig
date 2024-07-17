@@ -178,8 +178,8 @@ pub const PrimitiveTopology = enum(u32) {
 };
 
 pub const FrontFace = enum(u32) {
-    CCW = 0x00000000,
-    CW  = 0x00000001,
+    ccw = 0x00000000,
+    cw  = 0x00000001,
 };
 
 pub const CullMode = enum(u32) {
@@ -198,21 +198,18 @@ pub const PrimitiveState = extern struct {
     strip_index_format: IndexFormat,
     front_face: FrontFace,
     cull_mode: CullMode,
-};
-pub inline fn primitiveStateWithDepthClipControl(topology: PrimitiveTopology, strip_index_format: IndexFormat, front_face: FrontFace, cull_mode: CullMode,unclipped_depth: bool) PrimitiveState {
-    return PrimitiveState {
-        .next_in_chain = @ptrCast(&PrimitiveDepthClipControl {
+
+    pub inline fn withDepthClipControl(self: *PrimitiveState, unclipped_depth: bool) *PrimitiveState {
+        self.next_in_chain = @ptrCast(&PrimitiveDepthClipControl {
             .chain = ChainedStruct {
                 .s_type = SType.primitive_depth_clip_control,
             },
             .unclipped_depth = @intFromBool(unclipped_depth),
-        }),
-        .topology = topology,
-        .strip_index_format = strip_index_format,
-        .front_face = front_face,
-        .cull_mode = cull_mode,
-    };
-}
+        });
+
+        return self;
+    }
+};
 
 pub const StencilOperation = enum(u32) {
     keep            = 0x00000000,

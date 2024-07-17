@@ -74,8 +74,8 @@ Then, in `build.zig` add:
         }
     };
     ```
-* Chained structs are provided with inline functions for constructing them.
-  * For example, you can either do:
+* Chained structs are provided with inline functions for constructing them, which come in two forms depending on whether or not the chained struct is likely to always be required.
+  * For required chained structs, you can either write them explicitely:
     ```zig
     SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromXlibWindow {
@@ -88,9 +88,18 @@ Then, in `build.zig` add:
         .label = "xlib_surface_descriptor",
     };
     ```
-    or more simply:
+    or use a function to construct them:
     ```zig
     surfaceDescriptorFromXlibWindow("xlib_surface_descriptor", display, window);
+    ```
+  * For optional chained structs, you can either write them explicitely like in the example above, or you can use a method of the parent struct instance to add them, for example:
+    ```zig
+    (&PrimitiveState {
+      .topology = PrimitiveTopology.triangle_list,
+      .strip_index_format = IndexFormat.uint16,
+      .front_face = FrontFace.ccw,
+      .cull_mode = CullMode.back,
+    }).withDepthClipControl(false);
     ```
 * `WGPUBool` is replaced with `bool` whenever possible.
   * This pretty much means, it is replaced with `bool` in the parameters and return values of methods, but not in structs or the parameters/return values of procs (which are supposed to be function pointers to things returned by `wgpuGetProcAddress`).
