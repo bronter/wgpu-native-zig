@@ -13,6 +13,7 @@ pub const RenderBundleEncoderDescriptor = extern struct {
     stencil_read_only: WGPUBool,
 };
 
+// TODO: This is very similar to CommandEncoder; should it go in the same file? There's a lot of duplicated import code.
 pub const RenderBundleEncoder = opaque {
     // TODO: fill in methods
 };

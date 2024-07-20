@@ -4,6 +4,8 @@ const _misc = @import("misc.zig");
 const WGPUFlags = _misc.WGPUFlags;
 const WGPUBool = _misc.WGPUBool;
 
+const Buffer = @import("buffer.zig").Buffer;
+
 pub const TextureFormat = enum(u32) {
     @"undefined"            = 0x00000000,
     r8_unorm                = 0x00000001,
@@ -113,6 +115,15 @@ pub const TextureUsage = struct {
     pub const render_attachment = @as(TextureUsageFlags, 0x00000010);
 };
 
+// TODO: Like a lot of things in this file, this breaks from the wrapper code convention by having an unneeded prefix ("Texture")
+//       in front of the name, even though "Aspect" is exclusively used in TextureAspect. I've done this because just calling
+//       it "Aspect" seems like it'd confuse people thinking it is an aspect ratio or something, but should it just be "Aspect"?
+pub const TextureAspect = enum(u32) {
+    all          = 0x00000000,
+    stencil_only = 0x00000001,
+    depth_only   = 0x00000002,
+};
+
 pub const TextureView = opaque {
     // TODO: fill in methods
 };
@@ -185,4 +196,33 @@ pub const TextureDescriptor = extern struct {
 
 pub const Texture = opaque {
     // TODO: fill in methods
+};
+
+pub const Origin3D = extern struct {
+    x: u32,
+    y: u32,
+    z: u32,
+};
+
+pub const ImageCopyTexture = extern struct {
+    next_in_chain: ?*const ChainedStruct = null,
+    texture: *Texture,
+    mip_level: u32,
+    origin: Origin3D,
+    aspect: TextureAspect,
+};
+
+pub const TextureDataLayout = extern struct {
+    next_in_chain: ?*const ChainedStruct = null,
+    offset: u64,
+    bytes_per_row: u32,
+    rows_per_image: u32,
+};
+
+// Seems a little weird to put this in texture.zig,
+// but it seems to have more to do with images/textures than with buffers.
+pub const ImageCopyBuffer = extern struct {
+    next_in_chain: ?*const ChainedStruct = null,
+    layout: TextureDataLayout,
+    buffer: *Buffer,
 };
