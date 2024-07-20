@@ -305,7 +305,7 @@ extern fn wgpuCommandBufferSetLabel(command_buffer: *CommandBuffer, label: ?[*:0
 extern fn wgpuCommandBufferReference(command_buffer: *CommandBuffer) callconv(.C) void;
 extern fn wgpuCommandBufferRelease(command_buffer: *CommandBuffer) callconv(.C) void;
 
-const CommandBuffer = opaque {
+pub const CommandBuffer = opaque {
     pub inline fn setLabel(self: *CommandBuffer, label: ?[*:0]const u8) void {
         wgpuCommandBufferSetLabel(self, label);
     }
