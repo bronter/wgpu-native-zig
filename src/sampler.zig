@@ -44,6 +44,24 @@ pub const SamplerDescriptor = extern struct {
     max_anisotropy: u16,
 };
 
+pub const SamplerProcs = struct {
+    pub const SetLabel = *const fn(*Sampler, ?[*:0]const u8) callconv(.C) void;
+    pub const Reference = *const fn(*Sampler) callconv(.C) void;
+    pub const Release = *const fn(*Sampler) callconv(.C) void;
+};
+
+extern fn wgpuSamplerSetLabel(sampler: *Sampler, label: ?[*:0]const u8) callconv(.C) void;
+extern fn wgpuSamplerReference(sampler: *Sampler) callconv(.C) void;
+extern fn wgpuSamplerRelease(sampler: *Sampler) callconv(.C) void;
+
 pub const Sampler = opaque {
-    // TODO: fill in methods
+    pub inline fn setLabel(self: *Sampler, label: ?[*:0]const u8) void {
+        wgpuSamplerSetLabel(self, label);
+    }
+    pub inline fn reference(self: *Sampler) void {
+        wgpuSamplerReference(self);
+    }
+    pub inline fn release(self: *Sampler) void {
+        wgpuSamplerRelease(self);
+    }
 };
