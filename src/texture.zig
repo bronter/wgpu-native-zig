@@ -124,8 +124,38 @@ pub const TextureAspect = enum(u32) {
     depth_only   = 0x00000002,
 };
 
+pub const TextureViewDescriptor = extern struct {
+    next_in_chain: ?*const ChainedStruct = null,
+    label: ?[*:0]const u8 = null,
+    format: TextureFormat,
+    dimension: ViewDimension,
+    base_mip_level: u32,
+    mip_level_count: u32,
+    base_array_layer: u32,
+    array_layer_count: u32,
+    aspect: TextureAspect,
+};
+
+pub const TextureViewProcs = struct {
+    pub const SetLabel = *const fn(*TextureView, ?[*:0]const u8) callconv(.C) void;
+    pub const Reference = *const fn(*TextureView) callconv(.C) void;
+    pub const Release = *const fn(*TextureView) callconv(.C) void;
+};
+
+extern fn wgpuTextureViewSetLabel(texture_view: *TextureView, label: ?[*:0]const u8) callconv(.C) void;
+extern fn wgpuTextureViewReference(texture_view: *TextureView) callconv(.C) void;
+extern fn wgpuTextureViewRelease(texture_view: *TextureView) callconv(.C) void;
+
 pub const TextureView = opaque {
-    // TODO: fill in methods
+    pub inline fn setLabel(self: *TextureView, label: ?[*:0]const u8) void {
+        wgpuTextureViewSetLabel(self, label);
+    }
+    pub inline fn reference(self: *TextureView) void {
+        wgpuTextureViewReference(self);
+    }
+    pub inline fn release(self: *TextureView) void {
+        wgpuTextureViewRelease(self);
+    }
 };
 
 // TODO: Should this maybe go in sampler.zig instead?
@@ -194,8 +224,76 @@ pub const TextureDescriptor = extern struct {
     view_formats: [*]const TextureFormat,
 };
 
+pub const TextureProcs = struct {
+    pub const CreateView = *const fn(*Texture, *const TextureViewDescriptor) callconv(.C) ?*TextureView;
+    pub const Destroy = *const fn(*Texture) callconv(.C) void;
+    pub const GetDepthOrArrayLayers = *const fn(*Texture) callconv(.C) u32;
+    pub const GetDimension = *const fn(*Texture) callconv(.C) TextureDimension;
+    pub const GetFormat = *const fn(*Texture) callconv(.C) TextureFormat;
+    pub const GetHeight = *const fn(*Texture) callconv(.C) u32;
+    pub const GetMipLevelCount = *const fn(*Texture) callconv(.C) u32;
+    pub const GetSampleCount = *const fn(*Texture) callconv(.C) u32;
+    pub const GetUsage = *const fn(*Texture) callconv(.C) TextureUsageFlags;
+    pub const GetWidth = *const fn(*Texture) callconv(.C) u32;
+    pub const SetLabel = *const fn(*Texture, ?[*:0]const u8) callconv(.C) void;
+    pub const Reference = *const fn(*Texture) callconv(.C) void;
+    pub const Release = *const fn(*Texture) callconv(.C) void;
+};
+
+extern fn wgpuTextureCreateView(texture: *Texture, descriptor: *const TextureViewDescriptor) callconv(.C) ?*TextureView;
+extern fn wgpuTextureDestroy(texture: *Texture) callconv(.C) void;
+extern fn wgpuTextureGetDepthOrArrayLayers(texture: *Texture) callconv(.C) u32;
+extern fn wgpuTextureGetDimension(texture: *Texture) callconv(.C) TextureDimension;
+extern fn wgpuTextureGetFormat(texture: *Texture) callconv(.C) TextureFormat;
+extern fn wgpuTextureGetHeight(texture: *Texture) callconv(.C) u32;
+extern fn wgpuTextureGetMipLevelCount(texture: *Texture) callconv(.C) u32;
+extern fn wgpuTextureGetSampleCount(texture: *Texture) callconv(.C) u32;
+extern fn wgpuTextureGetUsage(texture: *Texture) callconv(.C) TextureUsageFlags;
+extern fn wgpuTextureGetWidth(texture: *Texture) callconv(.C) u32;
+extern fn wgpuTextureSetLabel(texture: *Texture, label: ?[*:0]const u8) callconv(.C) void;
+extern fn wgpuTextureReference(texture: *Texture) callconv(.C) void;
+extern fn wgpuTextureRelease(texture: *Texture) callconv(.C) void;
+
 pub const Texture = opaque {
-    // TODO: fill in methods
+    pub inline fn createView(self: *Texture, descriptor: *const TextureViewDescriptor) ?*TextureView {
+        return wgpuTextureCreateView(self, descriptor);
+    }
+    pub inline fn destroy(self: *Texture) void {
+        wgpuTextureDestroy(self);
+    }
+    pub inline fn getDepthOrArrayLayers(self: *Texture) u32 {
+        return wgpuTextureGetDepthOrArrayLayers(self);
+    }
+    pub inline fn getDimension(self: *Texture) TextureDimension {
+        return wgpuTextureGetDimension(self);
+    }
+    pub inline fn getFormat(self: *Texture) TextureFormat {
+        return wgpuTextureGetFormat(self);
+    }
+    pub inline fn getHeight(self: *Texture) u32 {
+        return wgpuTextureGetHeight(self);
+    }
+    pub inline fn getMipLevelCount(self: *Texture) u32 {
+        return wgpuTextureGetMipLevelCount(self);
+    }
+    pub inline fn getSampleCount(self: *Texture) u32 {
+        return wgpuTextureGetSampleCount(self);
+    }
+    pub inline fn getUsage(self: *Texture) TextureUsageFlags {
+        return wgpuTextureGetUsage(self);
+    }
+    pub inline fn getWidth(self: *Texture) u32 {
+        return wgpuTextureGetWidth(self);
+    }
+    pub inline fn setLabel(self: *Texture, label: ?[*:0]const u8) void {
+        wgpuTextureSetLabel(self, label);
+    }
+    pub inline fn reference(self: *Texture) void {
+        wgpuTextureReference(self);
+    }
+    pub inline fn release(self: *Texture) void {
+        wgpuTextureRelease(self);
+    }
 };
 
 pub const Origin3D = extern struct {
