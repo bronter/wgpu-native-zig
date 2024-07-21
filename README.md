@@ -1,7 +1,7 @@
 # wgpu-native-zig
 Zig bindings for [wgpu-native](https://github.com/gfx-rs/wgpu-native)
 
-Currently all this does is download the appropriate pre-built lib/headers, run the headers through @cImport, and re-export that as a module that you should hopefully be able to use.
+Currently all this does is download the appropriate pre-built lib/headers, run the headers through `translate-c`, and re-export that as a module that you should hopefully be able to use.
 
 ## Adding this package to your build
 In your `build.zig.zon` add:
@@ -22,12 +22,12 @@ Then, in `build.zig` add:
     const wgpu_native_dep = b.dependency("wgpu_native_zig");
 
     // Add module to your exe
-    exe.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu"));
+    exe.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu-c"));
     // Or, add to your lib similarly:
-    lib.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu"));
+    lib.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu-c"));
 ```
 
-## How the (WIP) wrapper code differs from just doing `const wgpu = @cImport({@cInclude("webgpu.h")});`
+## How the (WIP) wrapper code differs using `wgpu-native` through `translate-c`
 * Names are shortened to remove redundancy.
   * For example `wgpu.WGPUSurfaceDescriptor` becomes `wgpu.SurfaceDescriptor`
 * C pointers (`[*c]`) are replaced with more specific pointer types.

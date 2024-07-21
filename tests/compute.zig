@@ -1,7 +1,7 @@
 const std = @import("std");
 const testing = std.testing;
 
-const wgpu = @import("wgpu");
+const wgpu = @import("wgpu-c");
 
 fn handle_request_adapter(_: wgpu.WGPURequestAdapterStatus, adapter: wgpu.WGPUAdapter, _: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void {
     const ud: *wgpu.WGPUAdapter = @ptrCast(@alignCast(userdata));

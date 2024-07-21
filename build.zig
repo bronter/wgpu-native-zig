@@ -60,7 +60,6 @@ pub fn build(b: *std.Build) void {
 
     const wgpu_dep = b.lazyDependency(target_name, .{}).?;
 
-    mod.addIncludePath(wgpu_dep.path(""));
     const lib_name = switch (target_res.os.tag) {
         // There's also some sorf of .pdb file available, which I think is a database of debugging symbols.
         // I don't even have a Windows machine though,
@@ -74,6 +73,17 @@ pub fn build(b: *std.Build) void {
     const libwgpu_path = wgpu_dep.path(lib_name);
     mod.addObjectFile(libwgpu_path);
 
+    const translate_step = b.addTranslateC(.{
+        // wgpu.h imports webgpu.h, so we get the contents of both files, as well as a bunch of libc garbage.
+        .root_source_file = wgpu_dep.path("wgpu.h"),
+
+        .target = target,
+        .optimize = optimize,
+    });
+    const wgpu_c_mod = translate_step.addModule("wgpu-c");
+    wgpu_c_mod.addObjectFile(libwgpu_path);
+    wgpu_c_mod.link_libcpp = true;
+
     // Creates a step for unit testing. This only builds the test executable
     // but does not run it.
     const compute_test = b.addTest(.{
@@ -82,7 +92,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    compute_test.root_module.addImport("wgpu", mod);
+    compute_test.root_module.addImport("wgpu-c", wgpu_c_mod);
 
     const run_compute_test = b.addRunArtifact(compute_test);
 
