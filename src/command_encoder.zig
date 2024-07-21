@@ -32,7 +32,7 @@ pub const TimestampWrites = extern struct {
 pub const ComputePassTimestampWrites = TimestampWrites;
 
 pub const ComputePassDescriptor = extern struct {
-    next_in_chain: ?*ChainedStruct = null,
+    next_in_chain: ?*const ChainedStruct = null,
     label: ?[*:0]const u8 = null,
     timestamp_writes: ?*const ComputePassTimestampWrites,
 };
@@ -124,7 +124,7 @@ pub const Color = extern struct {
 };
 
 pub const ColorAttachment = extern struct {
-    next_in_chain: ?*ChainedStruct = null,
+    next_in_chain: ?*const ChainedStruct = null,
     view: ?*TextureView,
     resolve_target: ?*TextureView,
     loap_op: LoadOp,

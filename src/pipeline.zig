@@ -43,7 +43,7 @@ pub const PipelineLayout = opaque {
 };
 
 pub const ConstantEntry = extern struct {
-    next_in_chain: ?*ChainedStruct = null,
+    next_in_chain: ?*const ChainedStruct = null,
     key: [*:0]const u8 = null,
     value: f64,
 };
@@ -160,7 +160,7 @@ pub const VertexBufferLayout = extern struct {
 };
 
 pub const VertexState = extern struct {
-    next_in_chain: ?*ChainedStruct = null,
+    next_in_chain: ?*const ChainedStruct = null,
     module: *ShaderModule,
     entry_point: ?[*:0]const u8 = null,
     constant_count: usize,
