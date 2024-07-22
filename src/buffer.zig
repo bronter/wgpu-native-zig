@@ -82,17 +82,17 @@ pub const BufferProcs = struct {
     pub const Release = *const fn(*Buffer) callconv(.C) void;
 };
 
-extern fn wgpuBufferDestroy(buffer: *Buffer) callconv(.C) void;
-extern fn wgpuBufferGetConstMappedRange(buffer: *Buffer, offset: usize, size: usize) callconv(.C) ?*const anyopaque;
-extern fn wgpuBufferGetMapState(buffer: *Buffer) callconv(.C) BufferMapState;
-extern fn wgpuBufferGetMappedRange(buffer: *Buffer, offset: usize, size: usize) callconv(.C) ?*anyopaque;
-extern fn wgpuBufferGetSize(buffer: *Buffer) callconv(.C) u64;
-extern fn wgpuBufferGetUsage(buffer: *Buffer) callconv(.C) BufferUsageFlags;
-extern fn wgpuBufferMapAsync(buffer: *Buffer, mode: MapModeFlags, offset: usize, size: usize, callback: BufferMapCallback, userdata: ?*anyopaque) callconv(.C) void;
-extern fn wgpuBufferSetLabel(buffer: *Buffer, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuBufferUnmap(buffer: *Buffer) callconv(.C) void;
-extern fn wgpuBufferReference(buffer: *Buffer) callconv(.C) void;
-extern fn wgpuBufferRelease(buffer: *Buffer) callconv(.C) void;
+extern fn wgpuBufferDestroy(buffer: *Buffer) void;
+extern fn wgpuBufferGetConstMappedRange(buffer: *Buffer, offset: usize, size: usize) ?*const anyopaque;
+extern fn wgpuBufferGetMapState(buffer: *Buffer) BufferMapState;
+extern fn wgpuBufferGetMappedRange(buffer: *Buffer, offset: usize, size: usize) ?*anyopaque;
+extern fn wgpuBufferGetSize(buffer: *Buffer) u64;
+extern fn wgpuBufferGetUsage(buffer: *Buffer) BufferUsageFlags;
+extern fn wgpuBufferMapAsync(buffer: *Buffer, mode: MapModeFlags, offset: usize, size: usize, callback: BufferMapCallback, userdata: ?*anyopaque) void;
+extern fn wgpuBufferSetLabel(buffer: *Buffer, label: ?[*:0]const u8) void;
+extern fn wgpuBufferUnmap(buffer: *Buffer) void;
+extern fn wgpuBufferReference(buffer: *Buffer) void;
+extern fn wgpuBufferRelease(buffer: *Buffer) void;
 
 pub const Buffer = opaque {
     pub inline fn destroy(self: *Buffer) void {

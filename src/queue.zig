@@ -40,16 +40,16 @@ pub const QueueProcs = struct {
     // pub const SubmitForIndex = *const fn(*Queue, usize, *const CommandBuffer) callconv(.C) SubmissionIndex;
 };
 
-extern fn wgpuQueueOnSubmittedWorkDone(queue: *Queue, callback: WorkDoneCallback, userdata: ?*anyopaque) callconv(.C) void;
-extern fn wgpuQueueSetLabel(queue: *Queue, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuQueueSubmit(queue: *Queue, command_count: usize, commands: [*]const *const CommandBuffer) callconv(.C) void;
-extern fn wgpuQueueWriteBuffer(queue: *Queue, buffer: *Buffer, buffer_offset: u64, data: *const anyopaque, size: usize) callconv(.C) void;
-extern fn wgpuQueueWriteTexture(queue: *Queue, destination: *const ImageCopyTexture, data: *const anyopaque, data_size: usize, data_layout: *const TextureDataLayout, write_size: *const Extent3D) callconv(.C) void;
-extern fn wgpuQueueReference(queue: *Queue) callconv(.C) void;
-extern fn wgpuQueueRelease(queue: *Queue) callconv(.C) void;
+extern fn wgpuQueueOnSubmittedWorkDone(queue: *Queue, callback: WorkDoneCallback, userdata: ?*anyopaque) void;
+extern fn wgpuQueueSetLabel(queue: *Queue, label: ?[*:0]const u8) void;
+extern fn wgpuQueueSubmit(queue: *Queue, command_count: usize, commands: [*]const *const CommandBuffer) void;
+extern fn wgpuQueueWriteBuffer(queue: *Queue, buffer: *Buffer, buffer_offset: u64, data: *const anyopaque, size: usize) void;
+extern fn wgpuQueueWriteTexture(queue: *Queue, destination: *const ImageCopyTexture, data: *const anyopaque, data_size: usize, data_layout: *const TextureDataLayout, write_size: *const Extent3D) void;
+extern fn wgpuQueueReference(queue: *Queue) void;
+extern fn wgpuQueueRelease(queue: *Queue) void;
 
 // wgpu-native
-extern fn wgpuQueueSubmitForIndex(queue: *Queue, command_count: usize, commands: [*]const *const CommandBuffer) callconv(.C) SubmissionIndex;
+extern fn wgpuQueueSubmitForIndex(queue: *Queue, command_count: usize, commands: [*]const *const CommandBuffer) SubmissionIndex;
 
 pub const Queue = opaque {
     pub inline fn onSubmittedWorkDone(self: *Queue, callback: WorkDoneCallback, userdata: ?*anyopaque) void {

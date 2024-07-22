@@ -37,21 +37,21 @@ pub const RenderBundleEncoderProcs = struct {
     pub const Release = *const fn(*RenderBundleEncoder) callconv(.C) void;
 };
 
-extern fn wgpuRenderBundleEncoderDraw(render_bundle_encoder: *RenderBundleEncoder, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderDrawIndexed(render_bundle_encoder: *RenderBundleEncoder, index_count: u32, instance_count: u32, first_index: u32, base_vertex: i32, first_instance: u32) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderDrawIndexedIndirect(render_bundle_encoder: *RenderBundleEncoder, indirect_buffer: *Buffer, indirect_offset: u64) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderDrawIndirect(render_bundle_encoder: *RenderBundleEncoder, indirect_buffer: *Buffer, indirect_offset: u64) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderFinish(render_bundle_encoder: *RenderBundleEncoder, descriptor: *const RenderBundleDescriptor) callconv(.C) ?*RenderBundle;
-extern fn wgpuRenderBundleEncoderInsertDebugMarker(render_bundle_encoder: *RenderBundleEncoder, marker_label: [*:0]const u8) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderPopDebugGroup(render_bundle_encoder: *RenderBundleEncoder) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderPushDebugGroup(render_bundle_encoder: *RenderBundleEncoder, group_label: [*:0]const u8) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderSetBindGroup(render_bundle_encoder: *RenderBundleEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderSetIndexBuffer(render_bundle_encoder: *RenderBundleEncoder, buffer: *Buffer, format: IndexFormat, offset: u64, size: u64) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderSetLabel(render_bundle_encoder: *RenderBundleEncoder, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderSetPipeline(render_bundle_encoder: *RenderBundleEncoder, pipeline: *RenderPipeline) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderSetVertexBuffer(render_bundle_encoder: *RenderBundleEncoder, slot: u32, buffer: *Buffer, offset: u64, size: u64) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderReference(render_bundle_encoder: *RenderBundleEncoder) callconv(.C) void;
-extern fn wgpuRenderBundleEncoderRelease(render_bundle_encoder: *RenderBundleEncoder) callconv(.C) void;
+extern fn wgpuRenderBundleEncoderDraw(render_bundle_encoder: *RenderBundleEncoder, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) void;
+extern fn wgpuRenderBundleEncoderDrawIndexed(render_bundle_encoder: *RenderBundleEncoder, index_count: u32, instance_count: u32, first_index: u32, base_vertex: i32, first_instance: u32) void;
+extern fn wgpuRenderBundleEncoderDrawIndexedIndirect(render_bundle_encoder: *RenderBundleEncoder, indirect_buffer: *Buffer, indirect_offset: u64) void;
+extern fn wgpuRenderBundleEncoderDrawIndirect(render_bundle_encoder: *RenderBundleEncoder, indirect_buffer: *Buffer, indirect_offset: u64) void;
+extern fn wgpuRenderBundleEncoderFinish(render_bundle_encoder: *RenderBundleEncoder, descriptor: *const RenderBundleDescriptor) ?*RenderBundle;
+extern fn wgpuRenderBundleEncoderInsertDebugMarker(render_bundle_encoder: *RenderBundleEncoder, marker_label: [*:0]const u8) void;
+extern fn wgpuRenderBundleEncoderPopDebugGroup(render_bundle_encoder: *RenderBundleEncoder) void;
+extern fn wgpuRenderBundleEncoderPushDebugGroup(render_bundle_encoder: *RenderBundleEncoder, group_label: [*:0]const u8) void;
+extern fn wgpuRenderBundleEncoderSetBindGroup(render_bundle_encoder: *RenderBundleEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) void;
+extern fn wgpuRenderBundleEncoderSetIndexBuffer(render_bundle_encoder: *RenderBundleEncoder, buffer: *Buffer, format: IndexFormat, offset: u64, size: u64) void;
+extern fn wgpuRenderBundleEncoderSetLabel(render_bundle_encoder: *RenderBundleEncoder, label: ?[*:0]const u8) void;
+extern fn wgpuRenderBundleEncoderSetPipeline(render_bundle_encoder: *RenderBundleEncoder, pipeline: *RenderPipeline) void;
+extern fn wgpuRenderBundleEncoderSetVertexBuffer(render_bundle_encoder: *RenderBundleEncoder, slot: u32, buffer: *Buffer, offset: u64, size: u64) void;
+extern fn wgpuRenderBundleEncoderReference(render_bundle_encoder: *RenderBundleEncoder) void;
+extern fn wgpuRenderBundleEncoderRelease(render_bundle_encoder: *RenderBundleEncoder) void;
 
 // TODO: This is very similar to CommandEncoder; should it go in the same file? There's a lot of duplicated import code.
 pub const RenderBundleEncoder = opaque {
@@ -113,9 +113,9 @@ pub const RenderBundleProcs = struct {
     pub const Release = *const fn(*RenderBundle) callconv(.C) void;
 };
 
-extern fn wgpuRenderBundleSetLabel(render_bundle: *RenderBundle, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuRenderBundleReference(render_bundle: *RenderBundle) callconv(.C) void;
-extern fn wgpuRenderBundleRelease(render_bundle: *RenderBundle) callconv(.C) void;
+extern fn wgpuRenderBundleSetLabel(render_bundle: *RenderBundle, label: ?[*:0]const u8) void;
+extern fn wgpuRenderBundleReference(render_bundle: *RenderBundle) void;
+extern fn wgpuRenderBundleRelease(render_bundle: *RenderBundle) void;
 
 pub const RenderBundle = opaque {
     pub inline fn setLabel(self: *RenderBundle, label: ?[*:0]const u8) void {

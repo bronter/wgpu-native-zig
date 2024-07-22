@@ -117,7 +117,6 @@ Then, in `build.zig` add:
 ## TODO
 * Test this on other machines with different OS/CPU (currently only tested on linux x86_64)
 * Create more idiomatic wrapper around `webgpu.h`/`wgpu.h` (mostly finished with some potential issues)
-  * See if we really need `callconv(.C)` on extern fns; it seems like maybe this is the default for extern fn, or that Zig can somehow figure out the calling convention?
   * Investigate usages of many-item pointers. There are probably some many-item pointers that should be optional but aren't (potentially a breaking issue), and there are probably also some optional many-item pointers that should default to null but don't (annoying but can be worked around). Implementing more examples should uncover many of these issues. 
 * Port [wgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples) using wrapper code, as a basic form of documentation.
 * Custom-build `wgpu-native`; provided all the necessary tools/dependencies are present.

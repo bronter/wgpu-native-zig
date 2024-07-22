@@ -9,8 +9,8 @@ pub const LogLevel = enum(u32) {
 
 pub const LogCallback = *const fn(level: LogLevel, message: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void;
 
-extern fn wgpuSetLogCallback(callback: LogCallback, userdata: ?*anyopaque) callconv(.C) void;
-extern fn wgpuSetLogLevel(level: LogLevel) callconv(.C) void;
+extern fn wgpuSetLogCallback(callback: LogCallback, userdata: ?*anyopaque) void;
+extern fn wgpuSetLogLevel(level: LogLevel) void;
 
 pub inline fn setLogCallback(callback: LogCallback, userdata: ?*anyopaque) void {
     wgpuSetLogCallback(callback, userdata);

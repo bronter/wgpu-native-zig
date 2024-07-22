@@ -50,7 +50,7 @@ pub const CompareFunction = enum(u32) {
     always        = 0x00000008,
 };
 
-extern fn wgpuGetVersion() callconv(.C) u32;
+extern fn wgpuGetVersion() u32;
 pub inline fn getVersion() u32 {
     return wgpuGetVersion();
 }

@@ -50,9 +50,9 @@ pub const SamplerProcs = struct {
     pub const Release = *const fn(*Sampler) callconv(.C) void;
 };
 
-extern fn wgpuSamplerSetLabel(sampler: *Sampler, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuSamplerReference(sampler: *Sampler) callconv(.C) void;
-extern fn wgpuSamplerRelease(sampler: *Sampler) callconv(.C) void;
+extern fn wgpuSamplerSetLabel(sampler: *Sampler, label: ?[*:0]const u8) void;
+extern fn wgpuSamplerReference(sampler: *Sampler) void;
+extern fn wgpuSamplerRelease(sampler: *Sampler) void;
 
 pub const Sampler = opaque {
     pub inline fn setLabel(self: *Sampler, label: ?[*:0]const u8) void {

@@ -56,9 +56,9 @@ pub const PipelineLayoutProcs = struct {
     pub const Release = *const fn(*PipelineLayout) callconv(.C) void;
 };
 
-extern fn wgpuPipelineLayoutSetLabel(pipeline_layout: *PipelineLayout, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuPipelineLayoutReference(pipeline_layout: *PipelineLayout) callconv(.C) void;
-extern fn wgpuPipelineLayoutRelease(pipeline_layout: *PipelineLayout) callconv(.C) void;
+extern fn wgpuPipelineLayoutSetLabel(pipeline_layout: *PipelineLayout, label: ?[*:0]const u8) void;
+extern fn wgpuPipelineLayoutReference(pipeline_layout: *PipelineLayout) void;
+extern fn wgpuPipelineLayoutRelease(pipeline_layout: *PipelineLayout) void;
 
 pub const PipelineLayout = opaque {
     pub inline fn setLabel(self: *PipelineLayout, label: ?[*:0]const u8) void {
@@ -116,10 +116,10 @@ pub const ComputePipelineProcs = struct {
     pub const Release = *const fn(*ComputePipeline) callconv(.C) void;
 };
 
-extern fn wgpuComputePipelineGetBindGroupLayout(compute_pipeline: *ComputePipeline, group_index: u32) callconv(.C) ?*BindGroupLayout;
-extern fn wgpuComputePipelineSetLabel(compute_pipeline: *ComputePipeline, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuComputePipelineReference(compute_pipeline: *ComputePipeline) callconv(.C) void;
-extern fn wgpuComputePipelineRelease(compute_pipeline: *ComputePipeline) callconv(.C) void;
+extern fn wgpuComputePipelineGetBindGroupLayout(compute_pipeline: *ComputePipeline, group_index: u32) ?*BindGroupLayout;
+extern fn wgpuComputePipelineSetLabel(compute_pipeline: *ComputePipeline, label: ?[*:0]const u8) void;
+extern fn wgpuComputePipelineReference(compute_pipeline: *ComputePipeline) void;
+extern fn wgpuComputePipelineRelease(compute_pipeline: *ComputePipeline) void;
 
 pub const ComputePipeline = opaque {
     pub inline fn getBindGroupLayout(self: *ComputePipeline, group_index: u32) ?*BindGroupLayout {
@@ -369,10 +369,10 @@ pub const RenderPipelineProcs = struct {
     pub const Release = *const fn(*RenderPipeline) callconv(.C) void;
 };
 
-extern fn wgpuRenderPipelineGetBindGroupLayout(render_pipeline: *RenderPipeline, group_index: u32) callconv(.C) ?*BindGroupLayout;
-extern fn wgpuRenderPipelineSetLabel(render_pipeline: *RenderPipeline, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuRenderPipelineReference(render_pipeline: *RenderPipeline) callconv(.C) void;
-extern fn wgpuRenderPipelineRelease(render_pipeline: *RenderPipeline) callconv(.C) void;
+extern fn wgpuRenderPipelineGetBindGroupLayout(render_pipeline: *RenderPipeline, group_index: u32) ?*BindGroupLayout;
+extern fn wgpuRenderPipelineSetLabel(render_pipeline: *RenderPipeline, label: ?[*:0]const u8) void;
+extern fn wgpuRenderPipelineReference(render_pipeline: *RenderPipeline) void;
+extern fn wgpuRenderPipelineRelease(render_pipeline: *RenderPipeline) void;
 
 pub const RenderPipeline = opaque {
     pub inline fn getBindGroupLayout(self: *RenderPipeline, group_index: u32) ?*BindGroupLayout {

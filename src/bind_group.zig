@@ -57,9 +57,9 @@ pub const BindGroupLayoutProcs = struct {
     pub const Release = *const fn(*BindGroupLayout) callconv(.C) void;
 };
 
-extern fn wgpuBindGroupLayoutSetLabel(bind_group_layout: *BindGroupLayout, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuBindGroupLayoutReference(bind_group_layout: *BindGroupLayout) callconv(.C) void;
-extern fn wgpuBindGroupLayoutRelease(bind_group_layout: *BindGroupLayout) callconv(.C) void;
+extern fn wgpuBindGroupLayoutSetLabel(bind_group_layout: *BindGroupLayout, label: ?[*:0]const u8) void;
+extern fn wgpuBindGroupLayoutReference(bind_group_layout: *BindGroupLayout) void;
+extern fn wgpuBindGroupLayoutRelease(bind_group_layout: *BindGroupLayout) void;
 
 pub const BindGroupLayout = opaque {
     pub inline fn setLabel(self: *BindGroupLayout, label: ?[*:0]const u8) void {
@@ -115,9 +115,9 @@ pub const BindGroupProcs = struct {
     pub const Release = *const fn(*BindGroup) callconv(.C) void;
 };
 
-extern fn wgpuBindGroupSetLabel(bind_group: *BindGroup, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuBindGroupReference(bind_group: *BindGroup) callconv(.C) void;
-extern fn wgpuBindGroupRelease(bind_group: *BindGroup) callconv(.C) void;
+extern fn wgpuBindGroupSetLabel(bind_group: *BindGroup, label: ?[*:0]const u8) void;
+extern fn wgpuBindGroupReference(bind_group: *BindGroup) void;
+extern fn wgpuBindGroupRelease(bind_group: *BindGroup) void;
 
 pub const BindGroup = opaque {
     pub inline fn setLabel(self: *BindGroup, label: ?[*:0]const u8) void {

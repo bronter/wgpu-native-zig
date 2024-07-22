@@ -62,21 +62,21 @@ const ComputePassEncoderProcs = struct {
     // pub const EndPipelineStatisticsQuery = *const fn(*ComputePassEncoder) callconv(.C) void;
 };
 
-extern fn wgpuComputePassEncoderDispatchWorkgroups(compute_pass_encoder: *ComputePassEncoder, workgroup_count_x: u32, workgroup_count_y: u32, workgroup_count_z: u32) callconv(.C) void;
-extern fn wgpuComputePassEncoderDispatchWorkgroupsIndirect(compute_pass_encoder: *ComputePassEncoder, indirect_buffer: *Buffer, indirect_offset: u64) callconv(.C) void;
-extern fn wgpuComputePassEncoderEnd(compute_pass_encoder: *ComputePassEncoder) callconv(.C) void;
-extern fn wgpuComputePassEncoderInsertDebugMarker(compute_pass_encoder: *ComputePassEncoder, marker_label: [*:0]const u8) callconv(.C) void;
-extern fn wgpuComputePassEncoderPopDebugGroup(compute_pass_encoder: *ComputePassEncoder) callconv(.C) void;
-extern fn wgpuComputePassEncoderPushDebugGroup(compute_pass_encoder: *ComputePassEncoder, group_label: [*:0]const u8) callconv(.C) void;
-extern fn wgpuComputePassEncoderSetBindGroup(compute_pass_encoder: *ComputePassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: ?[*]const u32) callconv(.C) void;
-extern fn wgpuComputePassEncoderSetLabel(compute_pass_encoder: *ComputePassEncoder, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuComputePassEncoderSetPipeline(compute_pass_encoder: *ComputePassEncoder, pipeline: *ComputePipeline) callconv(.C) void;
-extern fn wgpuComputePassEncoderReference(compute_pass_encoder: *ComputePassEncoder) callconv(.C) void;
-extern fn wgpuComputePassEncoderRelease(compute_pass_encoder: *ComputePassEncoder) callconv(.C) void;
+extern fn wgpuComputePassEncoderDispatchWorkgroups(compute_pass_encoder: *ComputePassEncoder, workgroup_count_x: u32, workgroup_count_y: u32, workgroup_count_z: u32) void;
+extern fn wgpuComputePassEncoderDispatchWorkgroupsIndirect(compute_pass_encoder: *ComputePassEncoder, indirect_buffer: *Buffer, indirect_offset: u64) void;
+extern fn wgpuComputePassEncoderEnd(compute_pass_encoder: *ComputePassEncoder) void;
+extern fn wgpuComputePassEncoderInsertDebugMarker(compute_pass_encoder: *ComputePassEncoder, marker_label: [*:0]const u8) void;
+extern fn wgpuComputePassEncoderPopDebugGroup(compute_pass_encoder: *ComputePassEncoder) void;
+extern fn wgpuComputePassEncoderPushDebugGroup(compute_pass_encoder: *ComputePassEncoder, group_label: [*:0]const u8) void;
+extern fn wgpuComputePassEncoderSetBindGroup(compute_pass_encoder: *ComputePassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: ?[*]const u32) void;
+extern fn wgpuComputePassEncoderSetLabel(compute_pass_encoder: *ComputePassEncoder, label: ?[*:0]const u8) void;
+extern fn wgpuComputePassEncoderSetPipeline(compute_pass_encoder: *ComputePassEncoder, pipeline: *ComputePipeline) void;
+extern fn wgpuComputePassEncoderReference(compute_pass_encoder: *ComputePassEncoder) void;
+extern fn wgpuComputePassEncoderRelease(compute_pass_encoder: *ComputePassEncoder) void;
 
 // wgpu-native
-extern fn wgpuComputePassEncoderBeginPipelineStatisticsQuery(compute_pass_encoder: *ComputePassEncoder, query_set: *QuerySet, query_index: u32) callconv(.C) void;
-extern fn wgpuComputePassEncoderEndPipelineStatisticsQuery(compute_pass_encoder: *ComputePassEncoder) callconv(.C) void;
+extern fn wgpuComputePassEncoderBeginPipelineStatisticsQuery(compute_pass_encoder: *ComputePassEncoder, query_set: *QuerySet, query_index: u32) void;
+extern fn wgpuComputePassEncoderEndPipelineStatisticsQuery(compute_pass_encoder: *ComputePassEncoder) void;
 
 pub const ComputePassEncoder = opaque {
     pub inline fn dispatchWorkgroups(self: *ComputePassEncoder, workgroup_count_x: u32, workgroup_count_y: u32, workgroup_count_z: u32) void {
@@ -224,37 +224,37 @@ pub const RenderPassEncoderProcs = struct {
     // pub const EndPipelineStatisticsQuery = *const fn(*RenderPassEncoder) callconv(.C) void;
 };
 
-extern fn wgpuRenderPassEncoderBeginOcclusionQuery(render_pass_encoder: *RenderPassEncoder, query_index: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderDraw(render_pass_encoder: *RenderPassEncoder, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderDrawIndexed(render_pass_encoder: *RenderPassEncoder, index_count: u32, instance_count: u32, first_index: u32, base_vertex: i32, first_instance: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderDrawIndexedIndirect(render_pass_encoder: *RenderPassEncoder, indirect_buffer: *Buffer, indirect_offset: u64) callconv(.C) void;
-extern fn wgpuRenderPassEncoderDrawIndirect(render_pass_encoder: *RenderPassEncoder, indirect_buffer: *Buffer, indirect_offset: u64) callconv(.C) void;
-extern fn wgpuRenderPassEncoderEnd(render_pass_encoder: *RenderPassEncoder) callconv(.C) void;
-extern fn wgpuRenderPassEncoderEndOcclusionQuery(render_pass_encoder: *RenderPassEncoder) callconv(.C) void;
-extern fn wgpuRenderPassEncoderExecuteBundles(render_pass_encoder: *RenderPassEncoder, bundle_count: usize, bundles: [*]const RenderBundle) callconv(.C) void;
-extern fn wgpuRenderPassEncoderInsertDebugMarker(render_pass_encoder: *RenderPassEncoder, marker_label: [*:0]const u8) callconv(.C) void;
-extern fn wgpuRenderPassEncoderPopDebugGroup(render_pass_encoder: *RenderPassEncoder) callconv(.C) void;
-extern fn wgpuRenderPassEncoderPushDebugGroup(render_pass_encoder: *RenderPassEncoder, group_label: [*:0]const u8) callconv(.C) void;
-extern fn wgpuRenderPassEncoderSetBindGroup(render_pass_encoder: *RenderPassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderSetBlendConstant(render_pass_encoder: *RenderPassEncoder, color: *const Color) callconv(.C) void;
-extern fn wgpuRenderPassEncoderSetIndexBuffer(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, format: IndexFormat, offset: u64, size: u64) callconv(.C) void;
-extern fn wgpuRenderPassEncoderSetLabel(render_pass_encoder: *RenderPassEncoder, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuRenderPassEncoderSetPipeline(render_pass_encoder: *RenderPassEncoder, pipeline: *RenderPipeline) callconv(.C) void;
-extern fn wgpuRenderPassEncoderSetScissorRect(render_pass_encoder: *RenderPassEncoder, x: u32, y: u32, width: u32, height: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderSetStencilReference(render_pass_encoder: *RenderPassEncoder, stencil_reference: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderSetVertexBuffer(render_pass_encoder: *RenderPassEncoder, slot: u32, buffer: *Buffer, offset: u64, size: u64) callconv(.C) void;
-extern fn wgpuRenderPassEncoderSetViewport(render_pass_encoder: *RenderPassEncoder, x: f32, y: f32, width: f32, height: f32, min_depth: f32, max_depth: f32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderReference(render_pass_encoder: *RenderPassEncoder) callconv(.C) void;
-extern fn wgpuRenderPassEncoderRelease(render_pass_encoder: *RenderPassEncoder) callconv(.C) void;
+extern fn wgpuRenderPassEncoderBeginOcclusionQuery(render_pass_encoder: *RenderPassEncoder, query_index: u32) void;
+extern fn wgpuRenderPassEncoderDraw(render_pass_encoder: *RenderPassEncoder, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) void;
+extern fn wgpuRenderPassEncoderDrawIndexed(render_pass_encoder: *RenderPassEncoder, index_count: u32, instance_count: u32, first_index: u32, base_vertex: i32, first_instance: u32) void;
+extern fn wgpuRenderPassEncoderDrawIndexedIndirect(render_pass_encoder: *RenderPassEncoder, indirect_buffer: *Buffer, indirect_offset: u64) void;
+extern fn wgpuRenderPassEncoderDrawIndirect(render_pass_encoder: *RenderPassEncoder, indirect_buffer: *Buffer, indirect_offset: u64) void;
+extern fn wgpuRenderPassEncoderEnd(render_pass_encoder: *RenderPassEncoder) void;
+extern fn wgpuRenderPassEncoderEndOcclusionQuery(render_pass_encoder: *RenderPassEncoder) void;
+extern fn wgpuRenderPassEncoderExecuteBundles(render_pass_encoder: *RenderPassEncoder, bundle_count: usize, bundles: [*]const RenderBundle) void;
+extern fn wgpuRenderPassEncoderInsertDebugMarker(render_pass_encoder: *RenderPassEncoder, marker_label: [*:0]const u8) void;
+extern fn wgpuRenderPassEncoderPopDebugGroup(render_pass_encoder: *RenderPassEncoder) void;
+extern fn wgpuRenderPassEncoderPushDebugGroup(render_pass_encoder: *RenderPassEncoder, group_label: [*:0]const u8) void;
+extern fn wgpuRenderPassEncoderSetBindGroup(render_pass_encoder: *RenderPassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) void;
+extern fn wgpuRenderPassEncoderSetBlendConstant(render_pass_encoder: *RenderPassEncoder, color: *const Color) void;
+extern fn wgpuRenderPassEncoderSetIndexBuffer(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, format: IndexFormat, offset: u64, size: u64) void;
+extern fn wgpuRenderPassEncoderSetLabel(render_pass_encoder: *RenderPassEncoder, label: ?[*:0]const u8) void;
+extern fn wgpuRenderPassEncoderSetPipeline(render_pass_encoder: *RenderPassEncoder, pipeline: *RenderPipeline) void;
+extern fn wgpuRenderPassEncoderSetScissorRect(render_pass_encoder: *RenderPassEncoder, x: u32, y: u32, width: u32, height: u32) void;
+extern fn wgpuRenderPassEncoderSetStencilReference(render_pass_encoder: *RenderPassEncoder, stencil_reference: u32) void;
+extern fn wgpuRenderPassEncoderSetVertexBuffer(render_pass_encoder: *RenderPassEncoder, slot: u32, buffer: *Buffer, offset: u64, size: u64) void;
+extern fn wgpuRenderPassEncoderSetViewport(render_pass_encoder: *RenderPassEncoder, x: f32, y: f32, width: f32, height: f32, min_depth: f32, max_depth: f32) void;
+extern fn wgpuRenderPassEncoderReference(render_pass_encoder: *RenderPassEncoder) void;
+extern fn wgpuRenderPassEncoderRelease(render_pass_encoder: *RenderPassEncoder) void;
 
 // wgpu-native
-extern fn wgpuRenderPassEncoderSetPushConstants(render_pass_encoder: *RenderPassEncoder, stages: ShaderStageFlags, offset: u32, size_bytes: u32, data: *const anyopaque) callconv(.C) void;
-extern fn wgpuRenderPassEncoderMultiDrawIndirect(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, offset: u64, count: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderMultiDrawIndexedIndirect(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, offset: u64, count: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderMultiDrawIndirectCount(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, offset: u64, count_buffer: *Buffer, count_buffer_offset: u64, max_count: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderMultiDrawIndexedIndirectCount(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, offset: u64, count_buffer: *Buffer, count_buffer_offset: u64, max_count: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderBeginPipelineStatisticsQuery(render_pass_encoder: *RenderPassEncoder, query_set: *QuerySet, query_index: u32) callconv(.C) void;
-extern fn wgpuRenderPassEncoderEndPipelineStatisticsQuery(render_pass_encoder: *RenderPassEncoder) callconv(.C) void;
+extern fn wgpuRenderPassEncoderSetPushConstants(render_pass_encoder: *RenderPassEncoder, stages: ShaderStageFlags, offset: u32, size_bytes: u32, data: *const anyopaque) void;
+extern fn wgpuRenderPassEncoderMultiDrawIndirect(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, offset: u64, count: u32) void;
+extern fn wgpuRenderPassEncoderMultiDrawIndexedIndirect(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, offset: u64, count: u32) void;
+extern fn wgpuRenderPassEncoderMultiDrawIndirectCount(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, offset: u64, count_buffer: *Buffer, count_buffer_offset: u64, max_count: u32) void;
+extern fn wgpuRenderPassEncoderMultiDrawIndexedIndirectCount(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, offset: u64, count_buffer: *Buffer, count_buffer_offset: u64, max_count: u32) void;
+extern fn wgpuRenderPassEncoderBeginPipelineStatisticsQuery(render_pass_encoder: *RenderPassEncoder, query_set: *QuerySet, query_index: u32) void;
+extern fn wgpuRenderPassEncoderEndPipelineStatisticsQuery(render_pass_encoder: *RenderPassEncoder) void;
 
 pub const RenderPassEncoder = opaque {
     pub inline fn beginOcclusionQuery(self: *RenderPassEncoder, query_index: u32) void {
@@ -359,9 +359,9 @@ pub const CommandBufferProcs = struct {
     pub const Release = *const fn(*CommandBuffer) callconv(.C) void;
 };
 
-extern fn wgpuCommandBufferSetLabel(command_buffer: *CommandBuffer, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuCommandBufferReference(command_buffer: *CommandBuffer) callconv(.C) void;
-extern fn wgpuCommandBufferRelease(command_buffer: *CommandBuffer) callconv(.C) void;
+extern fn wgpuCommandBufferSetLabel(command_buffer: *CommandBuffer, label: ?[*:0]const u8) void;
+extern fn wgpuCommandBufferReference(command_buffer: *CommandBuffer) void;
+extern fn wgpuCommandBufferRelease(command_buffer: *CommandBuffer) void;
 
 pub const CommandBuffer = opaque {
     pub inline fn setLabel(self: *CommandBuffer, label: ?[*:0]const u8) void {
@@ -394,22 +394,22 @@ pub const CommandEncoderProcs = struct {
     pub const Release = *const fn(*CommandEncoder) callconv(.C) void;
 };
 
-extern fn wgpuCommandEncoderBeginComputePass(command_encoder: *CommandEncoder, descriptor: ?*const ComputePassDescriptor) callconv(.C) ?*ComputePassEncoder;
-extern fn wgpuCommandEncoderBeginRenderPass(command_encoder: *CommandEncoder, descriptor: *const RenderPassDescriptor) callconv(.C) ?*RenderPassEncoder;
-extern fn wgpuCommandEncoderClearBuffer(command_encoder: *CommandEncoder, buffer: *Buffer, offset: u64, size: u64) callconv(.C) void;
-extern fn wgpuCommandEncoderCopyBufferToBuffer(command_encoder: *CommandEncoder, source: *Buffer, source_offset: u64, destination: *Buffer, destination_offset: u64, size: u64) callconv(.C) void;
-extern fn wgpuCommandEncoderCopyBufferToTexture(command_encoder: *CommandEncoder, source: *const ImageCopyBuffer, destination: *const ImageCopyTexture, copy_size: *const Extent3D) callconv(.C) void;
-extern fn wgpuCommandEncoderCopyTextureToBuffer(command_encoder: *CommandEncoder, source: *const ImageCopyTexture, destination: *const ImageCopyBuffer, copy_size: *const Extent3D) callconv(.C) void;
-extern fn wgpuCommandEncoderCopyTextureToTexture(command_encoder: *CommandEncoder, source: *const ImageCopyTexture, destination: *const ImageCopyTexture, copy_size: *const Extent3D) callconv(.C) void;
-extern fn wgpuCommandEncoderFinish(command_encoder: *CommandEncoder, descriptor: ?*const CommandBufferDescriptor) callconv(.C) ?*CommandBuffer;
-extern fn wgpuCommandEncoderInsertDebugMarker(command_encoder: *CommandEncoder, marker_label: [*:0]const u8) callconv(.C) void;
-extern fn wgpuCommandEncoderPopDebugGroup(command_encoder: *CommandEncoder) callconv(.C) void;
-extern fn wgpuCommandEncoderPushDebugGroup(command_encoder: *CommandEncoder, group_label: [*:0]const u8) callconv(.C) void;
-extern fn wgpuCommandEncoderResolveQuerySet(command_encoder: *CommandEncoder, query_set: *QuerySet, first_query: u32, query_count: u32, destination: *Buffer, destination_offset: u64) callconv(.C) void;
-extern fn wgpuCommandEncoderSetLabel(command_encoder: *CommandEncoder, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuCommandEncoderWriteTimestamp(command_encoder: *CommandEncoder, query_set: *QuerySet, query_index: u32) callconv(.C) void;
-extern fn wgpuCommandEncoderReference(command_encoder: *CommandEncoder) callconv(.C) void;
-extern fn wgpuCommandEncoderRelease(command_encoder: *CommandEncoder) callconv(.C) void;
+extern fn wgpuCommandEncoderBeginComputePass(command_encoder: *CommandEncoder, descriptor: ?*const ComputePassDescriptor) ?*ComputePassEncoder;
+extern fn wgpuCommandEncoderBeginRenderPass(command_encoder: *CommandEncoder, descriptor: *const RenderPassDescriptor) ?*RenderPassEncoder;
+extern fn wgpuCommandEncoderClearBuffer(command_encoder: *CommandEncoder, buffer: *Buffer, offset: u64, size: u64) void;
+extern fn wgpuCommandEncoderCopyBufferToBuffer(command_encoder: *CommandEncoder, source: *Buffer, source_offset: u64, destination: *Buffer, destination_offset: u64, size: u64) void;
+extern fn wgpuCommandEncoderCopyBufferToTexture(command_encoder: *CommandEncoder, source: *const ImageCopyBuffer, destination: *const ImageCopyTexture, copy_size: *const Extent3D) void;
+extern fn wgpuCommandEncoderCopyTextureToBuffer(command_encoder: *CommandEncoder, source: *const ImageCopyTexture, destination: *const ImageCopyBuffer, copy_size: *const Extent3D) void;
+extern fn wgpuCommandEncoderCopyTextureToTexture(command_encoder: *CommandEncoder, source: *const ImageCopyTexture, destination: *const ImageCopyTexture, copy_size: *const Extent3D) void;
+extern fn wgpuCommandEncoderFinish(command_encoder: *CommandEncoder, descriptor: ?*const CommandBufferDescriptor) ?*CommandBuffer;
+extern fn wgpuCommandEncoderInsertDebugMarker(command_encoder: *CommandEncoder, marker_label: [*:0]const u8) void;
+extern fn wgpuCommandEncoderPopDebugGroup(command_encoder: *CommandEncoder) void;
+extern fn wgpuCommandEncoderPushDebugGroup(command_encoder: *CommandEncoder, group_label: [*:0]const u8) void;
+extern fn wgpuCommandEncoderResolveQuerySet(command_encoder: *CommandEncoder, query_set: *QuerySet, first_query: u32, query_count: u32, destination: *Buffer, destination_offset: u64) void;
+extern fn wgpuCommandEncoderSetLabel(command_encoder: *CommandEncoder, label: ?[*:0]const u8) void;
+extern fn wgpuCommandEncoderWriteTimestamp(command_encoder: *CommandEncoder, query_set: *QuerySet, query_index: u32) void;
+extern fn wgpuCommandEncoderReference(command_encoder: *CommandEncoder) void;
+extern fn wgpuCommandEncoderRelease(command_encoder: *CommandEncoder) void;
 
 pub const CommandEncoder = opaque {
     pub inline fn beginComputePass(self: *CommandEncoder, descriptor: ?*const ComputePassDescriptor) ?*ComputePassEncoder {

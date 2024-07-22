@@ -159,10 +159,10 @@ pub const ShaderModuleProcs = struct {
     pub const Release = *const fn(*ShaderModule) callconv(.C) void;
 };
 
-extern fn wgpuShaderModuleGetCompilationInfo(shader_module: *ShaderModule, callback: CompilationInfoCallback, userdata: ?*anyopaque) callconv(.C) void;
-extern fn wgpuShaderModuleSetLabel(shader_module: *ShaderModule, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuShaderModuleReference(shader_module: *ShaderModule) callconv(.C) void;
-extern fn wgpuShaderModuleRelease(shader_module: *ShaderModule) callconv(.C) void;
+extern fn wgpuShaderModuleGetCompilationInfo(shader_module: *ShaderModule, callback: CompilationInfoCallback, userdata: ?*anyopaque) void;
+extern fn wgpuShaderModuleSetLabel(shader_module: *ShaderModule, label: ?[*:0]const u8) void;
+extern fn wgpuShaderModuleReference(shader_module: *ShaderModule) void;
+extern fn wgpuShaderModuleRelease(shader_module: *ShaderModule) void;
 
 pub const ShaderModule = opaque {
     pub inline fn getCompilationInfo(self: *ShaderModule, callback: CompilationInfoCallback, userdata: ?*anyopaque) void {

@@ -55,12 +55,12 @@ pub const QuerySetProcs = struct {
     pub const Release = *const fn(*QuerySet) callconv(.C) void;
 };
 
-extern fn wgpuQuerySetDestroy(query_set: *QuerySet) callconv(.C) void;
-extern fn wgpuQuerySetGetCount(query_set: *QuerySet) callconv(.C) u32;
-extern fn wgpuQuerySetGetType(query_set: *QuerySet) callconv(.C) QueryType;
-extern fn wgpuQuerySetSetLabel(query_set: *QuerySet, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuQuerySetReference(query_set: *QuerySet) callconv(.C) void;
-extern fn wgpuQuerySetRelease(query_set: *QuerySet) callconv(.C) void;
+extern fn wgpuQuerySetDestroy(query_set: *QuerySet) void;
+extern fn wgpuQuerySetGetCount(query_set: *QuerySet) u32;
+extern fn wgpuQuerySetGetType(query_set: *QuerySet) QueryType;
+extern fn wgpuQuerySetSetLabel(query_set: *QuerySet, label: ?[*:0]const u8) void;
+extern fn wgpuQuerySetReference(query_set: *QuerySet) void;
+extern fn wgpuQuerySetRelease(query_set: *QuerySet) void;
 
 pub const QuerySet = opaque {
     pub inline fn destroy(self: *QuerySet) void {

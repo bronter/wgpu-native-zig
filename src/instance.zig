@@ -83,12 +83,12 @@ pub const InstanceProcs = struct {
     // pub const EnumerateAdapters = *const fn(*Instance, ?*const EnumerateAdapterOptions, [*]Adapter) callconv(.C) usize;
 };
 
-extern fn wgpuCreateInstance(descriptor: ?*const InstanceDescriptor) callconv(.C) ?*Instance;
-extern fn wgpuInstanceCreateSurface(instance: *Instance, descriptor: *const SurfaceDescriptor) callconv(.C) ?*Surface;
-extern fn wgpuInstanceProcessEvents(instance: *Instance) callconv(.C) void;
-extern fn wgpuInstanceRequestAdapter(instance: *Instance, options: ?*const RequestAdapterOptions, callback: RequestAdapterCallback, userdata: ?*anyopaque) callconv(.C) void;
-extern fn wgpuInstanceReference(instance: *Instance) callconv(.C) void;
-extern fn wgpuInstanceRelease(instance: *Instance) callconv(.C) void;
+extern fn wgpuCreateInstance(descriptor: ?*const InstanceDescriptor) ?*Instance;
+extern fn wgpuInstanceCreateSurface(instance: *Instance, descriptor: *const SurfaceDescriptor) ?*Surface;
+extern fn wgpuInstanceProcessEvents(instance: *Instance) void;
+extern fn wgpuInstanceRequestAdapter(instance: *Instance, options: ?*const RequestAdapterOptions, callback: RequestAdapterCallback, userdata: ?*anyopaque) void;
+extern fn wgpuInstanceReference(instance: *Instance) void;
+extern fn wgpuInstanceRelease(instance: *Instance) void;
 
 pub const RegistryReport = extern struct {
     num_allocated: usize,
@@ -132,8 +132,8 @@ pub const EnumerateAdapterOptions = extern struct {
 };
 
 // wgpu-native
-extern fn wgpuGenerateReport(instance: *Instance, report: *GlobalReport) callconv(.C) void;
-extern fn wgpuInstanceEnumerateAdapters(instance: *Instance, options: ?*EnumerateAdapterOptions, adapters: [*]Adapter) callconv(.C) usize;
+extern fn wgpuGenerateReport(instance: *Instance, report: *GlobalReport) void;
+extern fn wgpuInstanceEnumerateAdapters(instance: *Instance, options: ?*EnumerateAdapterOptions, adapters: [*]Adapter) usize;
 
 pub const Instance = opaque {
     pub inline fn create(descriptor: ?*const InstanceDescriptor) ?*Instance {
