@@ -7,6 +7,12 @@ const ImageCopyTexture = _texture.ImageCopyTexture;
 const TextureDataLayout = _texture.TextureDataLayout;
 const Extent3D = _texture.Extent3D;
 
+pub const SubmissionIndex = u64;
+pub const WrappedSubmissionIndex = extern struct {
+    queue: Queue,
+    submission_index: SubmissionIndex,
+};
+
 pub const QueueDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     label: ?[*:0]const u8 = null,
@@ -29,6 +35,9 @@ pub const QueueProcs = struct {
     pub const WriteTexture = *const fn(*Queue, *const ImageCopyTexture, *const anyopaque, usize, *const TextureDataLayout, *const Extent3D) callconv(.C) void;
     pub const Reference = *const fn(*Queue) callconv(.C) void;
     pub const Release = *const fn(*Queue) callconv(.C) void;
+
+    // wgpu-native procs?
+    // pub const SubmitForIndex = *const fn(*Queue, usize, *const CommandBuffer) callconv(.C) SubmissionIndex;
 };
 
 extern fn wgpuQueueOnSubmittedWorkDone(queue: *Queue, callback: WorkDoneCallback, userdata: ?*anyopaque) callconv(.C) void;
@@ -38,6 +47,9 @@ extern fn wgpuQueueWriteBuffer(queue: *Queue, buffer: *Buffer, buffer_offset: u6
 extern fn wgpuQueueWriteTexture(queue: *Queue, destination: *const ImageCopyTexture, data: *const anyopaque, data_size: usize, data_layout: *const TextureDataLayout, write_size: *const Extent3D) callconv(.C) void;
 extern fn wgpuQueueReference(queue: *Queue) callconv(.C) void;
 extern fn wgpuQueueRelease(queue: *Queue) callconv(.C) void;
+
+// wgpu-native
+extern fn wgpuQueueSubmitForIndex(queue: *Queue, command_count: usize, commands: *const CommandBuffer) callconv(.C) SubmissionIndex;
 
 pub const Queue = opaque {
     pub inline fn onSubmittedWorkDone(self: *Queue, callback: WorkDoneCallback, userdata: ?*anyopaque) void {
@@ -60,5 +72,10 @@ pub const Queue = opaque {
     }
     pub inline fn release(self: *Queue) void {
         wgpuQueueRelease(self);
+    }
+
+    // wgpu-native
+    pub inline fn submitForIndex(self: *Queue, command_count: usize, commands: *const CommandBuffer) SubmissionIndex {
+        return wgpuQueueSubmitForIndex(self, command_count, commands);
     }
 };

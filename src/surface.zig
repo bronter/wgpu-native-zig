@@ -22,15 +22,14 @@ pub const SurfaceDescriptor = extern struct {
 };
 
 pub const SurfaceDescriptorFromAndroidNativeWindow = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.surface_descriptor_from_android_native_window,
+    },
     window: *anyopaque,
 };
 pub inline fn surfaceDescriptorFromAndroidNativeWindow(label: ?[:0]const u8, window: *anyopaque) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromAndroidNativeWindow {
-            .chain = ChainedStruct {
-                .s_type = SType.surface_descriptor_from_android_native_window,
-            },
             .window = window,
         }),
         .label = label,
@@ -38,15 +37,14 @@ pub inline fn surfaceDescriptorFromAndroidNativeWindow(label: ?[:0]const u8, win
 }
 
 pub const SurfaceDescriptorFromCanvasHTMLSelector = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.surface_descriptor_from_canvas_html_selector,
+    },
     selector: [*:0]const u8,
 };
 pub inline fn surfaceDescriptorFromCanvasHTMLSelector(label: ?[:0]const u8, selector: [:0]const u8) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromCanvasHTMLSelector {
-            .chain = ChainedStruct {
-                .s_type = SType.surface_descriptor_from_canvas_html_selector,
-            },
             .selector = selector,
         }),
         .label = label,
@@ -54,15 +52,14 @@ pub inline fn surfaceDescriptorFromCanvasHTMLSelector(label: ?[:0]const u8, sele
 }
 
 pub const SurfaceDescriptorFromMetalLayer = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.surface_descriptor_from_metal_layer,
+    },
     layer: *anyopaque,
 };
 pub inline fn surfaceDescriptorFromMetalLayer(label: ?[:0]const u8, layer: *anyopaque) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromMetalLayer {
-            .chain = ChainedStruct {
-                .s_type = SType.surface_descriptor_from_metal_layer,
-            },
             .layer = layer,
         }),
         .label = label,
@@ -70,16 +67,15 @@ pub inline fn surfaceDescriptorFromMetalLayer(label: ?[:0]const u8, layer: *anyo
 }
 
 pub const SurfaceDescriptorFromWaylandSurface = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.surface_descriptor_from_wayland_surface,
+    },
     display: *anyopaque,
     surface: *anyopaque,
 };
 pub inline fn surfaceDescriptorFromWaylandSurface(label: ?[:0]const u8, display: *anyopaque, surface: *anyopaque) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromWaylandSurface {
-            .chain = ChainedStruct {
-                .s_type = SType.surface_descriptor_from_wayland_surface,
-            },
             .display = display,
             .surface = surface,
         }),
@@ -88,16 +84,15 @@ pub inline fn surfaceDescriptorFromWaylandSurface(label: ?[:0]const u8, display:
 }
 
 pub const SurfaceDescriptorFromWindowsHWND = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.surface_descriptor_from_windows_hwnd,
+    },
     hinstance: *anyopaque,
     hwnd: *anyopaque,
 };
 pub inline fn surfaceDescriptorFromWindowsHWND(label: ?[:0]const u8, hinstance: *anyopaque, hwnd: *anyopaque) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromWindowsHWND {
-            .chain = ChainedStruct {
-                .s_type = SType.surface_descriptor_from_windows_hwnd,
-            },
             .hinstance = hinstance,
             .hwnd = hwnd,
         }),
@@ -106,16 +101,15 @@ pub inline fn surfaceDescriptorFromWindowsHWND(label: ?[:0]const u8, hinstance: 
 }
 
 pub const SurfaceDescriptorFromXcbWindow = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.surface_descriptor_from_xcb_window,
+    },
     connection: *anyopaque,
     window: u32,
 };
 pub inline fn surfaceDescriptorFromXcbWindow(label: ?[:0]const u8, connection: *anyopaque, window: u32) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromXcbWindow {
-            .chain = ChainedStruct {
-                .s_type = SType.surface_descriptor_from_xcb_window,
-            },
             .connection = connection,
             .window = window,
         }),
@@ -124,16 +118,15 @@ pub inline fn surfaceDescriptorFromXcbWindow(label: ?[:0]const u8, connection: *
 }
 
 pub const SurfaceDescriptorFromXlibWindow = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.surface_descriptor_from_xlib_window,
+    },
     display: *anyopaque,
     window: u64,
 };
 pub inline fn surfaceDescriptorFromXlibWindow(label: ?[:0]const u8, display: *anyopaque, window: u64) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromXlibWindow {
-            .chain = ChainedStruct {
-                .s_type = SType.surface_descriptor_from_xlib_window,
-            },
             .display = display,
             .window = window,
         }),
@@ -156,6 +149,19 @@ pub const PresentMode = enum(u32) {
     mailbox      = 0x00000003,
 };
 
+pub const SurfaceConfigurationExtras = extern struct {
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.surface_configuration_extras,
+    },
+
+    // In wgpu.h, this is a WGPUBool, but that makes very little sense since:
+    // 1. This number describes the "Desired maximum number of frames that the presentation engine should queue in advance".
+    // 2. The docs for wgpu (in Rust) say that "Typical values range from 3 to 1, but higher values are possible".
+    //    If the value was >1 it could not be losslessly converted to Zig's bool type and back.
+    // Therefore, I'm going to declare it as a u32 instead since that's the underlying type for WGPUBool.
+    desired_maximum_frame_latency: u32,
+};
+
 pub const SurfaceConfiguration = extern struct {
     next_in_chain: *ChainedStruct,
     device: *Device,
@@ -167,6 +173,14 @@ pub const SurfaceConfiguration = extern struct {
     width: u32,
     height: u32,
     present_mode: PresentMode,
+
+    pub inline fn withDesiredMaxFrameLatency(self: SurfaceConfiguration, desired_max_frame_latency: u32) SurfaceConfiguration {
+        var sc = self;
+        sc.next_in_chain = @ptrCast(&SurfaceConfigurationExtras {
+            .desired_maximum_frame_latency = desired_max_frame_latency,
+        });
+        return sc;
+    }
 };
 
 pub const SurfaceCapabilitiesProcs = struct {

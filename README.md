@@ -107,6 +107,9 @@ Then, in `build.zig` add:
 ## TODO
 * Test this on other machines with different OS/CPU (currently only tested on linux x86_64)
 * Create more idiomatic wrapper around `webgpu.h`/`wgpu.h` (current WIP)
+  * See if we really need `callconv(.C)` on extern fns; it seems like maybe this is the default for extern fn, or that Zig can somehow figure out the calling convention?
 * Port [wgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples) using wrapper code, as a basic form of documentation.
 * Custom-build `wgpu-native`; provided all the necessary tools/dependencies are present.
 * Figure out dynamic linking
+* Normalize names from `wgpu.h` if possible
+  * The names for things related OpenGL ES and DirectX seem to be inconsistent with how they're named in `WGPUBackendType` from `webgpu.h`. Specifically, OpenGL ES is capitalized like `GLES` rather than `Gles`, and DirectX is prefixed with `D3D` rather than `Dx`. It's unclear to me whether this also relates to `fxc`, `dxc`, `dxil_path`, and `dxc_path`. 

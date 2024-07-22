@@ -28,17 +28,21 @@ pub const ShaderModuleDescriptor = extern struct {
 };
 
 pub const ShaderModuleSPIRVDescriptor = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.shader_module_spirv_descriptor,
+    },
     code_size: u32,
     code: [*]const u32,
 };
-pub inline fn shaderModuleSPIRVDescriptor(label: ?[*:0]const u8, hint_count: usize, hints: [*]const CompilationHint, code_size: u32, code: [*]const u32) ShaderModuleDescriptor {
+pub inline fn shaderModuleSPIRVDescriptor(
+    label: ?[*:0]const u8,
+    hint_count: usize,
+    hints: [*]const CompilationHint,
+    code_size: u32,
+    code: [*]const u32
+) ShaderModuleDescriptor {
     return ShaderModuleDescriptor {
         .next_in_chain = @ptrCast(&ShaderModuleSPIRVDescriptor {
-            .chain = ChainedStruct {
-                .next = null,
-                .s_type = SType.shader_module_spirv_descriptor,
-            },
             .code_size = code_size,
             .code = code,
         }),
@@ -49,17 +53,55 @@ pub inline fn shaderModuleSPIRVDescriptor(label: ?[*:0]const u8, hint_count: usi
 }
 
 pub const ShaderModuleWGSLDescriptor = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.shader_module_wgsl_descriptor,
+    },
     code: [*:0]const u8,
 };
-pub inline fn shaderModuleWGSLDescriptor(label: ?[*:0]const u8, hint_count: usize, hints: [*]const CompilationHint, code: [*:0]const u8) ShaderModuleDescriptor {
+pub inline fn shaderModuleWGSLDescriptor(
+    label: ?[*:0]const u8,
+    hint_count: usize,
+    hints: [*]const CompilationHint,
+    code: [*:0]const u8
+) ShaderModuleDescriptor {
     return ShaderModuleDescriptor {
         .next_in_chain = @ptrCast(&ShaderModuleWGSLDescriptor {
-            .chain = ChainedStruct {
-                .next = null,
-                .s_type = SType.shader_module_wgsl_descriptor,
-            },
             .code = code,
+        }),
+        .label = label,
+        .hint_count = hint_count,
+        .hints = hints,
+    };
+}
+
+pub const ShaderDefine = extern struct {
+    name: [*:0]const u8,
+    value: [*:0]const u8,
+};
+pub const ShaderModuleGLSLDescriptor = extern struct {
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.shader_module_glsl_descriptor,
+    },
+    stage: ShaderStage,
+    code: [*:0]const u8,
+    define_count: u32,
+    defines: [*]ShaderDefine,
+};
+pub inline fn shaderModuleGLSLDescriptor(
+    label: ?[*:0]const u8,
+    hint_count: usize,
+    hints: [*]const CompilationHint,
+    stage: ShaderStage,
+    code: [*:0]const u8,
+    define_count: u32,
+    defines: [*]ShaderDefine
+) ShaderModuleDescriptor {
+    return ShaderModuleDescriptor {
+        .next_in_chain = @ptrCast(&ShaderModuleGLSLDescriptor {
+            .stage = stage,
+            .code = code,
+            .define_count = define_count,
+            .defines = defines,
         }),
         .label = label,
         .hint_count = hint_count,

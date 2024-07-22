@@ -1,4 +1,6 @@
-const ChainedStruct = @import("chained_struct.zig").ChainedStruct;
+const _chained_struct = @import("chained_struct.zig");
+const ChainedStruct = _chained_struct.ChainedStruct;
+const SType = _chained_struct.SType;
 
 const _buffer = @import("buffer.zig");
 const Buffer = _buffer.Buffer;
@@ -15,6 +17,15 @@ const StorageTextureBindingLayout = _texture.StorageTextureBindingLayout;
 
 const ShaderStageFlags = @import("shader.zig").ShaderStageFlags;
 
+pub const BindGroupLayoutEntryExtras = extern struct {
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.bind_group_layout_entry_extras,
+    },
+
+    // Why does this exist? Is this different from entry_count on BindGroupLayoutDescriptor?
+    count: u32,
+};
+
 pub const BindGroupLayoutEntry = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     binding: u32,
@@ -23,6 +34,14 @@ pub const BindGroupLayoutEntry = extern struct {
     sampler: SamplerBindingLayout,
     texture: TextureBindingLayout,
     storage_texture: StorageTextureBindingLayout,
+
+    pub inline fn withCount(self: BindGroupLayoutEntry, count: u32) BindGroupLayoutEntry {
+        var bgle = self;
+        bgle.next_in_chain = @ptrCast(&BindGroupLayoutEntryExtras {
+            .count = count,
+        });
+        return bgle;
+    }
 };
 
 pub const BindGroupLayoutDescriptor = extern struct {
@@ -54,6 +73,18 @@ pub const BindGroupLayout = opaque {
     }
 };
 
+pub const BindGroupEntryExtras = extern struct {
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.bind_group_entry_extras,
+    },
+    buffers: [*]const Buffer,
+    buffer_count: usize,
+    samplers: [*]const Sampler,
+    sampler_count: usize,
+    texture_views: [*]const TextureView,
+    texture_view_count: usize,
+};
+
 pub const BindGroupEntry = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     binding: u32,
@@ -62,6 +93,12 @@ pub const BindGroupEntry = extern struct {
     size: u64,
     sampler: ?*Sampler = null,
     texture_view: ?*TextureView = null,
+
+    pub inline fn withNativeExtras(self: BindGroupEntry, extras: *BindGroupEntryExtras) BindGroupEntry {
+        var bge = self;
+        bge.next_in_chain = @ptrCast(extras);
+        return bge;
+    }
 };
 
 pub const BindGroupDescriptor = extern struct {

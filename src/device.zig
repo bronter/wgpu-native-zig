@@ -1,10 +1,15 @@
-const ChainedStruct = @import("chained_struct.zig").ChainedStruct;
+const _chained_struct = @import("chained_struct.zig");
+const ChainedStruct = _chained_struct.ChainedStruct;
+const SType = _chained_struct.SType;
 
 const _misc = @import("misc.zig");
 const WGPUBool = _misc.WGPUBool;
 const FeatureName = _misc.FeatureName;
-const Limits = _misc.Limits;
-const SupportedLimits = _misc.SupportedLimits;
+
+const _limits = @import("limits.zig");
+const Limits = _limits.Limits;
+const SupportedLimits = _limits.SupportedLimits;
+const RequiredLimits = _limits.RequiredLimits;
 
 const _bind_group = @import("bind_group.zig");
 const BindGroupDescriptor = _bind_group.BindGroupDescriptor;
@@ -19,6 +24,7 @@ const Buffer = _buffer.Buffer;
 const _queue = @import("queue.zig");
 const QueueDescriptor = _queue.QueueDescriptor;
 const Queue = _queue.Queue;
+const WrappedSubmissionIndex = _queue.WrappedSubmissionIndex;
 
 const _command_encoder = @import("command_encoder.zig");
 const CommandEncoderDescriptor = _command_encoder.CommandEncoderDescriptor;
@@ -54,17 +60,20 @@ const _texture = @import("texture.zig");
 const TextureDescriptor = _texture.TextureDescriptor;
 const Texture = _texture.Texture;
 
-pub const RequiredLimits = extern struct {
-    next_in_chain: ?*const ChainedStruct = null,
-    limits: Limits,
-};
-
 pub const DeviceLostReason = enum(u32) {
     @"undefined" = 0x00000000,
     destroyed    = 0x00000001,
 };
 
 pub const DeviceLostCallback = *const fn(reason: DeviceLostReason, message: ?[*:0]const u8, userdata: ?*anyopaque) callconv(.C) void;
+
+pub const DeviceExtras = extern struct {
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.device_extras,
+    },
+    // Gonna assume this isn't optional, because why else would you use DeviceExtras?
+    trace_path: [*:0]const u8 = null,
+};
 
 pub const DeviceDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
@@ -75,6 +84,14 @@ pub const DeviceDescriptor = extern struct {
     default_queue: QueueDescriptor,
     device_lost_callback: DeviceLostCallback,
     device_lost_user_data: ?*anyopaque,
+
+    pub inline fn withTracePath(self: DeviceDescriptor, trace_path: [*:0]const u8) DeviceDescriptor {
+        var dd = self;
+        dd.next_in_chain = @ptrCast(&DeviceExtras {
+            .trace_path = trace_path,
+        });
+        return dd;
+    }
 };
 
 pub const RequestDeviceStatus = enum(u32) {
@@ -133,33 +150,39 @@ pub const DeviceProcs = struct {
     pub const SetUncapturedErrorCallback = *const fn(*Device, ErrorCallback, ?*anyopaque) callconv(.C) void;
     pub const Reference = *const fn(*Device) callconv(.C) void;
     pub const Release = *const fn(*Device) callconv(.C) void;
+
+    // wgpu-native procs?
+    // pub const Poll = *const fn(*Device, WGPUBool, ?*const WrappedSubmissionIndex) callconv(.C) WGPUBool;
 };
 
-extern fn wgpuDeviceCreateBindGroup(device: *Device, descriptor: *const BindGroupDescriptor) ?*BindGroup;
-extern fn wgpuDeviceCreateBindGroupLayout(device: *Device, descriptor: *const BindGroupLayoutDescriptor) ?*BindGroupLayout;
-extern fn wgpuDeviceCreateBuffer(device: *Device, descriptor: *const BufferDescriptor) ?*Buffer;
-extern fn wgpuDeviceCreateCommandEncoder(device: *Device, descriptor: *const CommandEncoderDescriptor) ?*CommandEncoder;
-extern fn wgpuDeviceCreateComputePipeline(device: *Device, descriptor: *const ComputePipelineDescriptor) ?*ComputePipeline;
-extern fn wgpuDeviceCreateComputePipelineAsync(device: *Device, descriptor: *const ComputePipelineDescriptor, callback: CreateComputePipelineAsyncCallback, userdata: ?*anyopaque) void;
-extern fn wgpuDeviceCreatePipelineLayout(device: *Device, descriptor: *const PipelineLayoutDescriptor) ?*PipelineLayout;
-extern fn wgpuDeviceCreateQuerySet(device: *Device, descriptor: *const QuerySetDescriptor) ?*QuerySet;
-extern fn wgpuDeviceCreateRenderBundleEncoder(device: *Device, descriptor: *const RenderBundleEncoderDescriptor) ?*RenderBundleEncoder;
-extern fn wgpuDeviceCreateRenderPipeline(device: *Device, descriptor: *const RenderPipelineDescriptor) ?*RenderPipeline;
-extern fn wgpuDeviceCreateRenderPipelineAsync(device: *Device, descriptor: *const RenderPipelineDescriptor, callback: CreateRenderPipelineAsyncCallback, userdata: ?*anyopaque) void;
-extern fn wgpuDeviceCreateSampler(device: *Device, descriptor: *const SamplerDescriptor) ?*Sampler;
-extern fn wgpuDeviceCreateShaderModule(device: *Device, descriptor: *const ShaderModuleDescriptor) ?*ShaderModule;
-extern fn wgpuDeviceCreateTexture(device: *Device, descriptor: *const TextureDescriptor) ?*Texture;
-extern fn wgpuDeviceDestroy(device: *Device) void;
-extern fn wgpuDeviceEnumerateFeatures(device: *Device, features: [*]FeatureName) usize;
-extern fn wgpuDeviceGetLimits(device: *Device, limits: *SupportedLimits) WGPUBool;
-extern fn wgpuDeviceGetQueue(device: *Device) ?*Queue;
-extern fn wgpuDeviceHasFeature(device: *Device, feature: FeatureName) WGPUBool;
-extern fn wgpuDevicePopErrorScope(device: *Device, callback: ErrorCallback, userdata: ?*anyopaque) void;
-extern fn wgpuDevicePushErrorScope(device: *Device, filter: ErrorFilter) void;
-extern fn wgpuDeviceSetLabel(device: *Device, label: ?[*:0]const u8) void;
-extern fn wgpuDeviceSetUncapturedErrorCallback(device: *Device, callback: ErrorCallback, userdata: ?*anyopaque) void;
-extern fn wgpuDeviceReference(device: *Device) void;
-extern fn wgpuDeviceRelease(device: *Device) void;
+extern fn wgpuDeviceCreateBindGroup(device: *Device, descriptor: *const BindGroupDescriptor) callconv(.C) ?*BindGroup;
+extern fn wgpuDeviceCreateBindGroupLayout(device: *Device, descriptor: *const BindGroupLayoutDescriptor) callconv(.C) ?*BindGroupLayout;
+extern fn wgpuDeviceCreateBuffer(device: *Device, descriptor: *const BufferDescriptor) callconv(.C) ?*Buffer;
+extern fn wgpuDeviceCreateCommandEncoder(device: *Device, descriptor: *const CommandEncoderDescriptor) callconv(.C) ?*CommandEncoder;
+extern fn wgpuDeviceCreateComputePipeline(device: *Device, descriptor: *const ComputePipelineDescriptor) callconv(.C) ?*ComputePipeline;
+extern fn wgpuDeviceCreateComputePipelineAsync(device: *Device, descriptor: *const ComputePipelineDescriptor, callback: CreateComputePipelineAsyncCallback, userdata: ?*anyopaque) callconv(.C) void;
+extern fn wgpuDeviceCreatePipelineLayout(device: *Device, descriptor: *const PipelineLayoutDescriptor) callconv(.C) ?*PipelineLayout;
+extern fn wgpuDeviceCreateQuerySet(device: *Device, descriptor: *const QuerySetDescriptor) callconv(.C) ?*QuerySet;
+extern fn wgpuDeviceCreateRenderBundleEncoder(device: *Device, descriptor: *const RenderBundleEncoderDescriptor) callconv(.C) ?*RenderBundleEncoder;
+extern fn wgpuDeviceCreateRenderPipeline(device: *Device, descriptor: *const RenderPipelineDescriptor) callconv(.C) ?*RenderPipeline;
+extern fn wgpuDeviceCreateRenderPipelineAsync(device: *Device, descriptor: *const RenderPipelineDescriptor, callback: CreateRenderPipelineAsyncCallback, userdata: ?*anyopaque) callconv(.C) void;
+extern fn wgpuDeviceCreateSampler(device: *Device, descriptor: *const SamplerDescriptor) callconv(.C) ?*Sampler;
+extern fn wgpuDeviceCreateShaderModule(device: *Device, descriptor: *const ShaderModuleDescriptor) callconv(.C) ?*ShaderModule;
+extern fn wgpuDeviceCreateTexture(device: *Device, descriptor: *const TextureDescriptor) callconv(.C) ?*Texture;
+extern fn wgpuDeviceDestroy(device: *Device) callconv(.C) void;
+extern fn wgpuDeviceEnumerateFeatures(device: *Device, features: [*]FeatureName) callconv(.C) usize;
+extern fn wgpuDeviceGetLimits(device: *Device, limits: *SupportedLimits) callconv(.C) WGPUBool;
+extern fn wgpuDeviceGetQueue(device: *Device) callconv(.C) ?*Queue;
+extern fn wgpuDeviceHasFeature(device: *Device, feature: FeatureName) callconv(.C) WGPUBool;
+extern fn wgpuDevicePopErrorScope(device: *Device, callback: ErrorCallback, userdata: ?*anyopaque) callconv(.C) void;
+extern fn wgpuDevicePushErrorScope(device: *Device, filter: ErrorFilter) callconv(.C) void;
+extern fn wgpuDeviceSetLabel(device: *Device, label: ?[*:0]const u8) callconv(.C) void;
+extern fn wgpuDeviceSetUncapturedErrorCallback(device: *Device, callback: ErrorCallback, userdata: ?*anyopaque) callconv(.C) void;
+extern fn wgpuDeviceReference(device: *Device) callconv(.C) void;
+extern fn wgpuDeviceRelease(device: *Device) callconv(.C) void;
+
+// wgpu-native
+extern fn wgpuDevicePoll(device: *Device, wait: WGPUBool, wrapped_submission_index: ?*const WrappedSubmissionIndex) callconv(.C) WGPUBool;
 
 pub const Device = opaque {
     pub inline fn createBindGroup(self: *Device, descriptor: *const BindGroupDescriptor) ?*BindGroup {
@@ -238,6 +261,11 @@ pub const Device = opaque {
     }
     pub inline fn release(self: *Device) void {
         wgpuDeviceRelease(self);
+    }
+
+    // wgpu-native
+    pub inline fn poll(self: *Device, wait: bool, wrapped_submission_index: ?*const WrappedSubmissionIndex) bool {
+        return wgpuDevicePoll(self, @intFromBool(wait), wrapped_submission_index) != 0;
     }
 };
 

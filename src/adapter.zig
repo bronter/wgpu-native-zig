@@ -5,7 +5,8 @@ const ChainedStructOut = _chained_struct.ChainedStructOut;
 const _misc = @import("misc.zig");
 const WGPUBool = _misc.WGPUBool;
 const FeatureName = _misc.FeatureName;
-const SupportedLimits = _misc.SupportedLimits;
+
+const SupportedLimits = @import("limits.zig").SupportedLimits;
 
 const Surface = @import("surface.zig").Surface;
 
@@ -85,13 +86,13 @@ pub const AdapterProcs = struct {
     pub const Release = *const fn(Adapter) callconv(.C) void;
 };
 
-extern fn wgpuAdapterEnumerateFeatures(adapter: *Adapter, features: [*]FeatureName) usize;
-extern fn wgpuAdapterGetLimits(adapter: *Adapter, limits: *SupportedLimits) WGPUBool;
-extern fn wgpuAdapterGetProperties(adapter: *Adapter, properties: *AdapterProperties) void;
-extern fn wgpuAdapterHasFeature(adapter: *Adapter, feature: FeatureName) WGPUBool;
-extern fn wgpuAdapterRequestDevice(adapter: *Adapter, descriptor: ?*const DeviceDescriptor, callback: RequestDeviceCallback, userdata: ?*anyopaque) void;
-extern fn wgpuAdapterReference(adapter: *Adapter) void;
-extern fn wgpuAdapterRelease(adapter: *Adapter) void;
+extern fn wgpuAdapterEnumerateFeatures(adapter: *Adapter, features: [*]FeatureName) callconv(.C) usize;
+extern fn wgpuAdapterGetLimits(adapter: *Adapter, limits: *SupportedLimits) callconv(.C) WGPUBool;
+extern fn wgpuAdapterGetProperties(adapter: *Adapter, properties: *AdapterProperties) callconv(.C) void;
+extern fn wgpuAdapterHasFeature(adapter: *Adapter, feature: FeatureName) callconv(.C) WGPUBool;
+extern fn wgpuAdapterRequestDevice(adapter: *Adapter, descriptor: ?*const DeviceDescriptor, callback: RequestDeviceCallback, userdata: ?*anyopaque) callconv(.C) void;
+extern fn wgpuAdapterReference(adapter: *Adapter) callconv(.C) void;
+extern fn wgpuAdapterRelease(adapter: *Adapter) callconv(.C) void;
 
 pub const Adapter = opaque{
     pub inline fn enumerateFeatures(self: *Adapter, features: [*]FeatureName) usize {

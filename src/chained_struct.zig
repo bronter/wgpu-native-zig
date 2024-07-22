@@ -11,6 +11,18 @@ pub const SType = enum(u32) {
     surface_descriptor_from_android_native_window = 0x00000009,
     surface_descriptor_from_xcb_window            = 0x0000000A,
     render_pass_descriptor_max_draw_count         = 0x0000000F,
+
+    // wgpu-native extras (wgpu.h)
+    device_extras                                 = 0x00030001,
+    required_limits_extras                        = 0x00030002,
+    pipeline_layout_extras                        = 0x00030003,
+    shader_module_glsl_descriptor                 = 0x00030004,
+    supported_limits_extras                       = 0x00030005,
+    instance_extras                               = 0x00030006,
+    bind_group_entry_extras                       = 0x00030007,
+    bind_group_layout_entry_extras                = 0x00030008,
+    query_set_descriptor_extras                   = 0x00030009,
+    surface_configuration_extras                  = 0x0003000A,
 };
 
 pub const ChainedStruct = extern struct {

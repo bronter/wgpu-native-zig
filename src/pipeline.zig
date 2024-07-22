@@ -2,7 +2,10 @@ const _chained_struct = @import("chained_struct.zig");
 const ChainedStruct = _chained_struct.ChainedStruct;
 const SType = _chained_struct.SType;
 
-const ShaderModule = @import("shader.zig").ShaderModule;
+const _shader = @import("shader.zig");
+const ShaderModule = _shader.ShaderModule;
+const ShaderStageFlags = _shader.ShaderStageFlags;
+
 const BindGroupLayout = @import("bind_group.zig").BindGroupLayout;
 
 const _misc = @import("misc.zig");
@@ -13,11 +16,38 @@ const WGPUFlags = _misc.WGPUFlags;
 
 const TextureFormat = @import("texture.zig").TextureFormat;
 
+pub const PushConstantRange = extern struct {
+    stages: ShaderStageFlags,
+    start: u32,
+    end: u32,
+};
+
+pub const PipelineLayoutExtras = extern struct {
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.pipeline_layout_extras,
+    },
+    push_constant_range_count: usize,
+    push_constant_ranges: [*]const PushConstantRange,
+};
+
 pub const PipelineLayoutDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     label: ?[*:0]const u8 = null,
     bind_group_layout_count: usize,
     bind_group_layouts: [*]const BindGroupLayout,
+
+    pub inline fn withPushConstantRanges(
+        self: PipelineLayoutDescriptor,
+        push_constant_range_count: usize,
+        push_constant_ranges: [*]const PushConstantRange
+    ) PipelineLayoutDescriptor {
+        var pld = self;
+        pld.next_in_chain = @ptrCast(&PipelineLayoutExtras {
+            .push_constant_range_count = push_constant_range_count,
+            .push_constant_ranges = push_constant_ranges,
+        });
+        return pld;
+    }
 };
 
 pub const PipelineLayoutProcs = struct {
@@ -189,7 +219,9 @@ pub const CullMode = enum(u32) {
 };
 
 pub const PrimitiveDepthClipControl = extern struct {
-    chain: ChainedStruct,
+    chain: ChainedStruct = ChainedStruct {
+        .s_type = SType.primitive_depth_clip_control,
+    },
     unclipped_depth: WGPUBool,
 };
 pub const PrimitiveState = extern struct {
@@ -202,9 +234,6 @@ pub const PrimitiveState = extern struct {
     pub inline fn withDepthClipControl(self: PrimitiveState, unclipped_depth: bool) PrimitiveState {
         var ps = self;
         ps.next_in_chain = @ptrCast(&PrimitiveDepthClipControl {
-            .chain = ChainedStruct {
-                .s_type = SType.primitive_depth_clip_control,
-            },
             .unclipped_depth = @intFromBool(unclipped_depth),
         });
 
