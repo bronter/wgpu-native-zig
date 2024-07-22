@@ -92,14 +92,25 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    compute_test.root_module.addImport("wgpu-c", wgpu_c_mod);
+    compute_test.root_module.addImport("wgpu", mod);
 
     const run_compute_test = b.addRunArtifact(compute_test);
+
+    const compute_test_c = b.addTest(.{
+        .name = "compute-test-c",
+        .root_source_file = b.path("tests/compute_c.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    compute_test_c.root_module.addImport("wgpu-c", wgpu_c_mod);
+
+    const run_compute_test_c = b.addRunArtifact(compute_test_c);
 
     // This exposes a `test` step to the `zig build --help` menu,
     // providing a way for the user to request running the unit tests.
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_compute_test.step);
+    test_step.dependOn(&run_compute_test_c.step);
 
     const test_files = [_] [:0]const u8 {
         "src/instance.zig",

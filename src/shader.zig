@@ -23,8 +23,8 @@ pub const CompilationHint = extern struct {
 pub const ShaderModuleDescriptor = extern struct {
     next_in_chain: *const ChainedStruct,
     label: ?[*:0]const u8 = null,
-    hint_count: usize,
-    hints: [*]const CompilationHint,
+    hint_count: usize = 0,
+    hints: ?[*]const CompilationHint = null,
 };
 
 pub const ShaderModuleSPIRVDescriptor = extern struct {
@@ -34,21 +34,24 @@ pub const ShaderModuleSPIRVDescriptor = extern struct {
     code_size: u32,
     code: [*]const u32,
 };
-pub inline fn shaderModuleSPIRVDescriptor(
-    label: ?[*:0]const u8,
-    hint_count: usize,
-    hints: [*]const CompilationHint,
+pub const ShaderModuleSPIRVMergedDescriptor = struct {
+    label: ?[*:0]const u8 = null,
+    hint_count: usize = 0,
+    hints: ?[*]const CompilationHint = null,
     code_size: u32,
-    code: [*]const u32
+    code: [*]const u32,
+};
+pub inline fn shaderModuleSPIRVDescriptor(
+    descriptor: ShaderModuleSPIRVMergedDescriptor
 ) ShaderModuleDescriptor {
     return ShaderModuleDescriptor {
         .next_in_chain = @ptrCast(&ShaderModuleSPIRVDescriptor {
-            .code_size = code_size,
-            .code = code,
+            .code_size = descriptor.code_size,
+            .code = descriptor.code,
         }),
-        .label = label,
-        .hint_count = hint_count,
-        .hints = hints,
+        .label = descriptor.label,
+        .hint_count = descriptor.hint_count,
+        .hints = descriptor.hints,
     };
 }
 
@@ -58,19 +61,22 @@ pub const ShaderModuleWGSLDescriptor = extern struct {
     },
     code: [*:0]const u8,
 };
+pub const ShaderModuleWGSLMergedDescriptor = struct {
+    label: ?[*:0]const u8 = null,
+    hint_count: usize = 0,
+    hints: ?[*]const CompilationHint = null,
+    code: [*:0]const u8,
+};
 pub inline fn shaderModuleWGSLDescriptor(
-    label: ?[*:0]const u8,
-    hint_count: usize,
-    hints: [*]const CompilationHint,
-    code: [*:0]const u8
+    descriptor: ShaderModuleWGSLMergedDescriptor,
 ) ShaderModuleDescriptor {
     return ShaderModuleDescriptor {
         .next_in_chain = @ptrCast(&ShaderModuleWGSLDescriptor {
-            .code = code,
+            .code = descriptor.code,
         }),
-        .label = label,
-        .hint_count = hint_count,
-        .hints = hints,
+        .label = descriptor.label,
+        .hint_count = descriptor.hint_count,
+        .hints = descriptor.hints,
     };
 }
 
@@ -84,28 +90,31 @@ pub const ShaderModuleGLSLDescriptor = extern struct {
     },
     stage: ShaderStage,
     code: [*:0]const u8,
-    define_count: u32,
-    defines: [*]ShaderDefine,
+    define_count: u32 = 0,
+    defines: ?[*]ShaderDefine = null,
 };
-pub inline fn shaderModuleGLSLDescriptor(
-    label: ?[*:0]const u8,
-    hint_count: usize,
-    hints: [*]const CompilationHint,
+pub const ShaderModuleGLSLMergedDescriptor = struct {
+    label: ?[*:0]const u8 = null,
+    hint_count: usize = 0,
+    hints: ?[*]const CompilationHint = null,
     stage: ShaderStage,
     code: [*:0]const u8,
-    define_count: u32,
-    defines: [*]ShaderDefine
+    define_count: u32 = 0,
+    defines: ?[*]ShaderDefine = null,
+};
+pub inline fn shaderModuleGLSLDescriptor(
+    descriptor: ShaderModuleGLSLMergedDescriptor,
 ) ShaderModuleDescriptor {
     return ShaderModuleDescriptor {
         .next_in_chain = @ptrCast(&ShaderModuleGLSLDescriptor {
-            .stage = stage,
-            .code = code,
-            .define_count = define_count,
-            .defines = defines,
+            .stage = descriptor.stage,
+            .code = descriptor.code,
+            .define_count = descriptor.define_count,
+            .defines = descriptor.defines,
         }),
-        .label = label,
-        .hint_count = hint_count,
-        .hints = hints,
+        .label = descriptor.label,
+        .hint_count = descriptor.hint_count,
+        .hints = descriptor.hints,
     };
 }
 

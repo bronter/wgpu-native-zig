@@ -27,12 +27,16 @@ pub const SurfaceDescriptorFromAndroidNativeWindow = extern struct {
     },
     window: *anyopaque,
 };
-pub inline fn surfaceDescriptorFromAndroidNativeWindow(label: ?[:0]const u8, window: *anyopaque) SurfaceDescriptor {
+pub const MergedSurfaceDescriptorFromAndroidWindow = struct {
+    label: ?[*:0]const u8 = null,
+    window: *anyopaque,
+};
+pub inline fn surfaceDescriptorFromAndroidNativeWindow(descriptor: MergedSurfaceDescriptorFromAndroidWindow) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromAndroidNativeWindow {
-            .window = window,
+            .window = descriptor.window,
         }),
-        .label = label,
+        .label = descriptor.label,
     };
 }
 
@@ -42,12 +46,16 @@ pub const SurfaceDescriptorFromCanvasHTMLSelector = extern struct {
     },
     selector: [*:0]const u8,
 };
-pub inline fn surfaceDescriptorFromCanvasHTMLSelector(label: ?[:0]const u8, selector: [:0]const u8) SurfaceDescriptor {
+pub const MergedSurfaceDescriptorFromCanvasHTMLSelector = struct {
+    label: ?[*:0]const u8 = null,
+    selector: [*:0]const u8,
+};
+pub inline fn surfaceDescriptorFromCanvasHTMLSelector(descriptor: MergedSurfaceDescriptorFromCanvasHTMLSelector) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromCanvasHTMLSelector {
-            .selector = selector,
+            .selector = descriptor.selector,
         }),
-        .label = label,
+        .label = descriptor.label,
     };
 }
 
@@ -57,12 +65,16 @@ pub const SurfaceDescriptorFromMetalLayer = extern struct {
     },
     layer: *anyopaque,
 };
-pub inline fn surfaceDescriptorFromMetalLayer(label: ?[:0]const u8, layer: *anyopaque) SurfaceDescriptor {
+pub const MergedSurfaceDescriptorFromMetalLayer = struct {
+    label: ?[*:0]const u8 = null,
+    layer: *anyopaque,
+};
+pub inline fn surfaceDescriptorFromMetalLayer(descriptor: MergedSurfaceDescriptorFromMetalLayer) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromMetalLayer {
-            .layer = layer,
+            .layer = descriptor.layer,
         }),
-        .label = label,
+        .label = descriptor.label,
     };
 }
 
@@ -73,13 +85,18 @@ pub const SurfaceDescriptorFromWaylandSurface = extern struct {
     display: *anyopaque,
     surface: *anyopaque,
 };
-pub inline fn surfaceDescriptorFromWaylandSurface(label: ?[:0]const u8, display: *anyopaque, surface: *anyopaque) SurfaceDescriptor {
+pub const MergedSurfaceDescriptorFromWaylandSurface = struct {
+    label: ?[*:0]const u8 = null,
+    display: *anyopaque,
+    surface: *anyopaque,
+};
+pub inline fn surfaceDescriptorFromWaylandSurface(descriptor: MergedSurfaceDescriptorFromWaylandSurface) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromWaylandSurface {
-            .display = display,
-            .surface = surface,
+            .display = descriptor.display,
+            .surface = descriptor.surface,
         }),
-        .label = label,
+        .label = descriptor.label,
     };
 }
 
@@ -90,13 +107,18 @@ pub const SurfaceDescriptorFromWindowsHWND = extern struct {
     hinstance: *anyopaque,
     hwnd: *anyopaque,
 };
-pub inline fn surfaceDescriptorFromWindowsHWND(label: ?[:0]const u8, hinstance: *anyopaque, hwnd: *anyopaque) SurfaceDescriptor {
+pub const MergedSurfaceDescriptorFromWindowsHWND = struct {
+    label: ?[*:0]const u8 = null,
+    hinstance: *anyopaque,
+    hwnd: *anyopaque,
+};
+pub inline fn surfaceDescriptorFromWindowsHWND(descriptor: MergedSurfaceDescriptorFromWindowsHWND) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromWindowsHWND {
-            .hinstance = hinstance,
-            .hwnd = hwnd,
+            .hinstance = descriptor.hinstance,
+            .hwnd = descriptor.hwnd,
         }),
-        .label = label,
+        .label = descriptor.label,
     };
 }
 
@@ -107,13 +129,18 @@ pub const SurfaceDescriptorFromXcbWindow = extern struct {
     connection: *anyopaque,
     window: u32,
 };
-pub inline fn surfaceDescriptorFromXcbWindow(label: ?[:0]const u8, connection: *anyopaque, window: u32) SurfaceDescriptor {
+pub const MergedSurfaceDescriptorFromXcbWindow = struct {
+    label: ?[*:0]const u8 = null,
+    connection: *anyopaque,
+    window: u32,
+};
+pub inline fn surfaceDescriptorFromXcbWindow(descriptor: MergedSurfaceDescriptorFromXcbWindow) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromXcbWindow {
-            .connection = connection,
-            .window = window,
+            .connection = descriptor.connection,
+            .window = descriptor.window,
         }),
-        .label = label,
+        .label = descriptor.label,
     };
 }
 
@@ -124,13 +151,18 @@ pub const SurfaceDescriptorFromXlibWindow = extern struct {
     display: *anyopaque,
     window: u64,
 };
-pub inline fn surfaceDescriptorFromXlibWindow(label: ?[:0]const u8, display: *anyopaque, window: u64) SurfaceDescriptor {
+pub const MergedSurfaceDescriptorFromXlibWindow = struct {
+    label: ?[*:0]const u8 = null,
+    connection: *anyopaque,
+    window: u64,
+};
+pub inline fn surfaceDescriptorFromXlibWindow(descriptor: MergedSurfaceDescriptorFromXlibWindow) SurfaceDescriptor {
     return SurfaceDescriptor{
         .next_in_chain = @ptrCast(&SurfaceDescriptorFromXlibWindow {
-            .display = display,
-            .window = window,
+            .display = descriptor.display,
+            .window = descriptor.window,
         }),
-        .label = label,
+        .label = descriptor.label,
     };
 }
 

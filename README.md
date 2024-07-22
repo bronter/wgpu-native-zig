@@ -1,7 +1,9 @@
 # wgpu-native-zig
 Zig bindings for [wgpu-native](https://github.com/gfx-rs/wgpu-native)
 
-Currently all this does is download the appropriate pre-built lib/headers, run the headers through `translate-c`, and re-export that as a module that you should hopefully be able to use.
+This package exposes two modules: `wgpu-c` and `wgpu`.
+`wgpu-c` is just `wgpu.h` (and by extension `webgpu.h`) run through `translate-c`, so as close to wgpu-native's original C API as is possible in Zig.
+`wgpu` is a module full of pure Zig bindings for `libwgpu`, it does not import any C code and instead relies on `extern fn` declarations to hook up to `wgpu-native`.
 
 ## Adding this package to your build
 In your `build.zig.zon` add:
@@ -21,13 +23,13 @@ Then, in `build.zig` add:
 ```zig
     const wgpu_native_dep = b.dependency("wgpu_native_zig");
 
-    // Add module to your exe
-    exe.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu-c"));
+    // Add module to your exe (wgpu-c can also be added like this, just pass in "wgpu-c" instead)
+    exe.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu"));
     // Or, add to your lib similarly:
-    lib.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu-c"));
+    lib.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu"));
 ```
 
-## How the (WIP) wrapper code differs using `wgpu-native` through `translate-c`
+## How the `wgpu` module differs from `wgpu-c`
 * Names are shortened to remove redundancy.
   * For example `wgpu.WGPUSurfaceDescriptor` becomes `wgpu.SurfaceDescriptor`
 * C pointers (`[*c]`) are replaced with more specific pointer types.
@@ -90,7 +92,13 @@ Then, in `build.zig` add:
     ```
     or use a function to construct them:
     ```zig
-    surfaceDescriptorFromXlibWindow("xlib_surface_descriptor", display, window);
+    // Here the descriptors from SurfaceDescriptor and SurfaceDescriptorFromXlibWindow have been merged,
+    // so just pass in an anonymous struct with the things that you need; default values will take care of the rest.
+    surfaceDescriptorFromXlibWindow(.{
+        .label = "xlib_surface_descriptor",
+        .display = display,
+        .window = window
+    });
     ```
   * For optional chained structs, you can either write them explicitely like in the example above, or you can use a method of the parent struct instance to add them, for example:
     ```zig
@@ -106,8 +114,9 @@ Then, in `build.zig` add:
 
 ## TODO
 * Test this on other machines with different OS/CPU (currently only tested on linux x86_64)
-* Create more idiomatic wrapper around `webgpu.h`/`wgpu.h` (current WIP)
+* Create more idiomatic wrapper around `webgpu.h`/`wgpu.h` (mostly finished with some potential issues)
   * See if we really need `callconv(.C)` on extern fns; it seems like maybe this is the default for extern fn, or that Zig can somehow figure out the calling convention?
+  * Investigate usages of many-item pointers. There are probably some many-item pointers that should be optional but aren't (potentially a breaking issue), and there are probably also some optional many-item pointers that should default to null but don't (annoying but can be worked around). Implementing more examples should uncover many of these issues. 
 * Port [wgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples) using wrapper code, as a basic form of documentation.
 * Custom-build `wgpu-native`; provided all the necessary tools/dependencies are present.
 * Figure out dynamic linking

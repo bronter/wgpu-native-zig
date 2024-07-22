@@ -36,7 +36,7 @@ pub const ComputePassTimestampWrites = TimestampWrites;
 pub const ComputePassDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     label: ?[*:0]const u8 = null,
-    timestamp_writes: ?*const ComputePassTimestampWrites,
+    timestamp_writes: ?*const ComputePassTimestampWrites = null,
 };
 
 pub const CommandEncoderDescriptor = extern struct {
@@ -68,7 +68,7 @@ extern fn wgpuComputePassEncoderEnd(compute_pass_encoder: *ComputePassEncoder) c
 extern fn wgpuComputePassEncoderInsertDebugMarker(compute_pass_encoder: *ComputePassEncoder, marker_label: [*:0]const u8) callconv(.C) void;
 extern fn wgpuComputePassEncoderPopDebugGroup(compute_pass_encoder: *ComputePassEncoder) callconv(.C) void;
 extern fn wgpuComputePassEncoderPushDebugGroup(compute_pass_encoder: *ComputePassEncoder, group_label: [*:0]const u8) callconv(.C) void;
-extern fn wgpuComputePassEncoderSetBindGroup(compute_pass_encoder: *ComputePassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) callconv(.C) void;
+extern fn wgpuComputePassEncoderSetBindGroup(compute_pass_encoder: *ComputePassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: ?[*]const u32) callconv(.C) void;
 extern fn wgpuComputePassEncoderSetLabel(compute_pass_encoder: *ComputePassEncoder, label: ?[*:0]const u8) callconv(.C) void;
 extern fn wgpuComputePassEncoderSetPipeline(compute_pass_encoder: *ComputePassEncoder, pipeline: *ComputePipeline) callconv(.C) void;
 extern fn wgpuComputePassEncoderReference(compute_pass_encoder: *ComputePassEncoder) callconv(.C) void;
@@ -97,7 +97,7 @@ pub const ComputePassEncoder = opaque {
     pub inline fn pushDebugGroup(self: *ComputePassEncoder, group_label: [*:0]const u8) void {
         wgpuComputePassEncoderPushDebugGroup(self, group_label);
     }
-    pub inline fn setBindGroup(self: *ComputePassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) void {
+    pub inline fn setBindGroup(self: *ComputePassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: ?[*]const u32) void {
         wgpuComputePassEncoderSetBindGroup(self, group_index, group, dynamic_offset_count, dynamic_offsets);
     }
     pub inline fn setLabel(self: *ComputePassEncoder, label: ?[*:0]const u8) void {
@@ -144,7 +144,7 @@ pub const Color = extern struct {
 pub const ColorAttachment = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     view: ?*TextureView,
-    resolve_target: ?*TextureView,
+    resolve_target: ?*TextureView = null,
     loap_op: LoadOp,
     store_op: StoreOp,
     clear_value: Color
@@ -176,9 +176,9 @@ pub const RenderPassDescriptor = extern struct {
     label: ?[*:0]const u8 = null,
     color_attachment_count: usize,
     color_attachments: [*]const ColorAttachment,
-    depth_stencil_attachment: ?*const DepthStencilAttachment,
-    occlusion_query_set: ?*QuerySet,
-    timestamp_writes: ?*const RenderPassTimestampWrites,
+    depth_stencil_attachment: ?*const DepthStencilAttachment = null,
+    occlusion_query_set: ?*QuerySet = null,
+    timestamp_writes: ?*const RenderPassTimestampWrites = null,
 
     pub inline fn withMaxDrawCount(self: RenderPassDescriptor, max_draw_count: u64) RenderPassDescriptor {
         var descriptor = self;

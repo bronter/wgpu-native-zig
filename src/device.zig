@@ -78,8 +78,8 @@ pub const DeviceExtras = extern struct {
 pub const DeviceDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     label: ?[*:0]const u8 = null,
-    required_feature_count: usize,
-    required_features: [*]const FeatureName,
+    required_feature_count: usize = 0,
+    required_features: ?[*]const FeatureName,
     required_limits: ?*const RequiredLimits,
     default_queue: QueueDescriptor,
     device_lost_callback: DeviceLostCallback,

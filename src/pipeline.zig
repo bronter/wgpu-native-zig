@@ -82,14 +82,14 @@ pub const ProgrammableStageDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     module: *ShaderModule,
     entry_point: ?[*:0]const u8 = null,
-    constant_count: usize,
-    constants: [*]const ConstantEntry,
+    constant_count: usize = 0,
+    constants: ?[*]const ConstantEntry = null,
 };
 
 pub const ComputePipelineDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     label: ?[*:0]const u8 = null,
-    layout: ?*PipelineLayout,
+    layout: ?*PipelineLayout = null,
     compute: ProgrammableStageDescriptor,
 };
 
@@ -193,8 +193,8 @@ pub const VertexState = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     module: *ShaderModule,
     entry_point: ?[*:0]const u8 = null,
-    constant_count: usize,
-    constants: [*]const ConstantEntry,
+    constant_count: usize = 0,
+    constants: ?[*]const ConstantEntry,
     buffer_count: usize,
     buffers: [*]const VertexBufferLayout,
 };
@@ -345,8 +345,8 @@ pub const FragmentState = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     module: ShaderModule,
     entry_point: ?[*:0]const u8 = null,
-    constant_count: usize,
-    constants: [*]const ConstantEntry,
+    constant_count: usize = 0,
+    constants: ?[*]const ConstantEntry,
     target_count: usize,
     targets: [*]const ColorTargetState,
 };

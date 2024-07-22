@@ -9,7 +9,7 @@ const Extent3D = _texture.Extent3D;
 
 pub const SubmissionIndex = u64;
 pub const WrappedSubmissionIndex = extern struct {
-    queue: Queue,
+    queue: *Queue,
     submission_index: SubmissionIndex,
 };
 
@@ -42,14 +42,14 @@ pub const QueueProcs = struct {
 
 extern fn wgpuQueueOnSubmittedWorkDone(queue: *Queue, callback: WorkDoneCallback, userdata: ?*anyopaque) callconv(.C) void;
 extern fn wgpuQueueSetLabel(queue: *Queue, label: ?[*:0]const u8) callconv(.C) void;
-extern fn wgpuQueueSubmit(queue: *Queue, command_count: usize, commands: *const CommandBuffer) callconv(.C) void;
+extern fn wgpuQueueSubmit(queue: *Queue, command_count: usize, commands: [*]const *const CommandBuffer) callconv(.C) void;
 extern fn wgpuQueueWriteBuffer(queue: *Queue, buffer: *Buffer, buffer_offset: u64, data: *const anyopaque, size: usize) callconv(.C) void;
 extern fn wgpuQueueWriteTexture(queue: *Queue, destination: *const ImageCopyTexture, data: *const anyopaque, data_size: usize, data_layout: *const TextureDataLayout, write_size: *const Extent3D) callconv(.C) void;
 extern fn wgpuQueueReference(queue: *Queue) callconv(.C) void;
 extern fn wgpuQueueRelease(queue: *Queue) callconv(.C) void;
 
 // wgpu-native
-extern fn wgpuQueueSubmitForIndex(queue: *Queue, command_count: usize, commands: *const CommandBuffer) callconv(.C) SubmissionIndex;
+extern fn wgpuQueueSubmitForIndex(queue: *Queue, command_count: usize, commands: [*]const *const CommandBuffer) callconv(.C) SubmissionIndex;
 
 pub const Queue = opaque {
     pub inline fn onSubmittedWorkDone(self: *Queue, callback: WorkDoneCallback, userdata: ?*anyopaque) void {
@@ -58,8 +58,8 @@ pub const Queue = opaque {
     pub inline fn setLabel(self: *Queue, label: ?[*:0]const u8) void {
         wgpuQueueSetLabel(self, label);
     }
-    pub inline fn submit(self: *Queue, command_count: usize, commands: *const CommandBuffer) void {
-        wgpuQueueSubmit(self, command_count, commands);
+    pub inline fn submit(self: *Queue, commands: []const *const CommandBuffer) void {
+        wgpuQueueSubmit(self, commands.len, commands.ptr);
     }
     pub inline fn writeBuffer(self: *Queue, buffer: *Buffer, buffer_offset: u64, data: *const anyopaque, size: usize) void {
         wgpuQueueWriteBuffer(self, buffer, buffer_offset, data, size);
@@ -75,7 +75,7 @@ pub const Queue = opaque {
     }
 
     // wgpu-native
-    pub inline fn submitForIndex(self: *Queue, command_count: usize, commands: *const CommandBuffer) SubmissionIndex {
-        return wgpuQueueSubmitForIndex(self, command_count, commands);
+    pub inline fn submitForIndex(self: *Queue, commands: []const *const CommandBuffer) SubmissionIndex {
+        return wgpuQueueSubmitForIndex(self, commands.len, commands.ptr);
     }
 };
