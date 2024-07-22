@@ -2,7 +2,9 @@
 Zig bindings for [wgpu-native](https://github.com/gfx-rs/wgpu-native)
 
 This package exposes two modules: `wgpu-c` and `wgpu`.
+
 `wgpu-c` is just `wgpu.h` (and by extension `webgpu.h`) run through `translate-c`, so as close to wgpu-native's original C API as is possible in Zig.
+
 `wgpu` is a module full of pure Zig bindings for `libwgpu`, it does not import any C code and instead relies on `extern fn` declarations to hook up to `wgpu-native`.
 
 ## Adding this package to your build
