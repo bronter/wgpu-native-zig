@@ -326,12 +326,12 @@ pub const BlendState = extern struct {
 
 pub const ColorWriteMaskFlags = WGPUFlags;
 pub const ColorWriteMask = struct {
-    pub const none = @as(u32, 0x00000000);
-    pub const red = @as(u32, 0x00000001);
-    pub const green = @as(u32, 0x00000002);
-    pub const blue = @as(u32, 0x00000004);
-    pub const alpha = @as(u32, 0x00000008);
-    pub const all = @as(u32, 0x0000000F);
+    pub const none  = @as(ColorWriteMaskFlags, 0x00000000);
+    pub const red   = @as(ColorWriteMaskFlags, 0x00000001);
+    pub const green = @as(ColorWriteMaskFlags, 0x00000002);
+    pub const blue  = @as(ColorWriteMaskFlags, 0x00000004);
+    pub const alpha = @as(ColorWriteMaskFlags, 0x00000008);
+    pub const all   = @as(ColorWriteMaskFlags, 0x0000000F);
 };
 
 pub const ColorTargetState = extern struct {

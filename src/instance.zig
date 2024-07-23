@@ -17,23 +17,23 @@ const WGPUFlags = @import("misc.zig").WGPUFlags;
 
 pub const InstanceBackendFlags = WGPUFlags;
 pub const InstanceBackend = struct {
-    pub const all            = @as(u32, 0x00000000);
-    pub const vulkan         = @as(u32, 0x00000001);
-    pub const gl             = @as(u32, 0x00000002);
-    pub const metal          = @as(u32, 0x00000004);
-    pub const dx12           = @as(u32, 0x00000008);
-    pub const dx11           = @as(u32, 0x00000010);
-    pub const browser_webgpu = @as(u32, 0x00000020);
+    pub const all            = @as(InstanceBackendFlags, 0x00000000);
+    pub const vulkan         = @as(InstanceBackendFlags, 0x00000001);
+    pub const gl             = @as(InstanceBackendFlags, 0x00000002);
+    pub const metal          = @as(InstanceBackendFlags, 0x00000004);
+    pub const dx12           = @as(InstanceBackendFlags, 0x00000008);
+    pub const dx11           = @as(InstanceBackendFlags, 0x00000010);
+    pub const browser_webgpu = @as(InstanceBackendFlags, 0x00000020);
     pub const primary        = vulkan | metal | dx12 | browser_webgpu;
     pub const secondary      = gl | dx11;
 };
 
 pub const InstanceFlags = WGPUFlags;
 pub const InstanceFlag = struct {
-    pub const default            = @as(u32, 0x00000000);
-    pub const debug              = @as(u32, 0x00000001);
-    pub const validation         = @as(u32, 0x00000002);
-    pub const discard_hal_labels = @as(u32, 0x00000004);
+    pub const default            = @as(InstanceFlags, 0x00000000);
+    pub const debug              = @as(InstanceFlags, 0x00000001);
+    pub const validation         = @as(InstanceFlags, 0x00000002);
+    pub const discard_hal_labels = @as(InstanceFlags, 0x00000004);
 };
 
 pub const Dx12Compiler = enum(u32) {
