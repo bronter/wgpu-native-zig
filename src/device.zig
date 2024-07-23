@@ -1,3 +1,5 @@
+const std = @import("std");
+
 const _chained_struct = @import("chained_struct.zig");
 const ChainedStruct = _chained_struct.ChainedStruct;
 const SType = _chained_struct.SType;
@@ -75,15 +77,19 @@ pub const DeviceExtras = extern struct {
     trace_path: [*:0]const u8 = null,
 };
 
+pub fn defaultDeviceLostCallback(reason: DeviceLostReason, message: ?[*:0]const u8, _: ?*anyopaque) callconv(.C) void {
+    std.log.err("Device lost: reason={s} message=\"{s}\"\n", @tagName(reason), message);
+}
+
 pub const DeviceDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     label: ?[*:0]const u8 = null,
     required_feature_count: usize = 0,
-    required_features: ?[*]const FeatureName,
+    required_features: ?[*]const FeatureName = null,
     required_limits: ?*const RequiredLimits,
-    default_queue: QueueDescriptor,
-    device_lost_callback: DeviceLostCallback,
-    device_lost_user_data: ?*anyopaque,
+    default_queue: QueueDescriptor = QueueDescriptor{},
+    device_lost_callback: DeviceLostCallback = defaultDeviceLostCallback,
+    device_lost_user_data: ?*anyopaque = null,
 
     pub inline fn withTracePath(self: DeviceDescriptor, trace_path: [*:0]const u8) DeviceDescriptor {
         var dd = self;
@@ -140,7 +146,7 @@ pub const DeviceProcs = struct {
     pub const CreateShaderModule = *const fn(*Device, *const ShaderModuleDescriptor) callconv(.C) ?*ShaderModule;
     pub const CreateTexture = *const fn(*Device, *const TextureDescriptor) callconv(.C) ?*Texture;
     pub const Destroy = *const fn(*Device) callconv(.C) void;
-    pub const EnumerateFeatures = *const fn(*Device, [*]FeatureName) callconv(.C) usize;
+    pub const EnumerateFeatures = *const fn(*Device, ?[*]FeatureName) callconv(.C) usize;
     pub const GetLimits = *const fn(*Device, *SupportedLimits) callconv(.C) WGPUBool;
     pub const GetQueue = *const fn(*Device) callconv(.C) ?*Queue;
     pub const HasFeature = *const fn(*Device, FeatureName) callconv(.C) WGPUBool;
@@ -170,7 +176,7 @@ extern fn wgpuDeviceCreateSampler(device: *Device, descriptor: *const SamplerDes
 extern fn wgpuDeviceCreateShaderModule(device: *Device, descriptor: *const ShaderModuleDescriptor) ?*ShaderModule;
 extern fn wgpuDeviceCreateTexture(device: *Device, descriptor: *const TextureDescriptor) ?*Texture;
 extern fn wgpuDeviceDestroy(device: *Device) void;
-extern fn wgpuDeviceEnumerateFeatures(device: *Device, features: [*]FeatureName) usize;
+extern fn wgpuDeviceEnumerateFeatures(device: *Device, features: ?[*]FeatureName) usize;
 extern fn wgpuDeviceGetLimits(device: *Device, limits: *SupportedLimits) WGPUBool;
 extern fn wgpuDeviceGetQueue(device: *Device) ?*Queue;
 extern fn wgpuDeviceHasFeature(device: *Device, feature: FeatureName) WGPUBool;
@@ -230,7 +236,7 @@ pub const Device = opaque {
     pub inline fn destroy(self: *Device) void {
         wgpuDeviceDestroy(self);
     }
-    pub inline fn enumerateFeatures(self: *Device, features: [*]FeatureName) usize {
+    pub inline fn enumerateFeatures(self: *Device, features: ?[*]FeatureName) usize {
         return wgpuDeviceEnumerateFeatures(self, features);
     }
     pub inline fn getLimits(self: *Device, limits: *SupportedLimits) WGPUBool {

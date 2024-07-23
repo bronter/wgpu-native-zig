@@ -45,9 +45,9 @@ pub const BackendType = enum(u32) {
 pub const RequestAdapterOptions = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     compatible_surface: ?*Surface = null,
-    power_preference: PowerPreference,
-    backend_type: BackendType,
-    force_fallback_adapter: WGPUBool,
+    power_preference: PowerPreference = PowerPreference.@"undefined",
+    backend_type: BackendType = BackendType.@"undefined",
+    force_fallback_adapter: WGPUBool = @intFromBool(false),
 };
 
 pub const RequestAdapterStatus = enum(u32) {
@@ -77,7 +77,7 @@ const AdapterProperties = extern struct {
 };
 
 pub const AdapterProcs = struct {
-    pub const EnumerateFeatures = *const fn(Adapter, [*]FeatureName) callconv(.C) usize;
+    pub const EnumerateFeatures = *const fn(Adapter, ?[*]FeatureName) callconv(.C) usize;
     pub const GetLimits = *const fn(Adapter, *SupportedLimits) callconv(.C) WGPUBool;
     pub const GetProperties = *const fn(Adapter, *AdapterProperties) callconv(.C) void;
     pub const HasFeature = *const fn(Adapter, FeatureName) callconv(.C) WGPUBool;
@@ -86,7 +86,7 @@ pub const AdapterProcs = struct {
     pub const Release = *const fn(Adapter) callconv(.C) void;
 };
 
-extern fn wgpuAdapterEnumerateFeatures(adapter: *Adapter, features: [*]FeatureName) usize;
+extern fn wgpuAdapterEnumerateFeatures(adapter: *Adapter, features: ?[*]FeatureName) usize;
 extern fn wgpuAdapterGetLimits(adapter: *Adapter, limits: *SupportedLimits) WGPUBool;
 extern fn wgpuAdapterGetProperties(adapter: *Adapter, properties: *AdapterProperties) void;
 extern fn wgpuAdapterHasFeature(adapter: *Adapter, feature: FeatureName) WGPUBool;
@@ -95,7 +95,7 @@ extern fn wgpuAdapterReference(adapter: *Adapter) void;
 extern fn wgpuAdapterRelease(adapter: *Adapter) void;
 
 pub const Adapter = opaque{
-    pub inline fn enumerateFeatures(self: *Adapter, features: [*]FeatureName) usize {
+    pub inline fn enumerateFeatures(self: *Adapter, features: ?[*]FeatureName) usize {
         return wgpuAdapterEnumerateFeatures(self, features);
     }
     pub inline fn getLimits(self: *Adapter, limits: *SupportedLimits) bool {

@@ -28,7 +28,7 @@ pub const RenderBundleEncoderProcs = struct {
     pub const InsertDebugMarker = *const fn(*RenderBundleEncoder, [*:0]const u8) callconv(.C) void;
     pub const PopDebugGroup = *const fn(*RenderBundleEncoder) callconv(.C) void;
     pub const PushDebugGroup = *const fn(*RenderBundleEncoder, [*:0]const u8) callconv(.C) void;
-    pub const SetBindGroup = *const fn(*RenderBundleEncoder, u32, *BindGroup, usize, [*]const u32) callconv(.C) void;
+    pub const SetBindGroup = *const fn(*RenderBundleEncoder, u32, *BindGroup, usize, ?[*]const u32) callconv(.C) void;
     pub const SetIndexBuffer = *const fn(*RenderBundleEncoder, *Buffer, IndexFormat, u64, u64) callconv(.C) void;
     pub const SetLabel = *const fn(*RenderBundleEncoder, ?[*:0]const u8) callconv(.C) void;
     pub const SetPipeline = *const fn(*RenderBundleEncoder, *RenderPipeline) callconv(.C) void;
@@ -45,7 +45,7 @@ extern fn wgpuRenderBundleEncoderFinish(render_bundle_encoder: *RenderBundleEnco
 extern fn wgpuRenderBundleEncoderInsertDebugMarker(render_bundle_encoder: *RenderBundleEncoder, marker_label: [*:0]const u8) void;
 extern fn wgpuRenderBundleEncoderPopDebugGroup(render_bundle_encoder: *RenderBundleEncoder) void;
 extern fn wgpuRenderBundleEncoderPushDebugGroup(render_bundle_encoder: *RenderBundleEncoder, group_label: [*:0]const u8) void;
-extern fn wgpuRenderBundleEncoderSetBindGroup(render_bundle_encoder: *RenderBundleEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) void;
+extern fn wgpuRenderBundleEncoderSetBindGroup(render_bundle_encoder: *RenderBundleEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: ?[*]const u32) void;
 extern fn wgpuRenderBundleEncoderSetIndexBuffer(render_bundle_encoder: *RenderBundleEncoder, buffer: *Buffer, format: IndexFormat, offset: u64, size: u64) void;
 extern fn wgpuRenderBundleEncoderSetLabel(render_bundle_encoder: *RenderBundleEncoder, label: ?[*:0]const u8) void;
 extern fn wgpuRenderBundleEncoderSetPipeline(render_bundle_encoder: *RenderBundleEncoder, pipeline: *RenderPipeline) void;
@@ -79,7 +79,7 @@ pub const RenderBundleEncoder = opaque {
     pub inline fn pushDebugGroup(self: *RenderBundleEncoder, group_label: [*:0]const u8) void {
         wgpuRenderBundleEncoderPushDebugGroup(self, group_label);
     }
-    pub inline fn setBindGroup(self: *RenderBundleEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) void {
+    pub inline fn setBindGroup(self: *RenderBundleEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: ?[*]const u32) void {
         wgpuRenderBundleEncoderSetBindGroup(self, group_index, group, dynamic_offset_count, dynamic_offsets);
     }
     pub inline fn setIndexBuffer(self: *RenderBundleEncoder, buffer: *Buffer, format: IndexFormat, offset: u64, size: u64) void {

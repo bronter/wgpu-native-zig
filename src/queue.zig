@@ -30,14 +30,14 @@ pub const WorkDoneCallback = *const fn(status: WorkDoneStatus, userdata: ?*anyop
 pub const QueueProcs = struct {
     pub const OnSubmittedWorkDone = *const fn(*Queue, WorkDoneCallback, ?*anyopaque) callconv(.C) void;
     pub const SetLabel = *const fn(*Queue, ?[*:0]const u8) callconv(.C) void;
-    pub const Submit = *const fn(*Queue, usize, *const CommandBuffer) callconv(.C) void;
+    pub const Submit = *const fn(*Queue, usize, [*]const *const CommandBuffer) callconv(.C) void;
     pub const WriteBuffer = *const fn(*Queue, Buffer, u64, *const anyopaque, usize) callconv(.C) void;
     pub const WriteTexture = *const fn(*Queue, *const ImageCopyTexture, *const anyopaque, usize, *const TextureDataLayout, *const Extent3D) callconv(.C) void;
     pub const Reference = *const fn(*Queue) callconv(.C) void;
     pub const Release = *const fn(*Queue) callconv(.C) void;
 
     // wgpu-native procs?
-    // pub const SubmitForIndex = *const fn(*Queue, usize, *const CommandBuffer) callconv(.C) SubmissionIndex;
+    // pub const SubmitForIndex = *const fn(*Queue, usize, [*]const *const CommandBuffer) callconv(.C) SubmissionIndex;
 };
 
 extern fn wgpuQueueOnSubmittedWorkDone(queue: *Queue, callback: WorkDoneCallback, userdata: ?*anyopaque) void;

@@ -51,7 +51,7 @@ const ComputePassEncoderProcs = struct {
     pub const InsertDebugMarker = *const fn(*ComputePassEncoder, [*:0]const u8) callconv(.C) void;
     pub const PopDebugGroup = *const fn(*ComputePassEncoder) callconv(.C) void;
     pub const PushDebugGroup = *const fn(*ComputePassEncoder, [*:0]const u8) callconv(.C) void;
-    pub const SetBindGroup = *const fn(*ComputePassEncoder, u32, *BindGroup, usize, [*]const u32) callconv(.C) void;
+    pub const SetBindGroup = *const fn(*ComputePassEncoder, u32, *BindGroup, usize, ?[*]const u32) callconv(.C) void;
     pub const SetLabel = *const fn(*ComputePassEncoder, ?[*:0]const u8) callconv(.C) void;
     pub const SetPipeline = *const fn(*ComputePassEncoder, *ComputePipeline) callconv(.C) void;
     pub const Reference = *const fn(*ComputePassEncoder) callconv(.C) void;
@@ -202,7 +202,7 @@ pub const RenderPassEncoderProcs = struct {
     pub const InsertDebugMarker = *const fn(*RenderPassEncoder, [*:0]const u8) callconv(.C) void;
     pub const PopDebugGroup = *const fn(*RenderPassEncoder) callconv(.C) void;
     pub const PushDebugGroup = *const fn(*RenderPassEncoder, [*:0]const u8) callconv(.C) void;
-    pub const SetBindGroup = *const fn(*RenderPassEncoder, u32, *BindGroup, usize, [*]const u32) callconv(.C) void;
+    pub const SetBindGroup = *const fn(*RenderPassEncoder, u32, *BindGroup, usize, ?[*]const u32) callconv(.C) void;
     pub const SetBlendConstant = *const fn(*RenderPassEncoder, *const Color) callconv(.C) void;
     pub const SetIndexBuffer = *const fn(*RenderPassEncoder, *Buffer, IndexFormat, u64, u64) callconv(.C) void;
     pub const SetLabel = *const fn(*RenderPassEncoder, ?[*:0]const u8) callconv(.C) void;
@@ -235,7 +235,7 @@ extern fn wgpuRenderPassEncoderExecuteBundles(render_pass_encoder: *RenderPassEn
 extern fn wgpuRenderPassEncoderInsertDebugMarker(render_pass_encoder: *RenderPassEncoder, marker_label: [*:0]const u8) void;
 extern fn wgpuRenderPassEncoderPopDebugGroup(render_pass_encoder: *RenderPassEncoder) void;
 extern fn wgpuRenderPassEncoderPushDebugGroup(render_pass_encoder: *RenderPassEncoder, group_label: [*:0]const u8) void;
-extern fn wgpuRenderPassEncoderSetBindGroup(render_pass_encoder: *RenderPassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) void;
+extern fn wgpuRenderPassEncoderSetBindGroup(render_pass_encoder: *RenderPassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: ?[*]const u32) void;
 extern fn wgpuRenderPassEncoderSetBlendConstant(render_pass_encoder: *RenderPassEncoder, color: *const Color) void;
 extern fn wgpuRenderPassEncoderSetIndexBuffer(render_pass_encoder: *RenderPassEncoder, buffer: *Buffer, format: IndexFormat, offset: u64, size: u64) void;
 extern fn wgpuRenderPassEncoderSetLabel(render_pass_encoder: *RenderPassEncoder, label: ?[*:0]const u8) void;
@@ -290,7 +290,7 @@ pub const RenderPassEncoder = opaque {
     pub inline fn pushDebugGroup(self: *RenderPassEncoder, group_label: [*:0]const u8) void {
         wgpuRenderPassEncoderPushDebugGroup(self, group_label);
     }
-    pub inline fn setBindGroup(self: *RenderPassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: [*]const u32) void {
+    pub inline fn setBindGroup(self: *RenderPassEncoder, group_index: u32, group: *BindGroup, dynamic_offset_count: usize, dynamic_offsets: ?[*]const u32) void {
         wgpuRenderPassEncoderSetBindGroup(self, group_index, group, dynamic_offset_count, dynamic_offsets);
     }
     pub inline fn setBlendConstant(self: *RenderPassEncoder, color: *const Color) void {

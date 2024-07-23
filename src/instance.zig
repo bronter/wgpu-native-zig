@@ -80,7 +80,7 @@ pub const InstanceProcs = struct {
 
     // wgpu-native procs?
     // pub const GenerateReport = *const fn(*Instance, *GlobalReport) callconv(.C) void;
-    // pub const EnumerateAdapters = *const fn(*Instance, ?*const EnumerateAdapterOptions, [*]Adapter) callconv(.C) usize;
+    // pub const EnumerateAdapters = *const fn(*Instance, ?*const EnumerateAdapterOptions, ?[*]Adapter) callconv(.C) usize;
 };
 
 extern fn wgpuCreateInstance(descriptor: ?*const InstanceDescriptor) ?*Instance;
@@ -133,7 +133,7 @@ pub const EnumerateAdapterOptions = extern struct {
 
 // wgpu-native
 extern fn wgpuGenerateReport(instance: *Instance, report: *GlobalReport) void;
-extern fn wgpuInstanceEnumerateAdapters(instance: *Instance, options: ?*EnumerateAdapterOptions, adapters: [*]Adapter) usize;
+extern fn wgpuInstanceEnumerateAdapters(instance: *Instance, options: ?*EnumerateAdapterOptions, adapters: ?[*]Adapter) usize;
 
 pub const Instance = opaque {
     pub inline fn create(descriptor: ?*const InstanceDescriptor) ?*Instance {
@@ -181,7 +181,7 @@ pub const Instance = opaque {
     pub inline fn generateReport(self: *Instance, report: *GlobalReport) void {
         wgpuGenerateReport(self, report);
     }
-    pub inline fn enumerateAdapters(self: *Instance, options: ?*EnumerateAdapterOptions, adapters: [*]Adapter) usize {
+    pub inline fn enumerateAdapters(self: *Instance, options: ?*EnumerateAdapterOptions, adapters: ?[*]Adapter) usize {
         return wgpuInstanceEnumerateAdapters(self, options, adapters);
     }
 };

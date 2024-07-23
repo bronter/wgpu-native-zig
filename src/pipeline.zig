@@ -194,7 +194,7 @@ pub const VertexState = extern struct {
     module: *ShaderModule,
     entry_point: ?[*:0]const u8 = null,
     constant_count: usize = 0,
-    constants: ?[*]const ConstantEntry,
+    constants: ?[*]const ConstantEntry = null,
     buffer_count: usize,
     buffers: [*]const VertexBufferLayout,
 };
@@ -346,7 +346,7 @@ pub const FragmentState = extern struct {
     module: ShaderModule,
     entry_point: ?[*:0]const u8 = null,
     constant_count: usize = 0,
-    constants: ?[*]const ConstantEntry,
+    constants: ?[*]const ConstantEntry = null,
     target_count: usize,
     targets: [*]const ColorTargetState,
 };
