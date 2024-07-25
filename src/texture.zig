@@ -4,6 +4,10 @@ const _misc = @import("misc.zig");
 const WGPUFlags = _misc.WGPUFlags;
 const WGPUBool = _misc.WGPUBool;
 
+pub const WGPU_ARRAY_LAYER_COUNT_UNDEFINED = @as(u32, 0xffffffff);
+pub const WGPU_MIP_LEVEL_COUNT_UNDEFINED = @as(u32, 0xffffffff);
+pub const WGPU_COPY_STRIDE_UNDEFINED = @as(u32, 0xffffffff);
+
 const Buffer = @import("buffer.zig").Buffer;
 
 pub const TextureFormat = enum(u32) {
@@ -127,13 +131,13 @@ pub const TextureAspect = enum(u32) {
 pub const TextureViewDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     label: ?[*:0]const u8 = null,
-    format: TextureFormat,
-    dimension: ViewDimension,
-    base_mip_level: u32,
-    mip_level_count: u32,
-    base_array_layer: u32,
-    array_layer_count: u32,
-    aspect: TextureAspect,
+    format: TextureFormat = TextureFormat.@"undefined",
+    dimension: ViewDimension = ViewDimension.@"undefined",
+    base_mip_level: u32 = 0,
+    mip_level_count: u32 = WGPU_MIP_LEVEL_COUNT_UNDEFINED,
+    base_array_layer: u32 = 0,
+    array_layer_count: u32 = WGPU_ARRAY_LAYER_COUNT_UNDEFINED,
+    aspect: TextureAspect = TextureAspect.all,
 };
 
 pub const TextureViewProcs = struct {
@@ -225,7 +229,7 @@ pub const TextureDescriptor = extern struct {
 };
 
 pub const TextureProcs = struct {
-    pub const CreateView = *const fn(*Texture, *const TextureViewDescriptor) callconv(.C) ?*TextureView;
+    pub const CreateView = *const fn(*Texture, ?*const TextureViewDescriptor) callconv(.C) ?*TextureView;
     pub const Destroy = *const fn(*Texture) callconv(.C) void;
     pub const GetDepthOrArrayLayers = *const fn(*Texture) callconv(.C) u32;
     pub const GetDimension = *const fn(*Texture) callconv(.C) TextureDimension;
@@ -240,7 +244,7 @@ pub const TextureProcs = struct {
     pub const Release = *const fn(*Texture) callconv(.C) void;
 };
 
-extern fn wgpuTextureCreateView(texture: *Texture, descriptor: *const TextureViewDescriptor) ?*TextureView;
+extern fn wgpuTextureCreateView(texture: *Texture, descriptor: ?*const TextureViewDescriptor) ?*TextureView;
 extern fn wgpuTextureDestroy(texture: *Texture) void;
 extern fn wgpuTextureGetDepthOrArrayLayers(texture: *Texture) u32;
 extern fn wgpuTextureGetDimension(texture: *Texture) TextureDimension;
@@ -255,7 +259,7 @@ extern fn wgpuTextureReference(texture: *Texture) void;
 extern fn wgpuTextureRelease(texture: *Texture) void;
 
 pub const Texture = opaque {
-    pub inline fn createView(self: *Texture, descriptor: *const TextureViewDescriptor) ?*TextureView {
+    pub inline fn createView(self: *Texture, descriptor: ?*const TextureViewDescriptor) ?*TextureView {
         return wgpuTextureCreateView(self, descriptor);
     }
     pub inline fn destroy(self: *Texture) void {
@@ -312,9 +316,9 @@ pub const ImageCopyTexture = extern struct {
 
 pub const TextureDataLayout = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    offset: u64,
-    bytes_per_row: u32,
-    rows_per_image: u32,
+    offset: u64 = 0,
+    bytes_per_row: u32 = WGPU_COPY_STRIDE_UNDEFINED,
+    rows_per_image: u32 = WGPU_COPY_STRIDE_UNDEFINED,
 };
 
 // Seems a little weird to put this in texture.zig,

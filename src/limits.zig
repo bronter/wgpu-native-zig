@@ -3,6 +3,11 @@ const ChainedStructOut = _chained_struct.ChainedStructOut;
 const ChainedStruct = _chained_struct.ChainedStruct;
 const SType = _chained_struct.SType;
 
+// A lot of limits used to default to these, but I don't think they're used anymore?
+// https://github.com/gfx-rs/wgpu-native/pull/239
+pub const WGPU_LIMIT_U32_UNDEFINED = @as(u32, 0xffffffff);
+pub const WGPU_LIMIT_U64_UNDEFINED = @as(u64, 0xffffffffffffffff);
+
 pub const Limits = extern struct {
     max_texture_dimension_1d: u32,
     max_texture_dimension_2d: u32,

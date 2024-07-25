@@ -1,3 +1,5 @@
+pub const WGPU_WHOLE_SIZE = @as(u64, 0xffffffffffffffff);
+
 pub const WGPUBool = u32;
 pub const WGPUFlags = u32;
 

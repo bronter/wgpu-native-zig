@@ -195,8 +195,8 @@ pub const VertexState = extern struct {
     entry_point: ?[*:0]const u8 = null,
     constant_count: usize = 0,
     constants: ?[*]const ConstantEntry = null,
-    buffer_count: usize,
-    buffers: [*]const VertexBufferLayout,
+    buffer_count: usize = 0,
+    buffers: ?[*]const VertexBufferLayout = null,
 };
 
 pub const PrimitiveTopology = enum(u32) {
@@ -222,14 +222,14 @@ pub const PrimitiveDepthClipControl = extern struct {
     chain: ChainedStruct = ChainedStruct {
         .s_type = SType.primitive_depth_clip_control,
     },
-    unclipped_depth: WGPUBool,
+    unclipped_depth: WGPUBool = @intFromBool(false),
 };
 pub const PrimitiveState = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    topology: PrimitiveTopology,
-    strip_index_format: IndexFormat,
-    front_face: FrontFace,
-    cull_mode: CullMode,
+    topology: PrimitiveTopology = PrimitiveTopology.triangle_list,
+    strip_index_format: IndexFormat = IndexFormat.@"undefined",
+    front_face: FrontFace = FrontFace.ccw,
+    cull_mode: CullMode = CullMode.none,
 
     pub inline fn withDepthClipControl(self: PrimitiveState, unclipped_depth: bool) PrimitiveState {
         var ps = self;
@@ -282,11 +282,11 @@ pub const DepthStencilState = extern struct {
     depth_bias_clamp: f32,
 };
 
-pub const MultiSampleState = extern struct {
+pub const MultisampleState = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    count: u32,
-    mask: u32,
-    alpha_to_coverage_enabled: WGPUBool,
+    count: u32 = 1,
+    mask: u32 = 0xffffffff,
+    alpha_to_coverage_enabled: WGPUBool = @intFromBool(false),
 };
 
 pub const BlendOperation = enum(u32) {
@@ -317,11 +317,41 @@ pub const BlendComponent = extern struct {
     operation: BlendOperation,
     src_factor: BlendFactor,
     dst_factor: BlendFactor,
+
+    // Preset components borrowed from wgpu-types
+    pub const replace = BlendComponent {
+        .operation = BlendOperation.add,
+        .src_factor = BlendFactor.one,
+        .dst_factor = BlendFactor.zero,
+    };
+    pub const over = BlendComponent {
+        .operation = BlendOperation.add,
+        .src_factor = BlendFactor.one,
+        .dst_factor = BlendFactor.one_minus_src_alpha,
+    };
 };
 
 pub const BlendState = extern struct {
     color: BlendComponent,
     alpha: BlendComponent,
+
+    // Preset blend states borrowed from wgpu-types
+    pub const replace = BlendState {
+        .color = BlendComponent.replace,
+        .alpha = BlendComponent.replace,
+    };
+    pub const alpha_blending = BlendState {
+        .color = BlendComponent {
+            .operation = BlendOperation.add,
+            .src_factor = BlendFactor.src_alpha,
+            .dst_factor = BlendFactor.one_minus_src_alpha,
+        },
+        .alpha = BlendComponent.over,
+    };
+    pub const premultiplied_alpha_blending = BlendState {
+        .color = BlendComponent.over,
+        .alpha = BlendComponent.over,
+    };
 };
 
 pub const ColorWriteMaskFlags = WGPUFlags;
@@ -338,7 +368,7 @@ pub const ColorTargetState = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     format: TextureFormat,
     blend: ?*const BlendState = null,
-    write_mask: ColorWriteMaskFlags,
+    write_mask: ColorWriteMaskFlags = ColorWriteMask.all,
 };
 
 pub const FragmentState = extern struct {
@@ -358,7 +388,7 @@ pub const RenderPipelineDescriptor = extern struct {
     vertex: VertexState,
     primitive: PrimitiveState,
     depth_stencil: ?*const DepthStencilState = null,
-    multisample: MultiSampleState,
+    multisample: MultisampleState,
     fragment: ?*const FragmentState = null,
 };
 

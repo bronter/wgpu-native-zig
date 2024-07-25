@@ -2,6 +2,13 @@ const _misc = @import("misc.zig");
 const WGPUBool = _misc.WGPUBool;
 const WGPUFlags = _misc.WGPUFlags;
 
+// This one is a bit odd; in webgpu.h it is defined as SIZE_MAX (from stdint.h),
+// which like many things in C seems to be compiler- and platform- dependent.
+// Internally though it's set to Rust's usize::MAX.
+// Since Zig's translate-c seems to spit out a usize when given a size_t,
+// I think it's safe to set it to the max of Zig's usize.
+pub const WGPU_WHOLE_MAP_SIZE = ~@as(usize, 0);
+
 const ChainedStruct = @import("chained_struct.zig").ChainedStruct;
 
 pub const BufferBindingType = enum(u32) {
@@ -98,12 +105,14 @@ pub const Buffer = opaque {
     pub inline fn destroy(self: *Buffer) void {
         wgpuBufferDestroy(self);
     }
+    // wgpu-native translates a size of WGPU_WHOLE_MAP_SIZE to "None" internally
     pub inline fn getConstMappedRange(self: *Buffer, offset: usize, size: usize) ?*const anyopaque {
         return wgpuBufferGetConstMappedRange(self, offset, size);
     }
     pub inline fn getMapState(self: *Buffer) BufferMapState {
         return wgpuBufferGetMapState(self);
     }
+    // wgpu-native translates a size of WGPU_WHOLE_MAP_SIZE to "None" internally
     pub inline fn getMappedRange(self: *Buffer, offset: usize, size: usize) ?*anyopaque {
         return wgpuBufferGetMappedRange(self, offset, size);
     }

@@ -25,10 +25,12 @@ const RenderBundle = @import("render_bundle.zig").RenderBundle;
 
 const ShaderStageFlags = @import("shader.zig").ShaderStageFlags;
 
+pub const WGPU_QUERY_SET_INDEX_UNDEFINED = @as(u32, 0xffffffff);
+
 pub const TimestampWrites = extern struct {
     query_set: *QuerySet,
-    beginning_of_pass_write_index: u32,
-    end_of_pass_write_index: u32,
+    beginning_of_pass_write_index: u32 = WGPU_QUERY_SET_INDEX_UNDEFINED,
+    end_of_pass_write_index: u32 = WGPU_QUERY_SET_INDEX_UNDEFINED,
 };
 
 pub const ComputePassTimestampWrites = TimestampWrites;
@@ -135,19 +137,19 @@ pub const StoreOp = enum(u32) {
 };
 
 pub const Color = extern struct {
-    r: f64,
-    g: f64,
-    b: f64,
-    a: f64,
+    r: f64 = 0.0,
+    g: f64 = 0.0,
+    b: f64 = 0.0,
+    a: f64 = 0.0,
 };
 
 pub const ColorAttachment = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     view: ?*TextureView,
     resolve_target: ?*TextureView = null,
-    loap_op: LoadOp,
-    store_op: StoreOp,
-    clear_value: Color
+    loap_op: LoadOp = LoadOp.clear,
+    store_op: StoreOp = StoreOp.store,
+    clear_value: Color = Color {},
 };
 
 pub const DepthStencilAttachment = extern struct {
