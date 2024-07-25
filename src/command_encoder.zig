@@ -200,7 +200,7 @@ pub const RenderPassEncoderProcs = struct {
     pub const DrawIndirect = *const fn(*RenderPassEncoder, *Buffer, u64) callconv(.C) void;
     pub const End = *const fn(*RenderPassEncoder) callconv(.C) void;
     pub const EndOcclusionQuery = *const fn(*RenderPassEncoder) callconv(.C) void;
-    pub const ExecuteBundles = *const fn(*RenderPassEncoder, usize, [*]const RenderBundle) callconv(.C) void;
+    pub const ExecuteBundles = *const fn(*RenderPassEncoder, usize, [*]const *const RenderBundle) callconv(.C) void;
     pub const InsertDebugMarker = *const fn(*RenderPassEncoder, [*:0]const u8) callconv(.C) void;
     pub const PopDebugGroup = *const fn(*RenderPassEncoder) callconv(.C) void;
     pub const PushDebugGroup = *const fn(*RenderPassEncoder, [*:0]const u8) callconv(.C) void;
@@ -233,7 +233,7 @@ extern fn wgpuRenderPassEncoderDrawIndexedIndirect(render_pass_encoder: *RenderP
 extern fn wgpuRenderPassEncoderDrawIndirect(render_pass_encoder: *RenderPassEncoder, indirect_buffer: *Buffer, indirect_offset: u64) void;
 extern fn wgpuRenderPassEncoderEnd(render_pass_encoder: *RenderPassEncoder) void;
 extern fn wgpuRenderPassEncoderEndOcclusionQuery(render_pass_encoder: *RenderPassEncoder) void;
-extern fn wgpuRenderPassEncoderExecuteBundles(render_pass_encoder: *RenderPassEncoder, bundle_count: usize, bundles: [*]const RenderBundle) void;
+extern fn wgpuRenderPassEncoderExecuteBundles(render_pass_encoder: *RenderPassEncoder, bundle_count: usize, bundles: [*]const *const RenderBundle) void;
 extern fn wgpuRenderPassEncoderInsertDebugMarker(render_pass_encoder: *RenderPassEncoder, marker_label: [*:0]const u8) void;
 extern fn wgpuRenderPassEncoderPopDebugGroup(render_pass_encoder: *RenderPassEncoder) void;
 extern fn wgpuRenderPassEncoderPushDebugGroup(render_pass_encoder: *RenderPassEncoder, group_label: [*:0]const u8) void;
@@ -280,8 +280,8 @@ pub const RenderPassEncoder = opaque {
     pub inline fn endOcclusionQuery(self: *RenderPassEncoder) void {
         wgpuRenderPassEncoderEndOcclusionQuery(self);
     }
-    pub inline fn executeBundles(self: *RenderPassEncoder, bundle_count: usize, bundles: [*]const RenderBundle) void {
-        wgpuRenderPassEncoderExecuteBundles(self, bundle_count, bundles);
+    pub inline fn executeBundles(self: *RenderPassEncoder, bundles: []const *const RenderBundle) void {
+        wgpuRenderPassEncoderExecuteBundles(self, bundles.len, bundles.ptr);
     }
     pub inline fn insertDebugMarker(self: *RenderPassEncoder, marker_label: [*:0]const u8) void {
         wgpuRenderPassEncoderInsertDebugMarker(self, marker_label);
