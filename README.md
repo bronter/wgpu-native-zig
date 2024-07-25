@@ -119,5 +119,3 @@ Then, in `build.zig` add:
 * Port [wgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples) using wrapper code, as a basic form of documentation.
 * Custom-build `wgpu-native`; provided all the necessary tools/dependencies are present.
 * Figure out dynamic linking
-* Normalize names from `wgpu.h` if possible
-  * The names for things related OpenGL ES and DirectX seem to be inconsistent with how they're named in `WGPUBackendType` from `webgpu.h`. Specifically, OpenGL ES is capitalized like `GLES` rather than `Gles`, and DirectX is prefixed with `D3D` rather than `Dx`. It's unclear to me whether this also relates to `fxc`, `dxc`, `dxil_path`, and `dxc_path`. 
