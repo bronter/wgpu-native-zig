@@ -10,6 +10,7 @@ const _texture = @import("texture.zig");
 const Texture = _texture.Texture;
 const TextureFormat = _texture.TextureFormat;
 const TextureUsageFlags = _texture.TextureUsageFlags;
+const TextureUsage = _texture.TextureUsage;
 
 const _device = @import("device.zig");
 const Device = _device.Device;
@@ -198,13 +199,13 @@ pub const SurfaceConfiguration = extern struct {
     next_in_chain: *ChainedStruct,
     device: *Device,
     format: TextureFormat,
-    usage: TextureUsageFlags,
-    view_format_count: usize,
-    view_formats: [*]const TextureFormat,
-    alpha_mode: CompositeAlphaMode,
+    usage: TextureUsageFlags = TextureUsage.render_attachment,
+    view_format_count: usize = 0,
+    view_formats: [*]const TextureFormat = (&[_]TextureFormat{}).ptr,
+    alpha_mode: CompositeAlphaMode = CompositeAlphaMode.auto,
     width: u32,
     height: u32,
-    present_mode: PresentMode,
+    present_mode: PresentMode = PresentMode.fifo,
 
     pub inline fn withDesiredMaxFrameLatency(self: SurfaceConfiguration, desired_max_frame_latency: u32) SurfaceConfiguration {
         var sc = self;

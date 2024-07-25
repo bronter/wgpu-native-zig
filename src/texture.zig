@@ -184,9 +184,9 @@ pub const ViewDimension = enum(u32) {
 
 pub const TextureBindingLayout = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    sample_type: SampleType,
-    view_dimension: ViewDimension,
-    multisampled: WGPUBool,
+    sample_type: SampleType = SampleType.@"undefined",
+    view_dimension: ViewDimension = ViewDimension.@"2d",
+    multisampled: WGPUBool = @intFromBool(false),
 };
 
 pub const StorageTextureAccess = enum(u32) {
@@ -198,9 +198,9 @@ pub const StorageTextureAccess = enum(u32) {
 
 pub const StorageTextureBindingLayout = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    access: StorageTextureAccess,
-    format: TextureFormat,
-    view_dimension: ViewDimension,
+    access: StorageTextureAccess = StorageTextureAccess.@"undefined",
+    format: TextureFormat = TextureFormat.@"undefined",
+    view_dimension: ViewDimension = ViewDimension.@"2d",
 };
 
 pub const TextureDimension = enum(u32) {
@@ -210,9 +210,9 @@ pub const TextureDimension = enum(u32) {
 };
 
 pub const Extent3D = extern struct {
-    width: u32,
-    height: u32,
-    depth_or_array_layers: u32,
+    width: u32 = 1,
+    height: u32 = 1,
+    depth_or_array_layers: u32 = 1,
 };
 
 pub const TextureDescriptor = extern struct {
@@ -225,7 +225,7 @@ pub const TextureDescriptor = extern struct {
     mip_level_count: u32 = 1,
     sample_count: u32 = 1,
     view_format_count: usize = 0,
-    view_formats: ?[*]const TextureFormat = null,
+    view_formats: [*]const TextureFormat = (&[_]TextureFormat{}).ptr,
 };
 
 pub const TextureProcs = struct {
@@ -301,17 +301,17 @@ pub const Texture = opaque {
 };
 
 pub const Origin3D = extern struct {
-    x: u32,
-    y: u32,
-    z: u32,
+    x: u32 = 0,
+    y: u32 = 0,
+    z: u32 = 0,
 };
 
 pub const ImageCopyTexture = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     texture: *Texture,
-    mip_level: u32,
+    mip_level: u32 = 0,
     origin: Origin3D,
-    aspect: TextureAspect,
+    aspect: TextureAspect = TextureAspect.all,
 };
 
 pub const TextureDataLayout = extern struct {

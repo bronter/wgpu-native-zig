@@ -17,6 +17,8 @@ const StorageTextureBindingLayout = _texture.StorageTextureBindingLayout;
 
 const ShaderStageFlags = @import("shader.zig").ShaderStageFlags;
 
+const WGPU_WHOLE_SIZE = @import("misc.zig").WGPU_WHOLE_SIZE;
+
 pub const BindGroupLayoutEntryExtras = extern struct {
     chain: ChainedStruct = ChainedStruct {
         .s_type = SType.bind_group_layout_entry_extras,
@@ -89,8 +91,8 @@ pub const BindGroupEntry = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     binding: u32,
     buffer: ?*Buffer = null,
-    offset: u64,
-    size: u64,
+    offset: u64 = 0,
+    size: u64 = WGPU_WHOLE_SIZE,
     sampler: ?*Sampler = null,
     texture_view: ?*TextureView = null,
 

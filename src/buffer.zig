@@ -20,9 +20,9 @@ pub const BufferBindingType = enum(u32) {
 
 pub const BufferBindingLayout = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    @"type": BufferBindingType,
-    has_dynamic_offset: WGPUBool,
-    min_binding_size: u64,
+    @"type": BufferBindingType = BufferBindingType.@"undefined",
+    has_dynamic_offset: WGPUBool = @intFromBool(false),
+    min_binding_size: u64 = 0,
 };
 
 pub const BufferUsageFlags = WGPUFlags;
@@ -72,7 +72,7 @@ pub const BufferDescriptor = extern struct {
     label: ?[*:0]const u8 = null,
     usage: BufferUsageFlags,
     size: u64,
-    mapped_at_creation: WGPUBool,
+    mapped_at_creation: WGPUBool = @intFromBool(false),
 };
 
 pub const BufferProcs = struct {

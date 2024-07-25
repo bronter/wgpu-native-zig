@@ -154,14 +154,14 @@ pub const ColorAttachment = extern struct {
 
 pub const DepthStencilAttachment = extern struct {
     view: *TextureView,
-    depth_load_op: LoadOp,
-    depth_store_op: StoreOp,
-    depth_clear_value: f32,
-    depth_read_only: WGPUBool,
-    stencil_load_op: LoadOp,
-    stencil_store_op: StoreOp,
-    stencil_clear_value: u32,
-    stencil_read_only: WGPUBool,
+    depth_load_op: LoadOp = LoadOp.@"undefined",
+    depth_store_op: StoreOp = StoreOp.@"undefined",
+    depth_clear_value: f32 = 0,
+    depth_read_only: WGPUBool = @intFromBool(false),
+    stencil_load_op: LoadOp = LoadOp.@"undefined",
+    stencil_store_op: StoreOp = StoreOp.@"undefined",
+    stencil_clear_value: u32 = 0,
+    stencil_read_only: WGPUBool = @intFromBool(false),
 };
 
 pub const RenderPassTimestampWrites = TimestampWrites;
@@ -170,7 +170,7 @@ pub const RenderPassDescriptorMaxDrawCount = extern struct {
     chain: ChainedStruct = ChainedStruct {
         .s_type = SType.render_pass_descriptor_max_draw_count,
     },
-    max_draw_count: u64,
+    max_draw_count: u64 = 50000000,
 };
 
 pub const RenderPassDescriptor = extern struct {

@@ -83,7 +83,7 @@ pub const ProgrammableStageDescriptor = extern struct {
     module: *ShaderModule,
     entry_point: ?[*:0]const u8 = null,
     constant_count: usize = 0,
-    constants: ?[*]const ConstantEntry = null,
+    constants: [*]const ConstantEntry = (&[_]ConstantEntry{}).ptr,
 };
 
 pub const ComputePipelineDescriptor = extern struct {
@@ -184,7 +184,7 @@ pub const VertexAttribute = extern struct {
 
 pub const VertexBufferLayout = extern struct {
     array_stride: u64,
-    step_mode: VertexStepMode,
+    step_mode: VertexStepMode = VertexStepMode.vertex,
     attribute_count: usize,
     attributes: [*]const VertexAttribute,
 };
@@ -194,9 +194,9 @@ pub const VertexState = extern struct {
     module: *ShaderModule,
     entry_point: ?[*:0]const u8 = null,
     constant_count: usize = 0,
-    constants: ?[*]const ConstantEntry = null,
+    constants: [*]const ConstantEntry = (&[_]ConstantEntry{}).ptr,
     buffer_count: usize = 0,
-    buffers: ?[*]const VertexBufferLayout = null,
+    buffers: [*]const VertexBufferLayout = (&[_]VertexBufferLayout{}).ptr,
 };
 
 pub const PrimitiveTopology = enum(u32) {
@@ -262,24 +262,24 @@ pub const StencilOperation = enum(u32) {
 };
 
 pub const StencilFaceState = extern struct {
-    compare: CompareFunction,
-    fail_op: StencilOperation,
-    depth_fail_op: StencilOperation,
-    pass_op: StencilOperation,
+    compare: CompareFunction = CompareFunction.always,
+    fail_op: StencilOperation = StencilOperation.keep,
+    depth_fail_op: StencilOperation = StencilOperation.keep,
+    pass_op: StencilOperation = StencilOperation.keep,
 };
 
 pub const DepthStencilState = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     format: TextureFormat,
-    depth_write_enabled: WGPUBool,
-    depth_compare: CompareFunction,
+    depth_write_enabled: WGPUBool = @intFromBool(false),
+    depth_compare: CompareFunction = CompareFunction.@"undefined",
     stencil_front: StencilFaceState,
     stencil_back: StencilFaceState,
-    stencil_read_mask: u32,
-    stencil_write_mask: u32,
-    depth_bias: i32,
-    depth_bias_slope_scale: f32,
-    depth_bias_clamp: f32,
+    stencil_read_mask: u32 = 0xffffffff,
+    stencil_write_mask: u32 = 0xffffffff,
+    depth_bias: i32 = 0,
+    depth_bias_slope_scale: f32 = 0.0,
+    depth_bias_clamp: f32 = 0.0,
 };
 
 pub const MultisampleState = extern struct {
@@ -314,9 +314,9 @@ pub const BlendFactor = enum(u32) {
 };
 
 pub const BlendComponent = extern struct {
-    operation: BlendOperation,
-    src_factor: BlendFactor,
-    dst_factor: BlendFactor,
+    operation: BlendOperation = BlendOperation.add,
+    src_factor: BlendFactor = BlendFactor.one,
+    dst_factor: BlendFactor = BlendFactor.zero,
 
     // Preset components borrowed from wgpu-types
     pub const replace = BlendComponent {
@@ -376,7 +376,7 @@ pub const FragmentState = extern struct {
     module: ShaderModule,
     entry_point: ?[*:0]const u8 = null,
     constant_count: usize = 0,
-    constants: ?[*]const ConstantEntry = null,
+    constants: [*]const ConstantEntry = (&[_]ConstantEntry{}).ptr,
     target_count: usize,
     targets: [*]const ColorTargetState,
 };

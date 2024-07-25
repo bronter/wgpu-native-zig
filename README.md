@@ -118,7 +118,6 @@ Then, in `build.zig` add:
 * Test this on other machines with different OS/CPU (currently only tested on linux x86_64)
 * Create more idiomatic wrapper around `webgpu.h`/`wgpu.h` (mostly finished with some potential issues)
   * Investigate usages of many-item pointers. There are probably some many-item pointers that should be optional but aren't (potentially a breaking issue), and there are probably also some optional many-item pointers that should default to null but don't (annoying but can be worked around). Implementing more examples should uncover many of these issues.
-  * Fill out default values. Looking through the wgpu source code helps, but the structures don't match exactly. `dawn.json` also seems to document a lot of them, though I haven't checked if they agree with the wgpu defaults. Possibly the WebGPU spec defines these?
 * Port [wgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples) using wrapper code, as a basic form of documentation.
 * Custom-build `wgpu-native`; provided all the necessary tools/dependencies are present.
 * Figure out dynamic linking

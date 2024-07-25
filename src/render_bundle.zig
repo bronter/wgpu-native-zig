@@ -13,10 +13,10 @@ pub const RenderBundleEncoderDescriptor = extern struct {
     label: ?[*:0]const u8 = null,
     color_format_count: usize,
     color_formats: [*]const TextureFormat,
-    depth_stencil_format: TextureFormat,
-    sample_count: u32,
-    depth_read_only: WGPUBool,
-    stencil_read_only: WGPUBool,
+    depth_stencil_format: TextureFormat = TextureFormat.@"undefined",
+    sample_count: u32 = 1,
+    depth_read_only: WGPUBool = @intFromBool(false),
+    stencil_read_only: WGPUBool = @intFromBool(false),
 };
 
 pub const RenderBundleEncoderProcs = struct {

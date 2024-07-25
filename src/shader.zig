@@ -24,7 +24,7 @@ pub const ShaderModuleDescriptor = extern struct {
     next_in_chain: *const ChainedStruct,
     label: ?[*:0]const u8 = null,
     hint_count: usize = 0,
-    hints: ?[*]const CompilationHint = null,
+    hints: [*]const CompilationHint = (&[_]CompilationHint{}).ptr,
 };
 
 pub const ShaderModuleSPIRVDescriptor = extern struct {
@@ -37,7 +37,7 @@ pub const ShaderModuleSPIRVDescriptor = extern struct {
 pub const ShaderModuleSPIRVMergedDescriptor = struct {
     label: ?[*:0]const u8 = null,
     hint_count: usize = 0,
-    hints: ?[*]const CompilationHint = null,
+    hints: [*]const CompilationHint = (&[_]CompilationHint{}).ptr,
     code_size: u32,
     code: [*]const u32,
 };
@@ -64,7 +64,7 @@ pub const ShaderModuleWGSLDescriptor = extern struct {
 pub const ShaderModuleWGSLMergedDescriptor = struct {
     label: ?[*:0]const u8 = null,
     hint_count: usize = 0,
-    hints: ?[*]const CompilationHint = null,
+    hints: [*]const CompilationHint = (&[_]CompilationHint{}).ptr,
     code: [*:0]const u8,
 };
 pub inline fn shaderModuleWGSLDescriptor(
@@ -96,7 +96,7 @@ pub const ShaderModuleGLSLDescriptor = extern struct {
 pub const ShaderModuleGLSLMergedDescriptor = struct {
     label: ?[*:0]const u8 = null,
     hint_count: usize = 0,
-    hints: ?[*]const CompilationHint = null,
+    hints: [*]const CompilationHint = (&[_]CompilationHint{}).ptr,
     stage: ShaderStage,
     code: [*:0]const u8,
     define_count: u32 = 0,
