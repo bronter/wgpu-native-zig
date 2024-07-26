@@ -23,7 +23,7 @@ In your `build.zig.zon` add:
 ```
 Then, in `build.zig` add:
 ```zig
-    const wgpu_native_dep = b.dependency("wgpu_native_zig");
+    const wgpu_native_dep = b.dependency("wgpu_native_zig", .{});
 
     // Add module to your exe (wgpu-c can also be added like this, just pass in "wgpu-c" instead)
     exe.root_module.addImport("wgpu", wgpu_native_dep.module("wgpu"));
