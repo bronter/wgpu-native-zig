@@ -74,7 +74,7 @@ pub const PipelineLayout = opaque {
 
 pub const ConstantEntry = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    key: [*:0]const u8 = null,
+    key: [*:0]const u8,
     value: f64,
 };
 
