@@ -74,7 +74,7 @@ pub const DeviceExtras = extern struct {
         .s_type = SType.device_extras,
     },
     // Gonna assume this isn't optional, because why else would you use DeviceExtras?
-    trace_path: [*:0]const u8 = null,
+    trace_path: [*:0]const u8,
 };
 
 pub fn defaultDeviceLostCallback(reason: DeviceLostReason, message: ?[*:0]const u8, _: ?*anyopaque) callconv(.C) void {
