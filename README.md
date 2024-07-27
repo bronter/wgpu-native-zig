@@ -115,7 +115,7 @@ Then, in `build.zig` add:
   * This pretty much means, it is replaced with `bool` in the parameters and return values of methods, but not in structs or the parameters/return values of procs (which are supposed to be function pointers to things returned by `wgpuGetProcAddress`).
 
 ## TODO
-* Test this on other machines with different OS/CPU (currently only tested on linux x86_64)
+* Test this on other machines with different OS/CPU (currently only tested on linux x86_64; zig version 0.13.0-dev.351+64ef45eb0)
 * Port [wgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples) using wrapper code, as a basic form of documentation.
 * Custom-build `wgpu-native`; provided all the necessary tools/dependencies are present.
 * Figure out dynamic linking
