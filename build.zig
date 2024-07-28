@@ -106,6 +106,21 @@ pub fn build(b: *std.Build) void {
 
     const run_compute_test_c = b.addRunArtifact(compute_test_c);
 
+    const triangle_example_exe = b.addExecutable(.{
+        .name = "triangle-example",
+        .root_source_file = b.path("examples/triangle/triangle.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    triangle_example_exe.root_module.addImport("wgpu", mod);
+    const bmp_mod = b.createModule(.{
+        .root_source_file = b.path("examples/bmp.zig"),
+    });
+    triangle_example_exe.root_module.addImport("bmp", bmp_mod);
+    const run_triangle_cmd = b.addRunArtifact(triangle_example_exe);
+    const run_triangle_step = b.step("run-triangle-example", "Run the triangle example");
+    run_triangle_step.dependOn(&run_triangle_cmd.step);
+
     // This exposes a `test` step to the `zig build --help` menu,
     // providing a way for the user to request running the unit tests.
     const test_step = b.step("test", "Run unit tests");
