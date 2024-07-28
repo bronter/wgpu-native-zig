@@ -78,7 +78,7 @@ pub const DeviceExtras = extern struct {
 };
 
 pub fn defaultDeviceLostCallback(reason: DeviceLostReason, message: ?[*:0]const u8, _: ?*anyopaque) callconv(.C) void {
-    std.log.err("Device lost: reason={s} message=\"{s}\"\n", @tagName(reason), message);
+    std.log.err("Device lost: reason={s} message=\"{s}\"\n", .{ @tagName(reason), message orelse "" });
 }
 
 pub const DeviceDescriptor = extern struct {

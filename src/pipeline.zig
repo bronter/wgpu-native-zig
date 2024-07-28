@@ -373,7 +373,7 @@ pub const ColorTargetState = extern struct {
 
 pub const FragmentState = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    module: ShaderModule,
+    module: *ShaderModule,
     entry_point: ?[*:0]const u8 = null,
     constant_count: usize = 0,
     constants: [*]const ConstantEntry = (&[_]ConstantEntry{}).ptr,
