@@ -28,9 +28,7 @@ pub fn main() !void {
     defer adapter.release();
 
     const device_request = adapter.requestDeviceSync(&wgpu.DeviceDescriptor {
-        .required_limits = &wgpu.RequiredLimits {
-            .limits = wgpu.Limits {},
-        },
+        .required_limits = null,
     });
     const device = switch(device_request.status) {
         .success => device_request.device.?,
