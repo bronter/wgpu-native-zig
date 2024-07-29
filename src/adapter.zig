@@ -64,7 +64,7 @@ pub const RequestAdapterResponse = struct {
     adapter: ?*Adapter,
 };
 
-const AdapterProperties = extern struct {
+pub const AdapterProperties = extern struct {
     next_in_chain: ?*ChainedStructOut = null,
     vendor_id: u32,
     vendor_name: [*:0]const u8,
