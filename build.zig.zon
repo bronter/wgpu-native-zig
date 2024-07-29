@@ -88,6 +88,21 @@
             .hash = "1220236e1f3582750dc29df88453e5ced071cef6c7b99bb9c4fa8c0768b598810327",
             .lazy = true,
         },
+        .wgpu_windows_x86_Release = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-windows-i686-release.zip",
+            .hash = "1220300a415e6da6e4166b7d2967766200dbb27611e90b7b0f0581186d1cf46228f8",
+            .lazy = true,
+        },
+        .wgpu_windows_x86_64_Debug = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-windows-x86_64-debug.zip",
+            .hash = "12208d230d1caf2c05af6d98e468cd392bedafacbe7d54650a80544387da5b71b86d",
+            .lazy = true,
+        },
+        .wgpu_windows_x86_64_Release = .{
+            .url = "https://github.com/gfx-rs/wgpu-native/releases/download/v0.19.4.1/wgpu-windows-x86_64-release.zip",
+            .hash = "1220ad091260ce55550369c93489f75a44079d196f15b0de62140487380074d3923c",
+            .lazy = true,
+        },
     },
 
     // Specifies the set of files and directories that are included in this package.

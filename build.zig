@@ -23,7 +23,11 @@ const target_whitelist = [_] TargetQuery {
     TargetQuery {
         .cpu_arch = .x86,
         .os_tag = .windows,
-    }
+    },
+    TargetQuery {
+        .cpu_arch = .x86_64,
+        .os_tag = .windows,
+    },
 };
 
 // Although this function looks imperative, note that its job is to
