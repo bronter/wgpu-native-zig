@@ -50,7 +50,10 @@ pub fn build(b: *std.Build) void {
     const target_res = target.result;
     const os_str = @tagName(target_res.os.tag);
     const arch_str = @tagName(target_res.cpu.arch);
-    const mode_str = @tagName(optimize);
+    const mode_str = switch (optimize) {
+        .Debug => "debug",
+        else => "release"
+    };
     const target_name_slices = [_] [:0]const u8 {"wgpu_", os_str, "_", arch_str, "_", mode_str};
     const maybe_target_name = std.mem.concatWithSentinel(b.allocator, u8, &target_name_slices, 0);
     const target_name = maybe_target_name catch "wgpu_linux_x86_64_Debug";
