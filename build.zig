@@ -65,7 +65,7 @@ pub fn build(b: *std.Build) void {
         .link_libcpp = true,
     });
 
-    const wgpu_dep = b.lazyDependency(target_name, .{}).?;
+    const wgpu_dep = b.lazyDependency(target_name, .{}) orelse return;
 
     const lib_name = switch (target_res.os.tag) {
         // There's also some sorf of .pdb file available, which I think is a database of debugging symbols.
