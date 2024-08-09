@@ -260,7 +260,7 @@ pub const SurfaceProcs = struct {
     pub const Release = *const fn(*Surface) callconv(.C) void;
 };
 
-extern fn wgpuSurfaceConfigure(surface: *Surface, config: *SurfaceConfiguration) void;
+extern fn wgpuSurfaceConfigure(surface: *Surface, config: *const SurfaceConfiguration) void;
 extern fn wgpuSurfaceGetCapabilities(surface: *Surface, adapter: *Adapter, capabilities: *SurfaceCapabilities) void;
 extern fn wgpuSurfaceGetCurrentTexture(surface: *Surface, surface_texture: *SurfaceTexture) void;
 extern fn wgpuSurfaceGetPreferredFormat(surface: *Surface, adapter: *Adapter) TextureFormat;
