@@ -196,7 +196,7 @@ pub const SurfaceConfigurationExtras = extern struct {
 };
 
 pub const SurfaceConfiguration = extern struct {
-    next_in_chain: *ChainedStruct,
+    next_in_chain: ?*const ChainedStruct = null,
     device: *Device,
     format: TextureFormat,
     usage: TextureUsageFlags = TextureUsage.render_attachment,
