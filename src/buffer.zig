@@ -28,19 +28,20 @@ pub const BufferBindingLayout = extern struct {
     min_binding_size: u64 = 0,
 };
 
-pub const BufferUsage = WGPUFlags;
-pub const BufferUsages = struct {
-    pub const none          = @as(BufferUsage, 0x0000000000000000);
-    pub const map_read      = @as(BufferUsage, 0x0000000000000001);
-    pub const map_write     = @as(BufferUsage, 0x0000000000000002);
-    pub const copy_src      = @as(BufferUsage, 0x0000000000000004);
-    pub const copy_dst      = @as(BufferUsage, 0x0000000000000008);
-    pub const index         = @as(BufferUsage, 0x0000000000000010);
-    pub const vertex        = @as(BufferUsage, 0x0000000000000020);
-    pub const uniform       = @as(BufferUsage, 0x0000000000000040);
-    pub const storage       = @as(BufferUsage, 0x0000000000000080);
-    pub const indirect      = @as(BufferUsage, 0x0000000000000100);
-    pub const query_resolve = @as(BufferUsage, 0x0000000000000200);
+pub const BufferUsage = packed struct(WGPUFlags) {
+    map_read: bool = false,
+    map_write: bool = false,
+    copy_src: bool = false,
+    copy_dst: bool = false,
+    index: bool = false,
+    vertex: bool = false,
+    uniform: bool = false,
+    storage: bool = false,
+    indirect: bool = false,
+    query_resolve: bool = false,
+    _: u54 = 0,
+
+    pub const none = BufferUsage{};
 };
 
 pub const BufferMapState = enum(u32) {
@@ -49,11 +50,12 @@ pub const BufferMapState = enum(u32) {
     mapped   = 0x00000003,
 };
 
-pub const MapMode = WGPUFlags;
-pub const MapModes = struct {
-    pub const none  = @as(MapMode, 0x0000000000000000);
-    pub const read  = @as(MapMode, 0x0000000000000001);
-    pub const write = @as(MapMode, 0x0000000000000002);
+pub const MapMode = packed struct(WGPUFlags) {
+    read: bool = false,
+    write: bool = false,
+    _: u62 = 0,
+    
+    pub const none = MapMode{};
 };
 
 pub const MapAsyncStatus = enum(u32) {
@@ -83,20 +85,6 @@ pub const BufferDescriptor = extern struct {
     usage: BufferUsage,
     size: u64,
     mapped_at_creation: WGPUBool = @intFromBool(false),
-};
-
-pub const BufferProcs = struct {
-    pub const Destroy = *const fn(*Buffer) callconv(.C) void;
-    pub const GetConstMappedRange = *const fn(*Buffer, usize, usize) callconv(.C) ?*const anyopaque;
-    pub const GetMapState = *const fn(*Buffer) callconv(.C) BufferMapState;
-    pub const GetMappedRange = *const fn(*Buffer, usize, usize) callconv(.C) ?*anyopaque;
-    pub const GetSize = *const fn(*Buffer) callconv(.C) u64;
-    pub const GetUsage = *const fn(*Buffer) callconv(.C) BufferUsage;
-    pub const MapAsync = *const fn(*Buffer, MapMode, usize, usize, BufferMapCallbackInfo) callconv(.C) Future;
-    pub const SetLabel = *const fn(*Buffer, StringView) callconv(.C) void;
-    pub const Unmap = *const fn(*Buffer) callconv(.C) void;
-    pub const AddRef = *const fn(*Buffer) callconv(.C) void;
-    pub const Release = *const fn(*Buffer) callconv(.C) void;
 };
 
 extern fn wgpuBufferDestroy(buffer: *Buffer) void;

@@ -19,36 +19,28 @@ fn handleBufferMap(status: wgpu.MapAsyncStatus, _: wgpu.StringView, userdata1: ?
 // Based off of headless triangle example from https://github.com/eliemichel/LearnWebGPU-Code/tree/step030-headless
 
 pub fn main() !void {
-    const instance = wgpu.Instance.create(null).?;
+    const instance = try wgpu.Instance.create(null);
     defer instance.release();
 
-    const adapter_request = instance.requestAdapterSync(&wgpu.RequestAdapterOptions {}, 0);
-    const adapter = switch(adapter_request.status) {
-        .success => adapter_request.adapter.?,
-        else => return error.NoAdapter,
-    };
+    const adapter = try instance.requestAdapterSync(wgpu.RequestAdapterOptions {}, 0);
     defer adapter.release();
 
-    const device_request = adapter.requestDeviceSync(instance, &wgpu.DeviceDescriptor {
+    const device = try adapter.requestDeviceSync(instance, .{
         .required_limits = null,
     }, 0);
-    const device = switch(device_request.status) {
-        .success => device_request.device.?,
-        else => return error.NoDevice,
-    };
     defer device.release();
 
-    const queue = device.getQueue().?;
+    const queue = try device.getQueue();
     defer queue.release();
 
     const swap_chain_format = wgpu.TextureFormat.bgra8_unorm_srgb;
 
-    const target_texture = device.createTexture(&wgpu.TextureDescriptor {
+    const target_texture = try device.createTexture(&wgpu.TextureDescriptor {
         .label = wgpu.StringView.fromSlice("Render texture"),
         .size = output_extent,
         .format = swap_chain_format,
-        .usage = wgpu.TextureUsages.render_attachment | wgpu.TextureUsages.copy_src,
-    }).?;
+        .usage = wgpu.TextureUsage{ .render_attachment = true, .copy_src = true },
+    });
     defer target_texture.release();
 
     const target_texture_view = target_texture.createView(&wgpu.TextureViewDescriptor {
@@ -57,17 +49,17 @@ pub fn main() !void {
         .array_layer_count = 1,
     }).?;
 
-    const shader_module = device.createShaderModule(&wgpu.shaderModuleWGSLDescriptor(.{
+    const shader_module = try device.createShaderModule(&wgpu.shaderModuleWGSLDescriptor(.{
         .code = @embedFile("./shader.wgsl"),
-    })).?;
+    }));
     defer shader_module.release();
 
-    const staging_buffer = device.createBuffer(&wgpu.BufferDescriptor {
+    const staging_buffer = try device.createBuffer(&wgpu.BufferDescriptor {
         .label = wgpu.StringView.fromSlice("staging_buffer"),
-        .usage = wgpu.BufferUsages.map_read | wgpu.BufferUsages.copy_dst,
+        .usage = wgpu.BufferUsage{ .map_read = true, .copy_dst = true },
         .size = output_size,
         .mapped_at_creation = @as(u32, @intFromBool(false)),
-    }).?;
+    });
     defer staging_buffer.release();
 
     const color_targets = &[_] wgpu.ColorTargetState{
@@ -88,7 +80,7 @@ pub fn main() !void {
         },
     };
 
-    const pipeline = device.createRenderPipeline(&wgpu.RenderPipelineDescriptor {
+    const pipeline = try device.createRenderPipeline(&wgpu.RenderPipelineDescriptor {
         .vertex = wgpu.VertexState {
             .module = shader_module,
             .entry_point = wgpu.StringView.fromSlice("vs_main"),
@@ -101,15 +93,15 @@ pub fn main() !void {
             .targets = color_targets.ptr
         },
         .multisample = wgpu.MultisampleState {},
-    }).?;
+    });
     defer pipeline.release();
 
     { // Mock main "loop"
         const next_texture = target_texture_view;
 
-        const encoder = device.createCommandEncoder(&wgpu.CommandEncoderDescriptor {
+        const encoder = try device.createCommandEncoder(&wgpu.CommandEncoderDescriptor {
             .label = wgpu.StringView.fromSlice("Command Encoder"),
-        }).?;
+        });
         defer encoder.release();
 
         const color_attachments = &[_]wgpu.ColorAttachment{
@@ -155,7 +147,7 @@ pub fn main() !void {
         queue.submit(&[_]*const wgpu.CommandBuffer{command_buffer});
 
         var buffer_map_complete = false;
-        _ = staging_buffer.mapAsync(wgpu.MapModes.read, 0, output_size, wgpu.BufferMapCallbackInfo {
+        _ = staging_buffer.mapAsync(wgpu.MapMode{ .read = true }, 0, output_size, wgpu.BufferMapCallbackInfo {
             .callback = handleBufferMap,
             .userdata1 = @ptrCast(&buffer_map_complete),
         });

@@ -1,2 +1,2 @@
 #!/bin/sh
-zig build test compute-tests --summary all
+zig build unit-tests compute-tests --summary all

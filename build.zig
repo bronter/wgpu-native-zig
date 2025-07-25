@@ -263,64 +263,50 @@ fn triangle_example(b: *std.Build, context: *const WGPUBuildContext) void {
 }
 
 fn unit_tests(b: *std.Build, context: *const WGPUBuildContext) void {
-    const unit_test_step = b.step("test", "Run unit tests");
+    const unit_test_step = b.step("unit-tests", "Run unit tests");
     if (context.is_windows) {
         unit_test_step.dependOn(b.getInstallStep());
     }
 
-    const test_files = [_][:0]const u8{
-        "src/instance.zig",
-        "src/adapter.zig",
-        "src/pipeline.zig",
-    };
-    comptime var test_names: [test_files.len][:0]const u8 = test_files;
-    comptime for (test_files, 0..) |test_file, idx| {
-        const test_name = test_file[4..(test_file.len - 4)] ++ "-test";
-        test_names[idx] = test_name;
-    };
-
-    for (test_files, test_names) |test_file, test_name| {
-        // TODO: Seems weird to have a mod for each unit test, should probably revisit this.
-        const test_mod = b.createModule(.{
-            .root_source_file = b.path(test_file),
-            .target = context.target,
-            .optimize = context.optimize,
-        });
-        const t = b.addTest(.{
-            .name = test_name,
-            .root_module = test_mod,
-        });
-        handle_rt(context, t);
-        if (context.libwgpu_path != null) {
-            t.addObjectFile(context.libwgpu_path.?);
-        }
-        if (context.is_windows) {
-            t.linkLibC();
-        } else {
-            t.linkLibCpp();
-        }
-
-        const run_test = b.addRunArtifact(t);
-
-        if (context.is_mac) {
-            link_mac_frameworks(t);
-        }
-
-        if (context.link_mode == .dynamic) {
-            dynamic_link(context, t, run_test);
-        } else if (context.is_windows) {
-            if (context.target.result.abi == .gnu) {
-                link_windows_system_libraries(std.Build.Step.Compile, t, true);
-
-                // TODO: Find out why this is only required here; seems suspicious
-                t.linkSystemLibrary2("unwind", .{});
-            } else {
-                link_windows_system_libraries(std.Build.Step.Compile, t, false);
-            }
-        }
-
-        unit_test_step.dependOn(&run_test.step);
+    const test_mod = b.createModule(.{
+        .root_source_file = b.path("src/root.zig"),
+        .target = context.target,
+        .optimize = context.optimize,
+    });
+    const t = b.addTest(.{
+        .name = "root_unit",
+        .root_module = test_mod,
+    });
+    handle_rt(context, t);
+    if (context.libwgpu_path != null) {
+        t.addObjectFile(context.libwgpu_path.?);
     }
+    if (context.is_windows) {
+        t.linkLibC();
+    } else {
+        t.linkLibCpp();
+    }
+
+    const run_test = b.addRunArtifact(t);
+
+    if (context.is_mac) {
+        link_mac_frameworks(t);
+    }
+
+    if (context.link_mode == .dynamic) {
+        dynamic_link(context, t, run_test);
+    } else if (context.is_windows) {
+        if (context.target.result.abi == .gnu) {
+            link_windows_system_libraries(std.Build.Step.Compile, t, true);
+
+            // TODO: Find out why this is only required here; seems suspicious
+            t.linkSystemLibrary2("unwind", .{});
+        } else {
+            link_windows_system_libraries(std.Build.Step.Compile, t, false);
+        }
+    }
+
+    unit_test_step.dependOn(&run_test.step);
 }
 
 fn compute_tests(b: *std.Build, context: *const WGPUBuildContext) void {

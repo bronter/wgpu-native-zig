@@ -55,12 +55,6 @@ pub const SamplerDescriptor = extern struct {
     max_anisotropy: u16 = 1,
 };
 
-pub const SamplerProcs = struct {
-    pub const SetLabel = *const fn(*Sampler, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*Sampler) callconv(.C) void;
-    pub const Release = *const fn(*Sampler) callconv(.C) void;
-};
-
 extern fn wgpuSamplerSetLabel(sampler: *Sampler, label: StringView) void;
 extern fn wgpuSamplerAddRef(sampler: *Sampler) void;
 extern fn wgpuSamplerRelease(sampler: *Sampler) void;

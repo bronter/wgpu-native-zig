@@ -67,12 +67,6 @@ pub const BindGroupLayoutDescriptor = extern struct {
     entries: [*]const BindGroupLayoutEntry,
 };
 
-pub const BindGroupLayoutProcs = struct {
-    pub const SetLabel = *const fn(*BindGroupLayout, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*BindGroupLayout) callconv(.C) void;
-    pub const Release = *const fn(*BindGroupLayout) callconv(.C) void;
-};
-
 extern fn wgpuBindGroupLayoutSetLabel(bind_group_layout: *BindGroupLayout, label: StringView) void;
 extern fn wgpuBindGroupLayoutAddRef(bind_group_layout: *BindGroupLayout) void;
 extern fn wgpuBindGroupLayoutRelease(bind_group_layout: *BindGroupLayout) void;
@@ -126,12 +120,6 @@ pub const BindGroupDescriptor = extern struct {
     layout: *BindGroupLayout,
     entry_count: usize,
     entries: [*]const BindGroupEntry,
-};
-
-pub const BindGroupProcs = struct {
-    pub const SetLabel = *const fn(*BindGroup, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*BindGroup) callconv(.C) void;
-    pub const Release = *const fn(*BindGroup) callconv(.C) void;
 };
 
 extern fn wgpuBindGroupSetLabel(bind_group: *BindGroup, label: StringView) void;

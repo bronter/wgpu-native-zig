@@ -120,14 +120,15 @@ pub const TextureFormat = enum(u32) {
     nv12                    = 0x00030007,
 };
 
-pub const TextureUsage = WGPUFlags;
-pub const TextureUsages = struct {
-    pub const none              = @as(TextureUsage, 0x0000000000000000);
-    pub const copy_src          = @as(TextureUsage, 0x0000000000000001);
-    pub const copy_dst          = @as(TextureUsage, 0x0000000000000002);
-    pub const texture_binding   = @as(TextureUsage, 0x0000000000000004);
-    pub const storage_binding   = @as(TextureUsage, 0x0000000000000008);
-    pub const render_attachment = @as(TextureUsage, 0x0000000000000010);
+pub const TextureUsage = packed struct(WGPUFlags) {
+    copy_src: bool = false,
+    copy_dst: bool = false,
+    texture_binding: bool = false,
+    storage_binding: bool = false,
+    render_attachment: bool = false,
+    _: u59 = 0,
+
+    pub const none = TextureUsage{};
 };
 
 // TODO: Like a lot of things in this file, this breaks from the wrapper code convention by having an unneeded prefix ("Texture")
@@ -150,13 +151,7 @@ pub const TextureViewDescriptor = extern struct {
     base_array_layer: u32 = 0,
     array_layer_count: u32 = WGPU_ARRAY_LAYER_COUNT_UNDEFINED,
     aspect: TextureAspect = TextureAspect.all,
-    usage: TextureUsage = TextureUsages.none,
-};
-
-pub const TextureViewProcs = struct {
-    pub const SetLabel = *const fn(*TextureView, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*TextureView) callconv(.C) void;
-    pub const Release = *const fn(*TextureView) callconv(.C) void;
+    usage: TextureUsage = TextureUsage.none,
 };
 
 extern fn wgpuTextureViewSetLabel(texture_view: *TextureView, label: StringView) void;
@@ -253,22 +248,6 @@ pub const TextureDescriptor = extern struct {
     sample_count: u32 = 1,
     view_format_count: usize = 0,
     view_formats: [*]const TextureFormat = &[_]TextureFormat {},
-};
-
-pub const TextureProcs = struct {
-    pub const CreateView = *const fn(*Texture, ?*const TextureViewDescriptor) callconv(.C) ?*TextureView;
-    pub const Destroy = *const fn(*Texture) callconv(.C) void;
-    pub const GetDepthOrArrayLayers = *const fn(*Texture) callconv(.C) u32;
-    pub const GetDimension = *const fn(*Texture) callconv(.C) TextureDimension;
-    pub const GetFormat = *const fn(*Texture) callconv(.C) TextureFormat;
-    pub const GetHeight = *const fn(*Texture) callconv(.C) u32;
-    pub const GetMipLevelCount = *const fn(*Texture) callconv(.C) u32;
-    pub const GetSampleCount = *const fn(*Texture) callconv(.C) u32;
-    pub const GetUsage = *const fn(*Texture) callconv(.C) TextureUsage;
-    pub const GetWidth = *const fn(*Texture) callconv(.C) u32;
-    pub const SetLabel = *const fn(*Texture, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*Texture) callconv(.C) void;
-    pub const Release = *const fn(*Texture) callconv(.C) void;
 };
 
 extern fn wgpuTextureCreateView(texture: *Texture, descriptor: ?*const TextureViewDescriptor) ?*TextureView;

@@ -48,15 +48,6 @@ pub const QuerySetDescriptor = extern struct {
     }
 };
 
-pub const QuerySetProcs = struct {
-    pub const Destroy = *const fn(*QuerySet) callconv(.C) void;
-    pub const GetCount = *const fn(*QuerySet) callconv(.C) u32;
-    pub const GetType = *const fn(*QuerySet) callconv(.C) QueryType;
-    pub const SetLabel = *const fn(*QuerySet, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*QuerySet) callconv(.C) void;
-    pub const Release = *const fn(*QuerySet) callconv(.C) void;
-};
-
 extern fn wgpuQuerySetDestroy(query_set: *QuerySet) void;
 extern fn wgpuQuerySetGetCount(query_set: *QuerySet) u32;
 extern fn wgpuQuerySetGetType(query_set: *QuerySet) QueryType;

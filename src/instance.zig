@@ -8,10 +8,10 @@ const SType = _chained_struct.SType;
 const _adapter = @import("adapter.zig");
 const Adapter = _adapter.Adapter;
 const RequestAdapterOptions = _adapter.RequestAdapterOptions;
+const WGPURequestAdapterOptions = _adapter.WGPURequestAdapterOptions;
 const RequestAdapterCallbackInfo = _adapter.RequestAdapterCallbackInfo;
 const RequestAdapterCallback = _adapter.RequestAdapterCallback;
-const RequestAdapterStatus = _adapter.RequestAdapterStatus;
-const RequestAdapterResponse = _adapter.RequestAdapterResponse;
+const RequestAdapterError = _adapter.RequestAdapterError;
 const BackendType = _adapter.BackendType;
 
 const _surface = @import("surface.zig");
@@ -28,26 +28,29 @@ const _async = @import("async.zig");
 const Future = _async.Future;
 const WaitStatus = _async.WaitStatus;
 const FutureWaitInfo = _async.FutureWaitInfo;
+const CallbackMode = _async.CallbackMode;
 
-pub const InstanceBackend = WGPUFlags;
-pub const InstanceBackends = struct {
-    pub const all            = @as(InstanceBackend, 0x00000000);
-    pub const vulkan         = @as(InstanceBackend, 0x00000001);
-    pub const gl             = @as(InstanceBackend, 0x00000002);
-    pub const metal          = @as(InstanceBackend, 0x00000004);
-    pub const dx12           = @as(InstanceBackend, 0x00000008);
-    pub const dx11           = @as(InstanceBackend, 0x00000010);
-    pub const browser_webgpu = @as(InstanceBackend, 0x00000020);
-    pub const primary        = vulkan | metal | dx12 | browser_webgpu;
-    pub const secondary      = gl | dx11;
+pub const InstanceBackend = packed struct(WGPUFlags) {
+    vulkan: bool = false,
+    gl: bool = false,
+    metal: bool = false,
+    dx12: bool = false,
+    dx11: bool = false,
+    browser_webgpu: bool = false,
+    _: u58 = 0,
+    
+    pub const all = Instance{};
+    pub const primary = InstanceBackend{ .vulkan = true , .metal = true, .dx12 = true, .browser_webgpu = true };
+    pub const secondary = InstanceBackend{ .gl = true, .dx11 = true };
 };
 
-pub const InstanceFlag = WGPUFlags;
-pub const InstanceFlags = struct {
-    pub const default            = @as(InstanceFlag, 0x00000000);
-    pub const debug              = @as(InstanceFlag, 0x00000001);
-    pub const validation         = @as(InstanceFlag, 0x00000002);
-    pub const discard_hal_labels = @as(InstanceFlag, 0x00000004);
+pub const InstanceFlag = packed struct(WGPUFlags) {
+    debug: bool = false,
+    validation: bool = false,
+    discard_hal_labels: bool = false,
+    _: u61 = 0,
+
+    pub const default = InstanceFlag{};
 };
 
 pub const Dx12Compiler = enum(u32) {
@@ -79,7 +82,31 @@ pub const GLFenceBehaviour = enum(u32) {
     gl_fence_behaviour_auto_finish = 0x00000001,
 };
 
-pub const InstanceExtras = extern struct {
+pub const InstanceExtras = struct {
+    backends: InstanceBackend,
+    flags: InstanceFlag,
+    dx12_shader_compiler: Dx12Compiler,
+    gles3_minor_version: Gles3MinorVersion,
+    gl_fence_behavior: GLFenceBehaviour,
+    dxil_path: []const u8 = "",
+    dxc_path: []const u8 = "",
+    dxc_max_shader_model: DxcMaxShaderModel,
+
+    fn toWGPU(self: InstanceExtras) WGPUInstanceExtras {
+        return WGPUInstanceExtras {
+            .backends = self.backends,
+            .flags = self.flags,
+            .dx12_shader_compiler = self.dx12_shader_compiler,
+            .gles3_minor_version = self.gles3_minor_version,
+            .gl_fence_behavior = self.gl_fence_behavior,
+            .dxil_path = StringView.fromSlice(self.dxil_path),
+            .dxc_path = StringView.fromSlice(self.dxc_path),
+            .dxc_max_shader_model = self.dxc_max_shader_model,
+        };
+    }
+};
+
+const WGPUInstanceExtras = extern struct {
     chain: ChainedStruct = ChainedStruct {
         .s_type = SType.instance_extras,
     },
@@ -93,7 +120,25 @@ pub const InstanceExtras = extern struct {
     dxc_max_shader_model: DxcMaxShaderModel,
 };
 
-pub const InstanceCapabilities = extern struct {
+pub const InstanceCapabilities = struct {
+    // This struct chain is used as mutable in some places and immutable in others.
+    next_in_chain: ?*ChainedStructOut = null,
+
+    // Enable use of Instance.waitAny() with `timeoutNS > 0`.
+    timed_wait_any_enable: bool,
+
+    // The maximum number FutureWaitInfo supported in a call to Instance.waitAny() with `timeoutNS > 0`.
+    timed_wait_any_max_count: usize,
+
+    fn toWGPU(self: InstanceCapabilities) WGPUInstanceCapabilities {
+        return WGPUInstanceCapabilities {
+            .timed_wait_any_enable = @intFromBool(self.timed_wait_any_enable),
+            .timed_wait_any_max_count = self.timed_wait_any_max_count,
+        };
+    }
+};
+
+const WGPUInstanceCapabilities = extern struct {
     // This struct chain is used as mutable in some places and immutable in others.
     next_in_chain: ?*ChainedStructOut = null,
 
@@ -102,19 +147,41 @@ pub const InstanceCapabilities = extern struct {
 
     // The maximum number FutureWaitInfo supported in a call to ::wgpuInstanceWaitAny with `timeoutNS > 0`.
     timed_wait_any_max_count: usize,
+
+    fn toInstanceCapabilities(self: WGPUInstanceCapabilities) InstanceCapabilities {
+        return InstanceCapabilities {
+            .next_in_chain = self.next_in_chain,
+            .timed_wait_any_enable = self.timed_wait_any_enable != 0,
+            .timed_wait_any_max_count = self.timed_wait_any_max_count,
+        };
+    }
 };
 
-pub const InstanceDescriptor = extern struct {
+pub const InstanceDescriptor = struct {
+    // Instance features to enable
+    features: InstanceCapabilities,
+    native_extras: ?InstanceExtras = null,
+
+    fn toWGPU(self: InstanceDescriptor) WGPUInstanceDescriptor {
+        var instance_extras: ?*const ChainedStruct = undefined;
+        if (self.native_extras) |native_extras| {
+            instance_extras = @ptrCast(&native_extras.toWGPU());
+        } else {
+            instance_extras = null;
+        }
+
+        return WGPUInstanceDescriptor {
+            .next_in_chain = instance_extras,
+            .features = self.features.toWGPU(),
+        };
+    }
+};
+
+const WGPUInstanceDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
 
     // Instance features to enable
-    features: InstanceCapabilities,
-
-    pub inline fn withNativeExtras(self: InstanceDescriptor, extras: *InstanceExtras) InstanceDescriptor {
-        var id = self;
-        id.next_in_chain = @ptrCast(extras);
-        return id;
-    }
+    features: WGPUInstanceCapabilities,
 };
 
 pub const WGSLLanguageFeatureName = enum(u32) {
@@ -124,13 +191,13 @@ pub const WGSLLanguageFeatureName = enum(u32) {
     pointer_composite_access                = 0x00000004,
 };
 
-pub const SupportedWGSLLanguageFeaturesProcs = struct {
-    pub const FreeMembers = *const fn(SupportedWGSLLanguageFeatures) callconv(.C) void;
-};
-
 extern fn wgpuSupportedWGSLLanguageFeaturesFreeMembers(supported_wgsl_language_features: SupportedWGSLLanguageFeatures) void;
 
-pub const SupportedWGSLLanguageFeatures = extern struct {
+pub const SupportedWGSLLanguageFeatures = struct {
+    features: []const WGSLLanguageFeatureName,
+};
+
+const WGPUSupportedWGSLLanguageFeatures = extern struct {
     feature_count: usize,
     features: [*]const WGSLLanguageFeatureName,
 
@@ -141,32 +208,14 @@ pub const SupportedWGSLLanguageFeatures = extern struct {
     // }
 };
 
-pub const InstanceProcs = struct {
-    pub const CreateInstance = *const fn(?*const InstanceDescriptor) callconv(.C) ?*Instance;
-    pub const GetCapabilities = *const fn(*InstanceCapabilities) callconv(.C) Status;
+extern fn wgpuGetInstanceCapabilities(capabilities: *WGPUInstanceCapabilities) Status;
 
-    pub const CreateSurface = *const fn(*Instance, *const SurfaceDescriptor) callconv(.C) ?*Surface;
-    pub const GetWGSLLanguageFeatures = *const fn(*Instance, *SupportedWGSLLanguageFeatures) callconv(.C) Status;
-    pub const HasWGSLLanguageFeature = *const fn(*Instance, WGSLLanguageFeatureName) callconv(.C) WGPUBool;
-    pub const ProcessEvents = *const fn(*Instance) callconv(.C) void;
-    pub const RequestAdapter = *const fn(*Instance, ?*const RequestAdapterOptions, RequestAdapterCallbackInfo) callconv(.C) Future;
-    pub const WaitAny = *const fn(*Instance, usize, ?[*] FutureWaitInfo, u64) callconv(.C) WaitStatus;
-    pub const InstanceAddRef = *const fn(*Instance) callconv(.C) void;
-    pub const InstanceRelease = *const fn(*Instance) callconv(.C) void;
-
-    // wgpu-native procs?
-    // pub const GenerateReport = *const fn(*Instance, *GlobalReport) callconv(.C) void;
-    // pub const EnumerateAdapters = *const fn(*Instance, ?*const EnumerateAdapterOptions, ?[*]Adapter) callconv(.C) usize;
-};
-
-extern fn wgpuGetInstanceCapabilities(capabilities: *InstanceCapabilities) Status;
-
-extern fn wgpuCreateInstance(descriptor: ?*const InstanceDescriptor) ?*Instance;
+extern fn wgpuCreateInstance(descriptor: ?*const WGPUInstanceDescriptor) ?*Instance;
 extern fn wgpuInstanceCreateSurface(instance: *Instance, descriptor: *const SurfaceDescriptor) ?*Surface;
-extern fn wgpuInstanceGetWGSLLanguageFeatures(instance: *Instance, features: *SupportedWGSLLanguageFeatures) Status;
+extern fn wgpuInstanceGetWGSLLanguageFeatures(instance: *Instance, features: *WGPUSupportedWGSLLanguageFeatures) Status;
 extern fn wgpuInstanceHasWGSLLanguageFeature(instance: *Instance, feature: WGSLLanguageFeatureName) WGPUBool;
 extern fn wgpuInstanceProcessEvents(instance: *Instance) void;
-extern fn wgpuInstanceRequestAdapter(instance: *Instance, options: ?*const RequestAdapterOptions, callback_info: RequestAdapterCallbackInfo) Future;
+extern fn wgpuInstanceRequestAdapter(instance: *Instance, options: ?*const WGPURequestAdapterOptions, callback_info: RequestAdapterCallbackInfo) Future;
 extern fn wgpuInstanceWaitAny(instance: *Instance, future_count: usize, futures: ?[*] FutureWaitInfo, timeout_ns: u64) WaitStatus;
 extern fn wgpuInstanceAddRef(instance: *Instance) void;
 extern fn wgpuInstanceRelease(instance: *Instance) void;
@@ -212,16 +261,33 @@ pub const EnumerateAdapterOptions = extern struct {
 extern fn wgpuGenerateReport(instance: *Instance, report: *GlobalReport) void;
 extern fn wgpuInstanceEnumerateAdapters(instance: *Instance, options: ?*EnumerateAdapterOptions, adapters: ?[*]*Adapter) usize;
 
+pub const InstanceError = error {
+    FailedToCreateInstance,
+    FailedToGetCapabilities,
+} || RequestAdapterError || std.mem.Allocator.Error;
+
 pub const Instance = opaque {
     // This is a global function, but it creates an instance so I put it here.
-    pub inline fn create(descriptor: ?*const InstanceDescriptor) ?*Instance {
-        return wgpuCreateInstance(descriptor);
+    pub fn create(descriptor: ?InstanceDescriptor) InstanceError!*Instance {
+        var maybe_instance: ?*Instance = undefined;
+        if (descriptor) |d| {
+            maybe_instance = wgpuCreateInstance(&d.toWGPU());
+        } else {
+            maybe_instance = wgpuCreateInstance(null);
+        }
+
+        return maybe_instance orelse InstanceError.FailedToCreateInstance;
     }
 
     // This is also a global function, but I think it would make sense being a member of Instance;
-    // You'd use it like `const status = Instance.getCapabilities(&capabilities);`
-    pub inline fn getCapabilities(capabilities: *InstanceCapabilities) Status {
-        return wgpuGetInstanceCapabilities(capabilities);
+    // You'd use it like `const capabilities = try Instance.getCapabilities();`
+    pub inline fn getCapabilities() InstanceError!InstanceCapabilities {
+        var wgpu_capabilities: WGPUInstanceCapabilities = undefined;
+        if (wgpuGetInstanceCapabilities(&wgpu_capabilities) == Status.success) {
+            return wgpu_capabilities.toInstanceCapabilities();
+        } else {
+            return InstanceError.FailedToGetCapabilities;
+        }
     }
 
     pub inline fn createSurface(self: *Instance, descriptor: *const SurfaceDescriptor) ?*Surface {
@@ -245,44 +311,55 @@ pub const Instance = opaque {
         wgpuInstanceProcessEvents(self);
     }
 
-    fn defaultAdapterCallback(status: RequestAdapterStatus, adapter: ?*Adapter, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
-        const ud_response: *RequestAdapterResponse = @ptrCast(@alignCast(userdata1));
-        ud_response.* = RequestAdapterResponse {
-            .status = status,
-            .message = message.toSlice(),
-            .adapter = adapter,
+    // Meant to be used within requestAdapterSync, though it might be a good default to expose.
+    fn defaultAdapterCallback(response: RequestAdapterError!*Adapter, maybe_message: ?[]const u8, userdata: *?RequestAdapterError!*Adapter) void {
+        userdata.* = response catch blk: {
+            if (maybe_message) |message| {
+                std.log.err("{s}\n", .{message});
+            }
+            break :blk response;
         };
-
-        const completed: *bool = @ptrCast(@alignCast(userdata2));
-        completed.* = true;
     }
 
     // This is a synchronous wrapper that handles asynchronous (callback) logic.
     // It uses polling to see when the request has been fulfilled, so needs a polling interval parameter.
-    pub fn requestAdapterSync(self: *Instance, options: ?*const RequestAdapterOptions, polling_interval_nanoseconds: u64) RequestAdapterResponse {
-        var response: RequestAdapterResponse = undefined;
-        var completed = false;
-        const callback_info = RequestAdapterCallbackInfo {
-            .callback = defaultAdapterCallback,
-            .userdata1 = @ptrCast(&response),
-            .userdata2 = @ptrCast(&completed),
-        };
-        const adapter_future = wgpuInstanceRequestAdapter(self, options, callback_info);
+    // A polling interval of 0 is valid, and probably what you'd want in most cases.
+    pub fn requestAdapterSync(self: *Instance, options: ?RequestAdapterOptions, polling_interval_nanoseconds: u64) InstanceError!*Adapter {
+        var adapter_response: ?RequestAdapterError!*Adapter = null;
+
+        const callback_info = RequestAdapterCallbackInfo.init(
+            null, 
+            &adapter_response,
+            defaultAdapterCallback,
+        );
+        const adapter_future = self.requestAdapter(
+            options,
+            callback_info,
+        );
 
         // TODO: Revisit once Instance.waitAny() is implemented in wgpu-native,
         //       it takes in futures and returns when one of them completes.
         _ = adapter_future;
         self.processEvents();
-        while (!completed) {
+        while (adapter_response == null) {
             std.Thread.sleep(polling_interval_nanoseconds);
             self.processEvents();
         }
 
-        return response;
+        return adapter_response.?;
     }
 
-    pub inline fn requestAdapter(self: *Instance, options: ?*const RequestAdapterOptions, callback_info: RequestAdapterCallbackInfo) Future {
-        return wgpuInstanceRequestAdapter(self, options, callback_info);
+
+    pub fn requestAdapter(
+        self: *Instance,
+        options: ?RequestAdapterOptions,
+        callback_info: RequestAdapterCallbackInfo,
+    ) Future {
+        if (options) |o| {
+            return wgpuInstanceRequestAdapter(self, &o.toWGPU(), callback_info);
+        } else {
+            return wgpuInstanceRequestAdapter(self, null, callback_info);
+        }
     }
 
     // Unimplemented as of wgpu-native v25.0.2.1,
@@ -305,27 +382,34 @@ pub const Instance = opaque {
     pub inline fn generateReport(self: *Instance, report: *GlobalReport) void {
         wgpuGenerateReport(self, report);
     }
-    pub inline fn enumerateAdapters(self: *Instance, options: ?*EnumerateAdapterOptions, adapters: ?[*]*Adapter) usize {
-        return wgpuInstanceEnumerateAdapters(self, options, adapters);
+
+    // Allocates memory to store the list of Adapters
+    pub inline fn enumerateAdapters(self: *Instance, allocator: std.mem.Allocator, options: ?*EnumerateAdapterOptions) InstanceError![]*Adapter {
+        const count = wgpuInstanceEnumerateAdapters(self, options, null);
+        const adapters = try allocator.alloc(*Adapter, count);
+
+        // TODO: Should we bother checking the returned count at this point or just trust that it matches what we got in the previous call?
+        _ = wgpuInstanceEnumerateAdapters(self, options, adapters.ptr);
+        return adapters;
     }
 };
 
 test "can create instance (and release it afterwards)" {
-    const testing = @import("std").testing;
-
-    const instance = Instance.create(null);
-    try testing.expect(instance != null);
-    instance.?.release();
+    const instance = try Instance.create(null);
+    instance.release();
 }
 
-test "can request adapter" {
+test "requestAdapterSync returns adapter" {
+    const instance = try Instance.create(null);
+    const response = try instance.requestAdapterSync(null, 0);
+    _ = response;
+}
+
+test "can enumerate adapters" {
     const testing = @import("std").testing;
 
-    const instance = Instance.create(null);
-    const response = instance.?.requestAdapterSync(null, 200_000_000);
-    const adapter: ?*Adapter = switch(response.status) {
-        .success => response.adapter,
-        else => null,
-    };
-    try testing.expect(adapter != null);
+    const instance = try Instance.create(null);
+    const adapters = try instance.enumerateAdapters(testing.allocator, null);
+    defer testing.allocator.free(adapters);
+    try testing.expect(adapters.len != 0);
 }

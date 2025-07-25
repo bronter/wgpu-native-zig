@@ -55,12 +55,6 @@ pub const PipelineLayoutDescriptor = extern struct {
     }
 };
 
-pub const PipelineLayoutProcs = struct {
-    pub const SetLabel = *const fn(*PipelineLayout, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*PipelineLayout) callconv(.C) void;
-    pub const Release = *const fn(*PipelineLayout) callconv(.C) void;
-};
-
 extern fn wgpuPipelineLayoutSetLabel(pipeline_layout: *PipelineLayout, label: StringView) void;
 extern fn wgpuPipelineLayoutAddRef(pipeline_layout: *PipelineLayout) void;
 extern fn wgpuPipelineLayoutRelease(pipeline_layout: *PipelineLayout) void;
@@ -129,13 +123,6 @@ pub const CreateComputePipelineAsyncCallback = *const fn(
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque,
 ) callconv(.C) void;
-
-pub const ComputePipelineProcs = struct {
-    pub const GetBindGroupLayout = *const fn(*ComputePipeline, u32) callconv(.C) ?*BindGroupLayout;
-    pub const SetLabel = *const fn(*ComputePipeline, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*ComputePipeline) callconv(.C) void;
-    pub const Release = *const fn(*ComputePipeline) callconv(.C) void;
-};
 
 extern fn wgpuComputePipelineGetBindGroupLayout(compute_pipeline: *ComputePipeline, group_index: u32) ?*BindGroupLayout;
 extern fn wgpuComputePipelineSetLabel(compute_pipeline: *ComputePipeline, label: StringView) void;
@@ -381,14 +368,15 @@ pub const BlendState = extern struct {
     };
 };
 
-pub const ColorWriteMask = WGPUFlags;
-pub const ColorWriteMasks = struct {
-    pub const none  = @as(ColorWriteMask, 0x0000000000000000);
-    pub const red   = @as(ColorWriteMask, 0x0000000000000001);
-    pub const green = @as(ColorWriteMask, 0x0000000000000002);
-    pub const blue  = @as(ColorWriteMask, 0x0000000000000004);
-    pub const alpha = @as(ColorWriteMask, 0x0000000000000008);
-    pub const all        = none | red | green | blue | alpha;
+pub const ColorWriteMask = packed struct(WGPUFlags) {
+    red: bool = false,
+    green: bool = false,
+    blue: bool = false,
+    alpha: bool = false,
+    _: u60 = 0,
+
+    pub const none = ColorWriteMask{};
+    pub const all = ColorWriteMask{ .red = true, .green = true, .blue = true, .alpha = true };
 };
 
 pub const ColorTargetState = extern struct {
@@ -400,7 +388,7 @@ pub const ColorTargetState = extern struct {
     format: TextureFormat,
 
     blend: ?*const BlendState = null,
-    write_mask: ColorWriteMask = ColorWriteMasks.all,
+    write_mask: ColorWriteMask = ColorWriteMask.all,
 };
 
 pub const FragmentState = extern struct {
@@ -422,13 +410,6 @@ pub const RenderPipelineDescriptor = extern struct {
     depth_stencil: ?*const DepthStencilState = null,
     multisample: MultisampleState,
     fragment: ?*const FragmentState = null,
-};
-
-pub const RenderPipelineProcs = struct {
-    pub const GetBindGroupLayout = *const fn(*RenderPipeline, u32) callconv(.C) ?*BindGroupLayout;
-    pub const SetLabel = *const fn(*RenderPipeline, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*RenderPipeline) callconv(.C) void;
-    pub const Release = *const fn(*RenderPipeline) callconv(.C) void;
 };
 
 extern fn wgpuRenderPipelineGetBindGroupLayout(render_pipeline: *RenderPipeline, group_index: u32) ?*BindGroupLayout;

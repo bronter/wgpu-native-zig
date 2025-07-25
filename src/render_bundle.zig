@@ -21,27 +21,6 @@ pub const RenderBundleEncoderDescriptor = extern struct {
     stencil_read_only: WGPUBool = @intFromBool(false),
 };
 
-pub const RenderBundleEncoderProcs = struct {
-    pub const Draw = *const fn(*RenderBundleEncoder, u32, u32, u32, u32) callconv(.C) void;
-    pub const DrawIndexed = *const fn(*RenderBundleEncoder, u32, u32, u32, i32, u32) callconv(.C) void;
-    pub const DrawIndexedIndirect = *const fn(*RenderBundleEncoder, *Buffer, u64) callconv(.C) void;
-    pub const DrawIndirect = *const fn(*RenderBundleEncoder, *Buffer, u64) callconv(.C) void;
-    pub const Finish = *const fn(*RenderBundleEncoder, *const RenderBundleDescriptor) callconv(.C) ?*RenderBundle;
-    pub const InsertDebugMarker = *const fn(*RenderBundleEncoder, StringView) callconv(.C) void;
-    pub const PopDebugGroup = *const fn(*RenderBundleEncoder) callconv(.C) void;
-    pub const PushDebugGroup = *const fn(*RenderBundleEncoder, StringView) callconv(.C) void;
-    pub const SetBindGroup = *const fn(*RenderBundleEncoder, u32, *BindGroup, usize, ?[*]const u32) callconv(.C) void;
-    pub const SetIndexBuffer = *const fn(*RenderBundleEncoder, *Buffer, IndexFormat, u64, u64) callconv(.C) void;
-    pub const SetLabel = *const fn(*RenderBundleEncoder, StringView) callconv(.C) void;
-    pub const SetPipeline = *const fn(*RenderBundleEncoder, *RenderPipeline) callconv(.C) void;
-    pub const SetVertexBuffer = *const fn(*RenderBundleEncoder, u32, *Buffer, u64, u64) callconv(.C) void;
-    pub const AddRef = *const fn(*RenderBundleEncoder) callconv(.C) void;
-    pub const Release = *const fn(*RenderBundleEncoder) callconv(.C) void;
-
-    // wgpu-native procs?
-    // pub const SetPushConstants = *const fn(*RenderBundleEncoder, ShaderStage, u32, u32, *const anyopaque) callconv(.C) void;
-};
-
 extern fn wgpuRenderBundleEncoderDraw(render_bundle_encoder: *RenderBundleEncoder, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) void;
 extern fn wgpuRenderBundleEncoderDrawIndexed(render_bundle_encoder: *RenderBundleEncoder, index_count: u32, instance_count: u32, first_index: u32, base_vertex: i32, first_instance: u32) void;
 extern fn wgpuRenderBundleEncoderDrawIndexedIndirect(render_bundle_encoder: *RenderBundleEncoder, indirect_buffer: *Buffer, indirect_offset: u64) void;
@@ -122,12 +101,6 @@ pub const RenderBundleEncoder = opaque {
 pub const RenderBundleDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     label: StringView = StringView {},
-};
-
-pub const RenderBundleProcs = struct {
-    pub const SetLabel = *const fn(*RenderBundle, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*RenderBundle) callconv(.C) void;
-    pub const Release = *const fn(*RenderBundle) callconv(.C) void;
 };
 
 extern fn wgpuRenderBundleSetLabel(render_bundle: *RenderBundle, label: StringView) void;
