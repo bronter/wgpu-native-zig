@@ -9,7 +9,7 @@ pub const LogLevel = enum(u32) {
     trace    = 0x00000005,
 };
 
-pub const LogCallback = *const fn(level: LogLevel, message: StringView, userdata: ?*anyopaque) callconv(.C) void;
+pub const LogCallback = *const fn(level: LogLevel, message: StringView, userdata: ?*anyopaque) callconv(.c) void;
 
 extern fn wgpuSetLogCallback(callback: LogCallback, userdata: ?*anyopaque) void;
 extern fn wgpuSetLogLevel(level: LogLevel) void;
