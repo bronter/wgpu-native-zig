@@ -4,17 +4,16 @@ pub fn write24BitBMP(file_name: []const u8, comptime width: u32, comptime height
     const file = try std.fs.cwd().createFile(file_name, .{});
     defer file.close();
 
-    var writer = file.deprecatedWriter();
+    var buffer: [1024]u8 = undefined;
+    var fw = file.writer(&buffer);
+    const writer = &fw.interface;
+
+    const bytes_per_line = comptime std.mem.alignForward(u32, width * 3, 4);
+    const file_size = 54 + (bytes_per_line * height);
 
     // ID
     _ = try writer.write(&[2]u8{ 'B', 'M' });
 
-    const colors_per_line = width * 3;
-    const bytes_per_line = switch (colors_per_line & 0x00000003) {
-        0 => colors_per_line,
-        else => (colors_per_line | 0x00000003) + 1,
-    };
-    const file_size = 54 + (bytes_per_line * height);
     try writer.writeInt(u32, file_size, .little);
 
     // reserved
@@ -33,9 +32,11 @@ pub fn write24BitBMP(file_name: []const u8, comptime width: u32, comptime height
     try writer.writeInt(u16, 24, .little);
     // Six 32-bit words, all set to zero:
     // compression type, compressed image size, x pixels/meter, y pixels/meter, colors used, important colors
-    try writer.writeByteNTimes(0, 4 * 6);
+    for (0..4 * 6) |_| {
+        try writer.writeByte(0);
+    }
 
-    var line_buffer = [_]u8{0} ** bytes_per_line;
+    var line_buffer: [bytes_per_line]u8 = @splat(0);
     const bgra_pixels_per_line = width * 4;
     for (0..height) |i_y| {
         const y = height - i_y - 1;
@@ -49,4 +50,6 @@ pub fn write24BitBMP(file_name: []const u8, comptime width: u32, comptime height
         }
         _ = try writer.write(&line_buffer);
     }
+
+    try writer.flush();
 }
