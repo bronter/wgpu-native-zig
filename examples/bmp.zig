@@ -32,9 +32,7 @@ pub fn write24BitBMP(file_name: []const u8, comptime width: u32, comptime height
     try writer.writeInt(u16, 24, .little);
     // Six 32-bit words, all set to zero:
     // compression type, compressed image size, x pixels/meter, y pixels/meter, colors used, important colors
-    for (0..4 * 6) |_| {
-        try writer.writeByte(0);
-    }
+    try writer.splatByteAll(0 , 4 * 6);
 
     var line_buffer: [bytes_per_line]u8 = @splat(0);
     const bgra_pixels_per_line = width * 4;
