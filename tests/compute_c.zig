@@ -3,7 +3,7 @@ const testing = std.testing;
 
 const wgpu = @import("wgpu-c");
 
-fn handleRequestAdapter(status: wgpu.WGPURequestAdapterStatus, adapter: wgpu.WGPUAdapter, _: wgpu.WGPUStringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+fn handleRequestAdapter(status: wgpu.WGPURequestAdapterStatus, adapter: wgpu.WGPUAdapter, _: wgpu.WGPUStringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
     switch(status) {
         wgpu.WGPURequestAdapterStatus_Success => {
             const ud_adapter: *wgpu.WGPUAdapter = @ptrCast(@alignCast(userdata1));
@@ -17,7 +17,7 @@ fn handleRequestAdapter(status: wgpu.WGPURequestAdapterStatus, adapter: wgpu.WGP
     completed.* = true;
 }
 
-fn handleRequestDevice(status: wgpu.WGPURequestDeviceStatus, device: wgpu.WGPUDevice, _: wgpu.WGPUStringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+fn handleRequestDevice(status: wgpu.WGPURequestDeviceStatus, device: wgpu.WGPUDevice, _: wgpu.WGPUStringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
     switch(status) {
         wgpu.WGPURequestDeviceStatus_Success => {
             const ud_device: *wgpu.WGPUDevice = @ptrCast(@alignCast(userdata1));
@@ -31,7 +31,7 @@ fn handleRequestDevice(status: wgpu.WGPURequestDeviceStatus, device: wgpu.WGPUDe
     completed.* = true;
 }
 
-fn handleBufferMap(status: wgpu.WGPUMapAsyncStatus, _: wgpu.WGPUStringView, userdata1: ?*anyopaque, _: ?*anyopaque) callconv(.C) void {
+fn handleBufferMap(status: wgpu.WGPUMapAsyncStatus, _: wgpu.WGPUStringView, userdata1: ?*anyopaque, _: ?*anyopaque) callconv(.c) void {
     std.log.info("buffer_map status={x:.8}\n", .{status});
     const completed: *bool = @ptrCast(@alignCast(userdata1));
     completed.* = true;

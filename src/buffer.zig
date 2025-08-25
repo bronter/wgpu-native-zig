@@ -75,7 +75,7 @@ pub const BufferMapCallbackInfo = extern struct {
     userdata2: ?*anyopaque = null,
 };
 
-pub const BufferMapCallback = *const fn(status: MapAsyncStatus, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void;
+pub const BufferMapCallback = *const fn(status: MapAsyncStatus, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void;
 
 pub const BufferDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
@@ -86,17 +86,17 @@ pub const BufferDescriptor = extern struct {
 };
 
 pub const BufferProcs = struct {
-    pub const Destroy = *const fn(*Buffer) callconv(.C) void;
-    pub const GetConstMappedRange = *const fn(*Buffer, usize, usize) callconv(.C) ?*const anyopaque;
-    pub const GetMapState = *const fn(*Buffer) callconv(.C) BufferMapState;
-    pub const GetMappedRange = *const fn(*Buffer, usize, usize) callconv(.C) ?*anyopaque;
-    pub const GetSize = *const fn(*Buffer) callconv(.C) u64;
-    pub const GetUsage = *const fn(*Buffer) callconv(.C) BufferUsage;
-    pub const MapAsync = *const fn(*Buffer, MapMode, usize, usize, BufferMapCallbackInfo) callconv(.C) Future;
-    pub const SetLabel = *const fn(*Buffer, StringView) callconv(.C) void;
-    pub const Unmap = *const fn(*Buffer) callconv(.C) void;
-    pub const AddRef = *const fn(*Buffer) callconv(.C) void;
-    pub const Release = *const fn(*Buffer) callconv(.C) void;
+    pub const Destroy = *const fn(*Buffer) callconv(.c) void;
+    pub const GetConstMappedRange = *const fn(*Buffer, usize, usize) callconv(.c) ?*const anyopaque;
+    pub const GetMapState = *const fn(*Buffer) callconv(.c) BufferMapState;
+    pub const GetMappedRange = *const fn(*Buffer, usize, usize) callconv(.c) ?*anyopaque;
+    pub const GetSize = *const fn(*Buffer) callconv(.c) u64;
+    pub const GetUsage = *const fn(*Buffer) callconv(.c) BufferUsage;
+    pub const MapAsync = *const fn(*Buffer, MapMode, usize, usize, BufferMapCallbackInfo) callconv(.c) Future;
+    pub const SetLabel = *const fn(*Buffer, StringView) callconv(.c) void;
+    pub const Unmap = *const fn(*Buffer) callconv(.c) void;
+    pub const AddRef = *const fn(*Buffer) callconv(.c) void;
+    pub const Release = *const fn(*Buffer) callconv(.c) void;
 };
 
 extern fn wgpuBufferDestroy(buffer: *Buffer) void;
