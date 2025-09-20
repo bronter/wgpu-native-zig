@@ -110,7 +110,7 @@ pub const RequestAdapterCallback = *const fn(
     message: StringView,
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque,
-) callconv(.C) void;
+) callconv(.c) void;
 
 pub const RequestAdapterResponse = struct {
     status: RequestAdapterStatus,
@@ -119,7 +119,7 @@ pub const RequestAdapterResponse = struct {
 };
 
 pub const AdapterInfoProcs = struct {
-    pub const FreeMembers = *const fn(AdapterInfo) callconv(.C) void;
+    pub const FreeMembers = *const fn(AdapterInfo) callconv(.c) void;
 };
 
 extern fn wgpuAdapterInfoFreeMembers(adapter_info: AdapterInfo) void;
@@ -141,13 +141,13 @@ pub const AdapterInfo = extern struct {
 };
 
 pub const AdapterProcs = struct {
-    pub const GetFeatures = *const fn(*Adapter, *SupportedFeatures) callconv(.C) void;
-    pub const GetLimits = *const fn(*Adapter, *Limits) callconv(.C) Status;
-    pub const GetInfo = *const fn(*Adapter, *AdapterInfo) callconv(.C) Status;
-    pub const HasFeature = *const fn(*Adapter, FeatureName) callconv(.C) WGPUBool;
-    pub const RequestDevice = *const fn(*Adapter, ?*const DeviceDescriptor, RequestDeviceCallbackInfo) callconv(.C) Future;
-    pub const AddRef = *const fn(*Adapter) callconv(.C) void;
-    pub const Release = *const fn(*Adapter) callconv(.C) void;
+    pub const GetFeatures = *const fn(*Adapter, *SupportedFeatures) callconv(.c) void;
+    pub const GetLimits = *const fn(*Adapter, *Limits) callconv(.c) Status;
+    pub const GetInfo = *const fn(*Adapter, *AdapterInfo) callconv(.c) Status;
+    pub const HasFeature = *const fn(*Adapter, FeatureName) callconv(.c) WGPUBool;
+    pub const RequestDevice = *const fn(*Adapter, ?*const DeviceDescriptor, RequestDeviceCallbackInfo) callconv(.c) Future;
+    pub const AddRef = *const fn(*Adapter) callconv(.c) void;
+    pub const Release = *const fn(*Adapter) callconv(.c) void;
 };
 
 extern fn wgpuAdapterGetFeatures(adapter: *Adapter, features: *SupportedFeatures) void;
@@ -172,7 +172,7 @@ pub const Adapter = opaque{
         return wgpuAdapterHasFeature(self, feature) != 0;
     }
 
-    fn defaultDeviceCallback(status: RequestDeviceStatus, device: ?*Device, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+    fn defaultDeviceCallback(status: RequestDeviceStatus, device: ?*Device, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
         const ud_response: *RequestDeviceResponse = @ptrCast(@alignCast(userdata1));
         ud_response.* = RequestDeviceResponse {
             .status = status,
