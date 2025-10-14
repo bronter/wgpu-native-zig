@@ -26,12 +26,12 @@ pub const SurfaceDescriptor = extern struct {
     next_in_chain: *const ChainedStruct,
 
     // Label used to refer to the object.
-    label: StringView = StringView {},
+    label: StringView = StringView{},
 };
 
 // Chained in SurfaceDescriptor to make an Surface wrapping an Android [`ANativeWindow`](https://developer.android.com/ndk/reference/group/a-native-window).
 pub const SurfaceSourceAndroidNativeWindow = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.surface_source_android_native_window,
     },
 
@@ -44,7 +44,7 @@ pub const MergedSurfaceDescriptorFromAndroidWindow = struct {
 };
 pub inline fn surfaceDescriptorFromAndroidNativeWindow(descriptor: MergedSurfaceDescriptorFromAndroidWindow) SurfaceDescriptor {
     return SurfaceDescriptor{
-        .next_in_chain = @ptrCast(&SurfaceSourceAndroidNativeWindow {
+        .next_in_chain = @ptrCast(&SurfaceSourceAndroidNativeWindow{
             .window = descriptor.window,
         }),
         .label = StringView.fromSlice(descriptor.label),
@@ -53,7 +53,7 @@ pub inline fn surfaceDescriptorFromAndroidNativeWindow(descriptor: MergedSurface
 
 // Chained in SurfaceDescriptor to make an Surface wrapping a [`CAMetalLayer`](https://developer.apple.com/documentation/quartzcore/cametallayer?language=objc).
 pub const SurfaceSourceMetalLayer = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.surface_source_metal_layer,
     },
 
@@ -66,7 +66,7 @@ pub const MergedSurfaceDescriptorFromMetalLayer = struct {
 };
 pub inline fn surfaceDescriptorFromMetalLayer(descriptor: MergedSurfaceDescriptorFromMetalLayer) SurfaceDescriptor {
     return SurfaceDescriptor{
-        .next_in_chain = @ptrCast(&SurfaceSourceMetalLayer {
+        .next_in_chain = @ptrCast(&SurfaceSourceMetalLayer{
             .layer = descriptor.layer,
         }),
         .label = StringView.fromSlice(descriptor.label),
@@ -75,7 +75,7 @@ pub inline fn surfaceDescriptorFromMetalLayer(descriptor: MergedSurfaceDescripto
 
 // Chained in SurfaceDescriptor to make an Surface wrapping a [Wayland](https://wayland.freedesktop.org/) [`wl_surface`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_surface).
 pub const SurfaceSourceWaylandSurface = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.surface_source_wayland_surface,
     },
 
@@ -92,7 +92,7 @@ pub const MergedSurfaceDescriptorFromWaylandSurface = struct {
 };
 pub inline fn surfaceDescriptorFromWaylandSurface(descriptor: MergedSurfaceDescriptorFromWaylandSurface) SurfaceDescriptor {
     return SurfaceDescriptor{
-        .next_in_chain = @ptrCast(&SurfaceSourceWaylandSurface {
+        .next_in_chain = @ptrCast(&SurfaceSourceWaylandSurface{
             .display = descriptor.display,
             .surface = descriptor.surface,
         }),
@@ -102,7 +102,7 @@ pub inline fn surfaceDescriptorFromWaylandSurface(descriptor: MergedSurfaceDescr
 
 // Chained in SurfaceDescriptor to make an Surface wrapping a Windows [`HWND`](https://learn.microsoft.com/en-us/windows/apps/develop/ui-input/retrieve-hwnd).
 pub const SurfaceSourceWindowsHWND = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.surface_source_windows_hwnd,
     },
 
@@ -120,7 +120,7 @@ pub const MergedSurfaceDescriptorFromWindowsHWND = struct {
 };
 pub inline fn surfaceDescriptorFromWindowsHWND(descriptor: MergedSurfaceDescriptorFromWindowsHWND) SurfaceDescriptor {
     return SurfaceDescriptor{
-        .next_in_chain = @ptrCast(&SurfaceSourceWindowsHWND {
+        .next_in_chain = @ptrCast(&SurfaceSourceWindowsHWND{
             .hinstance = descriptor.hinstance,
             .hwnd = descriptor.hwnd,
         }),
@@ -130,7 +130,7 @@ pub inline fn surfaceDescriptorFromWindowsHWND(descriptor: MergedSurfaceDescript
 
 // Chained in SurfaceDescriptor to make an Surface wrapping an [XCB](https://xcb.freedesktop.org/) `xcb_window_t`.
 pub const SurfaceSourceXCBWindow = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.surface_source_xcb_window,
     },
 
@@ -147,7 +147,7 @@ pub const MergedSurfaceDescriptorFromXcbWindow = struct {
 };
 pub inline fn surfaceDescriptorFromXcbWindow(descriptor: MergedSurfaceDescriptorFromXcbWindow) SurfaceDescriptor {
     return SurfaceDescriptor{
-        .next_in_chain = @ptrCast(&SurfaceSourceXCBWindow {
+        .next_in_chain = @ptrCast(&SurfaceSourceXCBWindow{
             .connection = descriptor.connection,
             .window = descriptor.window,
         }),
@@ -157,7 +157,7 @@ pub inline fn surfaceDescriptorFromXcbWindow(descriptor: MergedSurfaceDescriptor
 
 // Chained in SurfaceDescriptor to make an Surface wrapping an [Xlib](https://www.x.org/releases/current/doc/libX11/libX11/libX11.html) `Window`.
 pub const SurfaceSourceXlibWindow = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.surface_source_xlib_window,
     },
 
@@ -174,7 +174,7 @@ pub const MergedSurfaceDescriptorFromXlibWindow = struct {
 };
 pub inline fn surfaceDescriptorFromXlibWindow(descriptor: MergedSurfaceDescriptorFromXlibWindow) SurfaceDescriptor {
     return SurfaceDescriptor{
-        .next_in_chain = @ptrCast(&SurfaceSourceXlibWindow {
+        .next_in_chain = @ptrCast(&SurfaceSourceXlibWindow{
             .display = descriptor.display,
             .window = descriptor.window,
         }),
@@ -185,14 +185,14 @@ pub inline fn surfaceDescriptorFromXlibWindow(descriptor: MergedSurfaceDescripto
 // Describes how frames are composited with other contents on the screen when `::wgpuSurfacePresent` is called
 pub const CompositeAlphaMode = enum(u32) {
     // Lets the WebGPU implementation choose the best mode (supported, and with the best performance) between `@"opaque"` or `inherit`.
-    auto            = 0x00000000,
+    auto = 0x00000000,
 
     // The alpha component of the image is ignored and teated as if it is always 1.0.
-    @"opaque"       = 0x00000001,
+    @"opaque" = 0x00000001,
 
     // The alpha component is respected and non-alpha components are assumed to be already multiplied with the alpha component.
     // For example, (0.5, 0, 0, 0.5) is semi-transparent bright red.
-    premultiplied   = 0x00000002,
+    premultiplied = 0x00000002,
 
     // The alpha component is respected and non-alpha components are assumed to NOT be already multiplied with the alpha component.
     // For example, (1.0, 0, 0, 0.5) is semi-transparent bright red.
@@ -200,18 +200,18 @@ pub const CompositeAlphaMode = enum(u32) {
 
     // The handling of the alpha component is unknown to WebGPU and should be handled by the application using system-specific APIs.
     // This mode may be unavailable (for example on Wasm).
-    inherit         = 0x00000004,
+    inherit = 0x00000004,
 };
 
 // Describes when and in which order frames are presented on the screen when `::wgpuSurfacePresent` is called.
 pub const PresentMode = enum(u32) {
     // Present mode is not specified. Use the default.
-    @"undefined" = 0x00000000,
+    undefined = 0x00000000,
 
     // The presentation of the image to the user waits for the next vertical blanking period to update in a first-in, first-out manner.
     // Tearing cannot be observed and frame-loop will be limited to the display's refresh rate.
     // This is the only mode that's always available.
-    fifo         = 0x00000001,
+    fifo = 0x00000001,
 
     // The presentation of the image to the user tries to wait for the next vertical blanking period but may decide to not wait if a frame is presented late.
     // Tearing can sometimes be observed but late-frame don't produce a full-frame stutter in the presentation.
@@ -220,15 +220,15 @@ pub const PresentMode = enum(u32) {
 
     // The presentation of the image to the user is updated immediately without waiting for a vertical blank.
     // Tearing can be observed but latency is minimized.
-    immediate    = 0x00000003,
+    immediate = 0x00000003,
 
     // The presentation of the image to the user waits for the next vertical blanking period to update to the latest provided image.
     // Tearing cannot be observed and a frame-loop is not limited to the display's refresh rate.
-    mailbox      = 0x00000004,
+    mailbox = 0x00000004,
 };
 
 pub const SurfaceConfigurationExtras = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.surface_configuration_extras,
     },
 
@@ -256,7 +256,7 @@ pub const SurfaceConfiguration = extern struct {
 
     // The additional TextureFormat for TextureView format reinterpretation of the surface's textures.
     view_format_count: usize = 0,
-    view_formats: [*]const TextureFormat = &[0]TextureFormat {},
+    view_formats: [*]const TextureFormat = &[0]TextureFormat{},
 
     // How the surface's frames will be composited on the screen.
     alpha_mode: CompositeAlphaMode = CompositeAlphaMode.auto,
@@ -266,7 +266,7 @@ pub const SurfaceConfiguration = extern struct {
 
     pub inline fn withDesiredMaxFrameLatency(self: SurfaceConfiguration, desired_max_frame_latency: u32) SurfaceConfiguration {
         var sc = self;
-        sc.next_in_chain = @ptrCast(&SurfaceConfigurationExtras {
+        sc.next_in_chain = @ptrCast(&SurfaceConfigurationExtras{
             .desired_maximum_frame_latency = desired_max_frame_latency,
         });
         return sc;
@@ -274,7 +274,7 @@ pub const SurfaceConfiguration = extern struct {
 };
 
 pub const SurfaceCapabilitiesProcs = struct {
-    pub const FreeMembers = *const fn(SurfaceCapabilities) callconv(.C) void;
+    pub const FreeMembers = *const fn (SurfaceCapabilities) callconv(.c) void;
 };
 
 extern fn wgpuSurfaceCapabilitiesFreeMembers(surface_capabilities: SurfaceCapabilities) void;
@@ -310,29 +310,29 @@ pub const SurfaceCapabilities = extern struct {
 // The status enum for `::wgpuSurfaceGetCurrentTexture`.
 pub const GetCurrentTextureStatus = enum(u32) {
     // Yay! Everything is good and we can render this frame.
-    success_optimal    = 0x00000001,
+    success_optimal = 0x00000001,
 
     // Still OK - the surface can present the frame, but in a suboptimal way.
     // The surface may need reconfiguration.
     success_suboptimal = 0x00000002,
 
     // Some operation timed out while trying to acquire the frame.
-    timeout            = 0x00000003,
+    timeout = 0x00000003,
 
     // The surface is too different to be used, compared to when it was originally created.
-    outdated           = 0x00000004,
+    outdated = 0x00000004,
 
     // The connection to whatever owns the surface was lost.
-    lost               = 0x00000005,
+    lost = 0x00000005,
 
     // The system ran out of memory.
-    out_of_memory      = 0x00000006,
+    out_of_memory = 0x00000006,
 
     // The Device configured on the Surface was lost.
-    device_lost        = 0x00000007,
+    device_lost = 0x00000007,
 
     // The surface is not configured, or there was an OutStructChainError.
-    @"error"           = 0x00000008,
+    @"error" = 0x00000008,
 };
 
 // Queried each frame from a Surface to get a Texture to render to along with some metadata.
@@ -348,14 +348,14 @@ pub const SurfaceTexture = extern struct {
 };
 
 pub const SurfaceProcs = struct {
-    pub const Configure = *const fn(*Surface, *const SurfaceConfiguration) callconv(.C) void;
-    pub const GetCapabilities = *const fn(*Surface, *Adapter, *SurfaceCapabilities) callconv(.C) Status;
-    pub const GetCurrentTexture = *const fn(*Surface, *SurfaceTexture) callconv(.C) void;
-    pub const Present = *const fn(*Surface) callconv(.C) Status;
-    pub const SetLabel = *const fn(*Surface, StringView) void;
-    pub const Unconfigure = *const fn(*Surface) callconv(.C) void;
-    pub const AddRef = *const fn(*Surface) callconv(.C) void;
-    pub const Release = *const fn(*Surface) callconv(.C) void;
+    pub const Configure = *const fn (*Surface, *const SurfaceConfiguration) callconv(.c) void;
+    pub const GetCapabilities = *const fn (*Surface, *Adapter, *SurfaceCapabilities) callconv(.c) Status;
+    pub const GetCurrentTexture = *const fn (*Surface, *SurfaceTexture) callconv(.c) void;
+    pub const Present = *const fn (*Surface) callconv(.c) Status;
+    pub const SetLabel = *const fn (*Surface, StringView) void;
+    pub const Unconfigure = *const fn (*Surface) callconv(.c) void;
+    pub const AddRef = *const fn (*Surface) callconv(.c) void;
+    pub const Release = *const fn (*Surface) callconv(.c) void;
 };
 
 extern fn wgpuSurfaceConfigure(surface: *Surface, config: *const SurfaceConfiguration) void;
@@ -423,3 +423,4 @@ pub const Surface = opaque {
         wgpuSurfaceRelease(self);
     }
 };
+

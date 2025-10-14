@@ -54,6 +54,7 @@ const WGPUBuildContext = struct {
     install_lib_dir: []const u8,
     wgpu_mod: *std.Build.Module,
     wgpu_c_mod: *std.Build.Module,
+    use_llvm: bool,
 
     fn init(b: *std.Build) ?WGPUBuildContext {
         const link_mode = b.option(std.builtin.LinkMode, "link_mode", "Use static linking instead of dynamic linking.") orelse .static;
@@ -212,6 +213,7 @@ const WGPUBuildContext = struct {
             .install_lib_dir = b.getInstallPath(.lib, ""),
             .wgpu_mod = wgpu_mod,
             .wgpu_c_mod = wgpu_c_mod,
+            .use_llvm = b.option(bool, "use_llvm", "Force use of LLVM") orelse false,
         };
     }
 };
@@ -247,6 +249,7 @@ fn triangle_example(b: *std.Build, context: *const WGPUBuildContext) void {
     const triangle_example_exe = b.addExecutable(.{
         .name = "triangle-example",
         .root_module = triangle_example_exe_mod,
+        .use_llvm = context.use_llvm,
     });
     handle_rt(context, triangle_example_exe);
 
@@ -289,6 +292,7 @@ fn unit_tests(b: *std.Build, context: *const WGPUBuildContext) void {
         const t = b.addTest(.{
             .name = test_name,
             .root_module = test_mod,
+            .use_llvm = context.use_llvm,
         });
         handle_rt(context, t);
         if (context.libwgpu_path != null) {
@@ -333,6 +337,7 @@ fn compute_tests(b: *std.Build, context: *const WGPUBuildContext) void {
     const compute_test = b.addTest(.{
         .name = "compute-test",
         .root_module = compute_test_mod,
+        .use_llvm = context.use_llvm,
     });
     handle_rt(context, compute_test);
 
@@ -347,6 +352,7 @@ fn compute_tests(b: *std.Build, context: *const WGPUBuildContext) void {
     const compute_test_c = b.addTest(.{
         .name = "compute-test-c",
         .root_module = compute_test_c_mod,
+        .use_llvm = context.use_llvm,
     });
     handle_rt(context, compute_test_c);
 

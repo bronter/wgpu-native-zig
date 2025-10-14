@@ -3,7 +3,7 @@ const testing = std.testing;
 
 const wgpu = @import("wgpu");
 
-fn handleBufferMap(status: wgpu.MapAsyncStatus, _: wgpu.StringView, userdata1: ?*anyopaque, _: ?*anyopaque) callconv(.C) void {
+fn handleBufferMap(status: wgpu.MapAsyncStatus, _: wgpu.StringView, userdata1: ?*anyopaque, _: ?*anyopaque) callconv(.c) void {
     std.log.info("buffer_map status={x:.8}\n", .{@intFromEnum(status)});
     const completed: *bool = @ptrCast(@alignCast(userdata1));
     completed.* = true;
@@ -18,14 +18,14 @@ fn compute_collatz() ![4]u32 {
     defer instance.release();
 
     const adapter_response = instance.requestAdapterSync(null, 200_000_000);
-    const adapter = switch(adapter_response.status) {
+    const adapter = switch (adapter_response.status) {
         .success => adapter_response.adapter.?,
         else => return error.NoAdapter,
     };
     defer adapter.release();
 
     const device_response = adapter.requestDeviceSync(instance, null, 200_000_000);
-    const device = switch(device_response.status) {
+    const device = switch (device_response.status) {
         .success => device_response.device.?,
         else => return error.NoDevice,
     };
@@ -40,7 +40,7 @@ fn compute_collatz() ![4]u32 {
     })).?;
     defer shader_module.release();
 
-    const staging_buffer = device.createBuffer(&wgpu.BufferDescriptor {
+    const staging_buffer = device.createBuffer(&wgpu.BufferDescriptor{
         .label = wgpu.StringView.fromSlice("staging_buffer"),
         .usage = wgpu.BufferUsages.map_read | wgpu.BufferUsages.copy_dst,
         .size = numbers_size,
@@ -48,7 +48,7 @@ fn compute_collatz() ![4]u32 {
     }).?;
     defer staging_buffer.release();
 
-    const storage_buffer = device.createBuffer(&wgpu.BufferDescriptor {
+    const storage_buffer = device.createBuffer(&wgpu.BufferDescriptor{
         .label = wgpu.StringView.fromSlice("storage_buffer"),
         .usage = wgpu.BufferUsages.storage | wgpu.BufferUsages.copy_dst | wgpu.BufferUsages.copy_src,
         .size = numbers_size,
@@ -56,9 +56,9 @@ fn compute_collatz() ![4]u32 {
     }).?;
     defer storage_buffer.release();
 
-    const compute_pipeline = device.createComputePipeline(&wgpu.ComputePipelineDescriptor {
+    const compute_pipeline = device.createComputePipeline(&wgpu.ComputePipelineDescriptor{
         .label = wgpu.StringView.fromSlice("compute_pipeline"),
-        .compute = wgpu.ProgrammableStageDescriptor {
+        .compute = wgpu.ProgrammableStageDescriptor{
             .module = shader_module,
             .entry_point = wgpu.StringView.fromSlice("main"),
         },
@@ -68,27 +68,25 @@ fn compute_collatz() ![4]u32 {
     const bind_group_layout = compute_pipeline.getBindGroupLayout(0).?;
     defer bind_group_layout.release();
 
-    const bind_group = device.createBindGroup(&wgpu.BindGroupDescriptor {
+    const bind_group = device.createBindGroup(&wgpu.BindGroupDescriptor{
         .label = wgpu.StringView.fromSlice("bind_group"),
         .layout = bind_group_layout,
         .entry_count = 1,
-        .entries = &[_]wgpu.BindGroupEntry {
-            wgpu.BindGroupEntry {
-                .binding = 0,
-                .buffer = storage_buffer,
-                .offset = 0,
-                .size = numbers_size,
-            }
-        },
+        .entries = &[_]wgpu.BindGroupEntry{wgpu.BindGroupEntry{
+            .binding = 0,
+            .buffer = storage_buffer,
+            .offset = 0,
+            .size = numbers_size,
+        }},
     }).?;
     defer bind_group.release();
 
-    const command_encoder = device.createCommandEncoder(&wgpu.CommandEncoderDescriptor {
+    const command_encoder = device.createCommandEncoder(&wgpu.CommandEncoderDescriptor{
         .label = wgpu.StringView.fromSlice("command_encoder"),
     }).?;
     defer command_encoder.release();
 
-    const compute_pass_encoder = command_encoder.beginComputePass(&wgpu.ComputePassDescriptor {
+    const compute_pass_encoder = command_encoder.beginComputePass(&wgpu.ComputePassDescriptor{
         .label = wgpu.StringView.fromSlice("compute_pass"),
     }).?;
 
@@ -102,7 +100,7 @@ fn compute_collatz() ![4]u32 {
 
     command_encoder.copyBufferToBuffer(storage_buffer, 0, staging_buffer, 0, numbers_size);
 
-    const command_buffer = command_encoder.finish(&wgpu.CommandBufferDescriptor {
+    const command_buffer = command_encoder.finish(&wgpu.CommandBufferDescriptor{
         .label = wgpu.StringView.fromSlice("command_buffer"),
     }).?;
     defer command_buffer.release();
@@ -111,19 +109,19 @@ fn compute_collatz() ![4]u32 {
     queue.submit(&[_]*const wgpu.CommandBuffer{command_buffer});
 
     var buffer_map_complete = false;
-    _ = staging_buffer.mapAsync(wgpu.MapModes.read, 0, numbers_size, wgpu.BufferMapCallbackInfo {
+    _ = staging_buffer.mapAsync(wgpu.MapModes.read, 0, numbers_size, wgpu.BufferMapCallbackInfo{
         .callback = handleBufferMap,
         .userdata1 = @ptrCast(&buffer_map_complete),
     });
     instance.processEvents();
-    while(!buffer_map_complete) {
+    while (!buffer_map_complete) {
         instance.processEvents();
     }
 
     const buf: [*]u32 = @ptrCast(@alignCast(staging_buffer.getMappedRange(0, numbers_size).?));
     defer staging_buffer.unmap();
 
-    const ret = [4]u32 {buf[0], buf[1], buf[2], buf[3]};
+    const ret = [4]u32{ buf[0], buf[1], buf[2], buf[3] };
     return ret;
 }
 

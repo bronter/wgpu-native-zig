@@ -31,36 +31,36 @@ const FutureWaitInfo = _async.FutureWaitInfo;
 
 pub const InstanceBackend = WGPUFlags;
 pub const InstanceBackends = struct {
-    pub const all            = @as(InstanceBackend, 0x00000000);
-    pub const vulkan         = @as(InstanceBackend, 0x00000001);
-    pub const gl             = @as(InstanceBackend, 0x00000002);
-    pub const metal          = @as(InstanceBackend, 0x00000004);
-    pub const dx12           = @as(InstanceBackend, 0x00000008);
-    pub const dx11           = @as(InstanceBackend, 0x00000010);
+    pub const all = @as(InstanceBackend, 0x00000000);
+    pub const vulkan = @as(InstanceBackend, 0x00000001);
+    pub const gl = @as(InstanceBackend, 0x00000002);
+    pub const metal = @as(InstanceBackend, 0x00000004);
+    pub const dx12 = @as(InstanceBackend, 0x00000008);
+    pub const dx11 = @as(InstanceBackend, 0x00000010);
     pub const browser_webgpu = @as(InstanceBackend, 0x00000020);
-    pub const primary        = vulkan | metal | dx12 | browser_webgpu;
-    pub const secondary      = gl | dx11;
+    pub const primary = vulkan | metal | dx12 | browser_webgpu;
+    pub const secondary = gl | dx11;
 };
 
 pub const InstanceFlag = WGPUFlags;
 pub const InstanceFlags = struct {
-    pub const default            = @as(InstanceFlag, 0x00000000);
-    pub const debug              = @as(InstanceFlag, 0x00000001);
-    pub const validation         = @as(InstanceFlag, 0x00000002);
+    pub const default = @as(InstanceFlag, 0x00000000);
+    pub const debug = @as(InstanceFlag, 0x00000001);
+    pub const validation = @as(InstanceFlag, 0x00000002);
     pub const discard_hal_labels = @as(InstanceFlag, 0x00000004);
 };
 
 pub const Dx12Compiler = enum(u32) {
-    @"undefined" = 0x00000000,
-    fxc          = 0x00000001,
-    dxc          = 0x00000002,
+    undefined = 0x00000000,
+    fxc = 0x00000001,
+    dxc = 0x00000002,
 };
 
 pub const Gles3MinorVersion = enum(u32) {
-    automatic  = 0x00000000,
-    version_0  = 0x00000001,
-    version_1  = 0x00000002,
-    version_2  = 0x00000003,
+    automatic = 0x00000000,
+    version_0 = 0x00000001,
+    version_1 = 0x00000002,
+    version_2 = 0x00000003,
 };
 
 pub const DxcMaxShaderModel = enum(u32) {
@@ -75,12 +75,12 @@ pub const DxcMaxShaderModel = enum(u32) {
 };
 
 pub const GLFenceBehaviour = enum(u32) {
-    gl_fence_behaviour_normal      = 0x00000000,
+    gl_fence_behaviour_normal = 0x00000000,
     gl_fence_behaviour_auto_finish = 0x00000001,
 };
 
 pub const InstanceExtras = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.instance_extras,
     },
     backends: InstanceBackend,
@@ -88,8 +88,8 @@ pub const InstanceExtras = extern struct {
     dx12_shader_compiler: Dx12Compiler,
     gles3_minor_version: Gles3MinorVersion,
     gl_fence_behavior: GLFenceBehaviour,
-    dxil_path: StringView = StringView {},
-    dxc_path: StringView = StringView {},
+    dxil_path: StringView = StringView{},
+    dxc_path: StringView = StringView{},
     dxc_max_shader_model: DxcMaxShaderModel,
 };
 
@@ -119,13 +119,13 @@ pub const InstanceDescriptor = extern struct {
 
 pub const WGSLLanguageFeatureName = enum(u32) {
     readonly_and_readwrite_storage_textures = 0x00000001,
-    packed4x8_integer_dot_product           = 0x00000002,
-    unrestricted_pointer_parameters         = 0x00000003,
-    pointer_composite_access                = 0x00000004,
+    packed4x8_integer_dot_product = 0x00000002,
+    unrestricted_pointer_parameters = 0x00000003,
+    pointer_composite_access = 0x00000004,
 };
 
 pub const SupportedWGSLLanguageFeaturesProcs = struct {
-    pub const FreeMembers = *const fn(SupportedWGSLLanguageFeatures) callconv(.C) void;
+    pub const FreeMembers = *const fn (SupportedWGSLLanguageFeatures) callconv(.c) void;
 };
 
 extern fn wgpuSupportedWGSLLanguageFeaturesFreeMembers(supported_wgsl_language_features: SupportedWGSLLanguageFeatures) void;
@@ -142,21 +142,21 @@ pub const SupportedWGSLLanguageFeatures = extern struct {
 };
 
 pub const InstanceProcs = struct {
-    pub const CreateInstance = *const fn(?*const InstanceDescriptor) callconv(.C) ?*Instance;
-    pub const GetCapabilities = *const fn(*InstanceCapabilities) callconv(.C) Status;
+    pub const CreateInstance = *const fn (?*const InstanceDescriptor) callconv(.c) ?*Instance;
+    pub const GetCapabilities = *const fn (*InstanceCapabilities) callconv(.c) Status;
 
-    pub const CreateSurface = *const fn(*Instance, *const SurfaceDescriptor) callconv(.C) ?*Surface;
-    pub const GetWGSLLanguageFeatures = *const fn(*Instance, *SupportedWGSLLanguageFeatures) callconv(.C) Status;
-    pub const HasWGSLLanguageFeature = *const fn(*Instance, WGSLLanguageFeatureName) callconv(.C) WGPUBool;
-    pub const ProcessEvents = *const fn(*Instance) callconv(.C) void;
-    pub const RequestAdapter = *const fn(*Instance, ?*const RequestAdapterOptions, RequestAdapterCallbackInfo) callconv(.C) Future;
-    pub const WaitAny = *const fn(*Instance, usize, ?[*] FutureWaitInfo, u64) callconv(.C) WaitStatus;
-    pub const InstanceAddRef = *const fn(*Instance) callconv(.C) void;
-    pub const InstanceRelease = *const fn(*Instance) callconv(.C) void;
+    pub const CreateSurface = *const fn (*Instance, *const SurfaceDescriptor) callconv(.c) ?*Surface;
+    pub const GetWGSLLanguageFeatures = *const fn (*Instance, *SupportedWGSLLanguageFeatures) callconv(.c) Status;
+    pub const HasWGSLLanguageFeature = *const fn (*Instance, WGSLLanguageFeatureName) callconv(.c) WGPUBool;
+    pub const ProcessEvents = *const fn (*Instance) callconv(.c) void;
+    pub const RequestAdapter = *const fn (*Instance, ?*const RequestAdapterOptions, RequestAdapterCallbackInfo) callconv(.c) Future;
+    pub const WaitAny = *const fn (*Instance, usize, ?[*]FutureWaitInfo, u64) callconv(.c) WaitStatus;
+    pub const InstanceAddRef = *const fn (*Instance) callconv(.c) void;
+    pub const InstanceRelease = *const fn (*Instance) callconv(.c) void;
 
     // wgpu-native procs?
-    // pub const GenerateReport = *const fn(*Instance, *GlobalReport) callconv(.C) void;
-    // pub const EnumerateAdapters = *const fn(*Instance, ?*const EnumerateAdapterOptions, ?[*]Adapter) callconv(.C) usize;
+    // pub const GenerateReport = *const fn(*Instance, *GlobalReport) callconv(.c) void;
+    // pub const EnumerateAdapters = *const fn(*Instance, ?*const EnumerateAdapterOptions, ?[*]Adapter) callconv(.c) usize;
 };
 
 extern fn wgpuGetInstanceCapabilities(capabilities: *InstanceCapabilities) Status;
@@ -167,7 +167,7 @@ extern fn wgpuInstanceGetWGSLLanguageFeatures(instance: *Instance, features: *Su
 extern fn wgpuInstanceHasWGSLLanguageFeature(instance: *Instance, feature: WGSLLanguageFeatureName) WGPUBool;
 extern fn wgpuInstanceProcessEvents(instance: *Instance) void;
 extern fn wgpuInstanceRequestAdapter(instance: *Instance, options: ?*const RequestAdapterOptions, callback_info: RequestAdapterCallbackInfo) Future;
-extern fn wgpuInstanceWaitAny(instance: *Instance, future_count: usize, futures: ?[*] FutureWaitInfo, timeout_ns: u64) WaitStatus;
+extern fn wgpuInstanceWaitAny(instance: *Instance, future_count: usize, futures: ?[*]FutureWaitInfo, timeout_ns: u64) WaitStatus;
 extern fn wgpuInstanceAddRef(instance: *Instance) void;
 extern fn wgpuInstanceRelease(instance: *Instance) void;
 
@@ -245,9 +245,9 @@ pub const Instance = opaque {
         wgpuInstanceProcessEvents(self);
     }
 
-    fn defaultAdapterCallback(status: RequestAdapterStatus, adapter: ?*Adapter, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+    fn defaultAdapterCallback(status: RequestAdapterStatus, adapter: ?*Adapter, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
         const ud_response: *RequestAdapterResponse = @ptrCast(@alignCast(userdata1));
-        ud_response.* = RequestAdapterResponse {
+        ud_response.* = RequestAdapterResponse{
             .status = status,
             .message = message.toSlice(),
             .adapter = adapter,
@@ -262,7 +262,7 @@ pub const Instance = opaque {
     pub fn requestAdapterSync(self: *Instance, options: ?*const RequestAdapterOptions, polling_interval_nanoseconds: u64) RequestAdapterResponse {
         var response: RequestAdapterResponse = undefined;
         var completed = false;
-        const callback_info = RequestAdapterCallbackInfo {
+        const callback_info = RequestAdapterCallbackInfo{
             .callback = defaultAdapterCallback,
             .userdata1 = @ptrCast(&response),
             .userdata2 = @ptrCast(&completed),
@@ -296,7 +296,6 @@ pub const Instance = opaque {
         wgpuInstanceAddRef(self);
     }
 
-
     pub inline fn release(self: *Instance) void {
         wgpuInstanceRelease(self);
     }
@@ -323,7 +322,7 @@ test "can request adapter" {
 
     const instance = Instance.create(null);
     const response = instance.?.requestAdapterSync(null, 200_000_000);
-    const adapter: ?*Adapter = switch(response.status) {
+    const adapter: ?*Adapter = switch (response.status) {
         .success => response.adapter,
         else => null,
     };

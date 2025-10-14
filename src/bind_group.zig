@@ -26,7 +26,7 @@ const WGPU_WHOLE_SIZE = _misc.WGPU_WHOLE_SIZE;
 const StringView = _misc.StringView;
 
 pub const BindGroupLayoutEntryExtras = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.bind_group_layout_entry_extras,
     },
 
@@ -38,22 +38,22 @@ pub const BindGroupLayoutEntry = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
     binding: u32,
     visibility: ShaderStage,
-    buffer: BufferBindingLayout = BufferBindingLayout {
-        .@"type" = BufferBindingType.binding_not_used,
+    buffer: BufferBindingLayout = BufferBindingLayout{
+        .type = BufferBindingType.binding_not_used,
     },
-    sampler: SamplerBindingLayout = SamplerBindingLayout {
-        .@"type" = SamplerBindingType.binding_not_used,
+    sampler: SamplerBindingLayout = SamplerBindingLayout{
+        .type = SamplerBindingType.binding_not_used,
     },
-    texture: TextureBindingLayout = TextureBindingLayout {
+    texture: TextureBindingLayout = TextureBindingLayout{
         .sample_type = SampleType.binding_not_used,
     },
-    storage_texture: StorageTextureBindingLayout = StorageTextureBindingLayout {
+    storage_texture: StorageTextureBindingLayout = StorageTextureBindingLayout{
         .access = StorageTextureAccess.binding_not_used,
     },
 
     pub inline fn withCount(self: BindGroupLayoutEntry, count: u32) BindGroupLayoutEntry {
         var bgle = self;
-        bgle.next_in_chain = @ptrCast(&BindGroupLayoutEntryExtras {
+        bgle.next_in_chain = @ptrCast(&BindGroupLayoutEntryExtras{
             .count = count,
         });
         return bgle;
@@ -62,15 +62,15 @@ pub const BindGroupLayoutEntry = extern struct {
 
 pub const BindGroupLayoutDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    label: StringView = StringView {},
+    label: StringView = StringView{},
     entry_count: usize,
     entries: [*]const BindGroupLayoutEntry,
 };
 
 pub const BindGroupLayoutProcs = struct {
-    pub const SetLabel = *const fn(*BindGroupLayout, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*BindGroupLayout) callconv(.C) void;
-    pub const Release = *const fn(*BindGroupLayout) callconv(.C) void;
+    pub const SetLabel = *const fn (*BindGroupLayout, StringView) callconv(.c) void;
+    pub const AddRef = *const fn (*BindGroupLayout) callconv(.c) void;
+    pub const Release = *const fn (*BindGroupLayout) callconv(.c) void;
 };
 
 extern fn wgpuBindGroupLayoutSetLabel(bind_group_layout: *BindGroupLayout, label: StringView) void;
@@ -93,7 +93,7 @@ pub const BindGroupLayout = opaque {
 };
 
 pub const BindGroupEntryExtras = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.bind_group_entry_extras,
     },
     buffers: ?[*]const *Buffer,
@@ -122,16 +122,16 @@ pub const BindGroupEntry = extern struct {
 
 pub const BindGroupDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    label: StringView = StringView {},
+    label: StringView = StringView{},
     layout: *BindGroupLayout,
     entry_count: usize,
     entries: [*]const BindGroupEntry,
 };
 
 pub const BindGroupProcs = struct {
-    pub const SetLabel = *const fn(*BindGroup, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*BindGroup) callconv(.C) void;
-    pub const Release = *const fn(*BindGroup) callconv(.C) void;
+    pub const SetLabel = *const fn (*BindGroup, StringView) callconv(.c) void;
+    pub const AddRef = *const fn (*BindGroup) callconv(.c) void;
+    pub const Release = *const fn (*BindGroup) callconv(.c) void;
 };
 
 extern fn wgpuBindGroupSetLabel(bind_group: *BindGroup, label: StringView) void;
