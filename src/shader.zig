@@ -151,7 +151,7 @@ pub const CompilationInfo = extern struct {
     messages: [*]const CompilationMessage,
 };
 
-pub const CompilationInfoCallback = *const fn(status: CompilationInfoRequestStatus, compilationInfo: ?*const CompilationInfo, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void;
+pub const CompilationInfoCallback = *const fn(status: CompilationInfoRequestStatus, compilationInfo: ?*const CompilationInfo, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void;
 
 pub const CompilationInfoCallbackInfo = extern struct {
     next_in_chain: ?*const ChainedStruct = null,

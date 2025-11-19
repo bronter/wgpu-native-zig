@@ -78,8 +78,8 @@ pub const DeviceLostReason = enum(u32) {
 };
 
 // `device` is a reference to the device which was lost. If, and only if, the `reason` is DeviceLostReason.failed_creation, `device` is a non-null pointer to a null Device.
-pub const DeviceLostCallback = *const fn(device: *const ?*Device, reason: DeviceLostReason, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void;
-pub fn defaultDeviceLostCallback(device: *const ?*Device, reason: DeviceLostReason, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+pub const DeviceLostCallback = *const fn(device: *const ?*Device, reason: DeviceLostReason, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void;
+pub fn defaultDeviceLostCallback(device: *const ?*Device, reason: DeviceLostReason, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
     _ = device;
     _ = userdata1;
     _ = userdata2;
@@ -114,7 +114,7 @@ pub const DeviceLostCallbackInfo = extern struct {
             @compileError("userdata should be a pointer type");
         }
         const Trampoline = struct {
-            fn cb(device: *const ?*Device, reason: DeviceLostReason, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+            fn cb(device: *const ?*Device, reason: DeviceLostReason, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
                 const wrapped_callback: CallbackType = @ptrCast(userdata2);
                 const _userdata: UserDataType = @ptrCast(@alignCast(userdata1));
                 wrapped_callback(device, reason, message.toSlice(), _userdata);
@@ -166,8 +166,8 @@ pub const ErrorType = enum(u32) {
     unknown       = 0x00000005,
 };
 
-pub const UncapturedErrorCallback = *const fn(device: ?*Device, error_type: ErrorType, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void;
-pub fn defaultUncapturedErrorCallback(device: ?*Device, error_type: ErrorType, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+pub const UncapturedErrorCallback = *const fn(device: ?*Device, error_type: ErrorType, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void;
+pub fn defaultUncapturedErrorCallback(device: ?*Device, error_type: ErrorType, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
     _ = device;
     _ = userdata1;
     _ = userdata2;
@@ -197,7 +197,7 @@ pub const UncapturedErrorCallbackInfo = extern struct {
             @compileError("userdata should be a pointer type");
         }
         const Trampoline = struct {
-            fn cb(device: ?*Device, error_type: ErrorType, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+            fn cb(device: ?*Device, error_type: ErrorType, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
                 const wrapped_callback: CallbackType = @ptrCast(userdata2);
                 const _userdata: UserDataType = @ptrCast(@alignCast(userdata1));
                 wrapped_callback(device, error_type, message.toSlice(), _userdata);
@@ -315,7 +315,7 @@ pub const RequestDeviceCallback = *const fn(
     message: StringView,
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque
-) callconv(.C) void;
+) callconv(.c) void;
 
 pub const RequestDeviceCallbackInfo = extern struct {
     next_in_chain: ?*ChainedStruct = null,
@@ -338,7 +338,7 @@ pub const RequestDeviceCallbackInfo = extern struct {
             @compileError("userdata should be a pointer type");
         }
         const Trampoline = struct {
-            fn cb(status: RequestDeviceStatus, device: ?*Device, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+            fn cb(status: RequestDeviceStatus, device: ?*Device, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
                 const wrapped_callback: CallbackType = @ptrCast(userdata2);
                 const _userdata: UserDataType = @ptrCast(@alignCast(userdata1));
                 const response: RequestDeviceError!*Device = switch (status) {
@@ -386,7 +386,7 @@ pub const PopErrorScopeCallback = *const fn(
     message: StringView,
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque,
-) callconv(.C) void;
+) callconv(.c) void;
 
 pub const PopErrorScopeCallbackInfo = extern struct {
     next_in_chain: ?*ChainedStruct = null,

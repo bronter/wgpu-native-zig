@@ -38,7 +38,7 @@ pub const QueueWorkDoneCallbackInfo = extern struct {
     userdata2: ?*anyopaque = null,
 };
 
-pub const QueueWorkDoneCallback = *const fn(status: WorkDoneStatus, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void;
+pub const QueueWorkDoneCallback = *const fn(status: WorkDoneStatus, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void;
 
 extern fn wgpuQueueOnSubmittedWorkDone(queue: *Queue, callback_info: QueueWorkDoneCallbackInfo) Future;
 extern fn wgpuQueueSetLabel(queue: *Queue, label: StringView) void;

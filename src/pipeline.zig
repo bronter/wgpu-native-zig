@@ -122,7 +122,7 @@ pub const CreateComputePipelineAsyncCallback = *const fn(
     message: StringView,
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque,
-) callconv(.C) void;
+) callconv(.c) void;
 
 extern fn wgpuComputePipelineGetBindGroupLayout(compute_pipeline: *ComputePipeline, group_index: u32) ?*BindGroupLayout;
 extern fn wgpuComputePipelineSetLabel(compute_pipeline: *ComputePipeline, label: StringView) void;
@@ -453,4 +453,4 @@ pub const CreateRenderPipelineAsyncCallback = *const fn(
     message: StringView,
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque,
-) callconv(.C) void;
+) callconv(.c) void;

@@ -4,7 +4,8 @@ pub fn write24BitBMP(file_name: []const u8, comptime width: u32, comptime height
     const file = try std.fs.cwd().createFile(file_name, .{});
     defer file.close();
 
-    var writer = file.writer();
+    // TODO: Use the new writer
+    var writer = file.deprecatedWriter();
 
     // ID
     _ = try writer.write(&[2]u8{'B', 'M'});

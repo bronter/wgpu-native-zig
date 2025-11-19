@@ -167,7 +167,7 @@ pub const RequestAdapterCallbackInfo = extern struct {
             @compileError("userdata should be a pointer type");
         }
         const Trampoline = struct {
-            fn cb(status: RequestAdapterStatus, adapter: ?*Adapter, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+            fn cb(status: RequestAdapterStatus, adapter: ?*Adapter, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
                 const wrapped_callback: CallbackType = @ptrCast(userdata2);
                 const _userdata: UserDataType = @ptrCast(@alignCast(userdata1));
                 const response: RequestAdapterError!*Adapter = switch (status) {
@@ -199,7 +199,7 @@ pub const RequestAdapterCallback = *const fn(
     message: StringView,
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque,
-) callconv(.C) void;
+) callconv(.c) void;
 
 
 extern fn wgpuAdapterInfoFreeMembers(adapter_info: WGPUAdapterInfo) void;
