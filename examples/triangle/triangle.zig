@@ -10,7 +10,7 @@ const output_extent = wgpu.Extent3D {
 const output_bytes_per_row = 4 * output_extent.width;
 const output_size = output_bytes_per_row * output_extent.height;
 
-fn handleBufferMap(status: wgpu.MapAsyncStatus, _: wgpu.StringView, userdata1: ?*anyopaque, _: ?*anyopaque) callconv(.C) void {
+fn handleBufferMap(status: wgpu.MapAsyncStatus, _: wgpu.StringView, userdata1: ?*anyopaque, _: ?*anyopaque) callconv(.c) void {
     std.log.info("buffer_map status={x:.8}\n", .{@intFromEnum(status)});
     const complete: *bool = @ptrCast(@alignCast(userdata1));
     complete.* = true;
@@ -147,7 +147,7 @@ pub fn main() !void {
 
         encoder.copyTextureToBuffer(&img_copy_src, &img_copy_dst, &output_extent);
 
-        const command_buffer = encoder.finish(&wgpu.CommandBufferDescriptor {
+         const command_buffer = encoder.finish(&wgpu.CommandBufferDescriptor {
             .label = wgpu.StringView.fromSlice("Command Buffer"),
         }).?;
         defer command_buffer.release();

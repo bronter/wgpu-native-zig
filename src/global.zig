@@ -1,7 +1,7 @@
 // const StringView = @import("misc.zig").StringView;
 
 // Generic function return type for wgpuGetProcAddress
-// pub const Proc = *const fn() callconv(.C) void;
+// pub const Proc = *const fn() callconv(.c) void;
 
 // Supposedly getProcAddress is a global function, but it doesn't seem like it should work without being tied to a Device?
 // Could be it's one of those functions that's meant to be called with null the first time, TODO: look into that.
