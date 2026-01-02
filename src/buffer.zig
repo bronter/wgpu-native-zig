@@ -4,7 +4,6 @@ const WGPUFlags = _misc.WGPUFlags;
 const StringView = _misc.StringView;
 const USIZE_MAX = _misc.USIZE_MAX;
 
-
 pub const WGPU_WHOLE_MAP_SIZE = USIZE_MAX;
 
 const _async = @import("async.zig");
@@ -14,54 +13,54 @@ const Future = _async.Future;
 const ChainedStruct = @import("chained_struct.zig").ChainedStruct;
 
 pub const BufferBindingType = enum(u32) {
-    binding_not_used  = 0x00000000, // Indicates that this BufferBindingLayout member of its parent BindGroupLayoutEntry is not used.
-    @"undefined"      = 0x00000001, // Indicates no value is passed for this argument
-    uniform           = 0x00000002,
-    storage           = 0x00000003,
+    binding_not_used = 0x00000000, // Indicates that this BufferBindingLayout member of its parent BindGroupLayoutEntry is not used.
+    undefined = 0x00000001, // Indicates no value is passed for this argument
+    uniform = 0x00000002,
+    storage = 0x00000003,
     read_only_storage = 0x00000004,
 };
 
 pub const BufferBindingLayout = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    @"type": BufferBindingType = BufferBindingType.@"undefined",
+    type: BufferBindingType = BufferBindingType.undefined,
     has_dynamic_offset: WGPUBool = @intFromBool(false),
     min_binding_size: u64 = 0,
 };
 
 pub const BufferUsage = WGPUFlags;
 pub const BufferUsages = struct {
-    pub const none          = @as(BufferUsage, 0x0000000000000000);
-    pub const map_read      = @as(BufferUsage, 0x0000000000000001);
-    pub const map_write     = @as(BufferUsage, 0x0000000000000002);
-    pub const copy_src      = @as(BufferUsage, 0x0000000000000004);
-    pub const copy_dst      = @as(BufferUsage, 0x0000000000000008);
-    pub const index         = @as(BufferUsage, 0x0000000000000010);
-    pub const vertex        = @as(BufferUsage, 0x0000000000000020);
-    pub const uniform       = @as(BufferUsage, 0x0000000000000040);
-    pub const storage       = @as(BufferUsage, 0x0000000000000080);
-    pub const indirect      = @as(BufferUsage, 0x0000000000000100);
+    pub const none = @as(BufferUsage, 0x0000000000000000);
+    pub const map_read = @as(BufferUsage, 0x0000000000000001);
+    pub const map_write = @as(BufferUsage, 0x0000000000000002);
+    pub const copy_src = @as(BufferUsage, 0x0000000000000004);
+    pub const copy_dst = @as(BufferUsage, 0x0000000000000008);
+    pub const index = @as(BufferUsage, 0x0000000000000010);
+    pub const vertex = @as(BufferUsage, 0x0000000000000020);
+    pub const uniform = @as(BufferUsage, 0x0000000000000040);
+    pub const storage = @as(BufferUsage, 0x0000000000000080);
+    pub const indirect = @as(BufferUsage, 0x0000000000000100);
     pub const query_resolve = @as(BufferUsage, 0x0000000000000200);
 };
 
 pub const BufferMapState = enum(u32) {
     unmapped = 0x00000001,
-    pending  = 0x00000002,
-    mapped   = 0x00000003,
+    pending = 0x00000002,
+    mapped = 0x00000003,
 };
 
 pub const MapMode = WGPUFlags;
 pub const MapModes = struct {
-    pub const none  = @as(MapMode, 0x0000000000000000);
-    pub const read  = @as(MapMode, 0x0000000000000001);
+    pub const none = @as(MapMode, 0x0000000000000000);
+    pub const read = @as(MapMode, 0x0000000000000001);
     pub const write = @as(MapMode, 0x0000000000000002);
 };
 
 pub const MapAsyncStatus = enum(u32) {
-    success          = 0x00000001,
+    success = 0x00000001,
     instance_dropped = 0x00000002,
-    @"error"         = 0x00000003,
-    aborted          = 0x00000004,
-    unknown          = 0x00000005,
+    @"error" = 0x00000003,
+    aborted = 0x00000004,
+    unknown = 0x00000005,
 };
 
 pub const BufferMapCallbackInfo = extern struct {
@@ -75,28 +74,28 @@ pub const BufferMapCallbackInfo = extern struct {
     userdata2: ?*anyopaque = null,
 };
 
-pub const BufferMapCallback = *const fn(status: MapAsyncStatus, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void;
+pub const BufferMapCallback = *const fn (status: MapAsyncStatus, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void;
 
 pub const BufferDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    label: StringView = StringView {},
+    label: StringView = StringView{},
     usage: BufferUsage,
     size: u64,
     mapped_at_creation: WGPUBool = @intFromBool(false),
 };
 
 pub const BufferProcs = struct {
-    pub const Destroy = *const fn(*Buffer) callconv(.C) void;
-    pub const GetConstMappedRange = *const fn(*Buffer, usize, usize) callconv(.C) ?*const anyopaque;
-    pub const GetMapState = *const fn(*Buffer) callconv(.C) BufferMapState;
-    pub const GetMappedRange = *const fn(*Buffer, usize, usize) callconv(.C) ?*anyopaque;
-    pub const GetSize = *const fn(*Buffer) callconv(.C) u64;
-    pub const GetUsage = *const fn(*Buffer) callconv(.C) BufferUsage;
-    pub const MapAsync = *const fn(*Buffer, MapMode, usize, usize, BufferMapCallbackInfo) callconv(.C) Future;
-    pub const SetLabel = *const fn(*Buffer, StringView) callconv(.C) void;
-    pub const Unmap = *const fn(*Buffer) callconv(.C) void;
-    pub const AddRef = *const fn(*Buffer) callconv(.C) void;
-    pub const Release = *const fn(*Buffer) callconv(.C) void;
+    pub const Destroy = *const fn (*Buffer) callconv(.c) void;
+    pub const GetConstMappedRange = *const fn (*Buffer, usize, usize) callconv(.c) ?*const anyopaque;
+    pub const GetMapState = *const fn (*Buffer) callconv(.c) BufferMapState;
+    pub const GetMappedRange = *const fn (*Buffer, usize, usize) callconv(.c) ?*anyopaque;
+    pub const GetSize = *const fn (*Buffer) callconv(.c) u64;
+    pub const GetUsage = *const fn (*Buffer) callconv(.c) BufferUsage;
+    pub const MapAsync = *const fn (*Buffer, MapMode, usize, usize, BufferMapCallbackInfo) callconv(.c) Future;
+    pub const SetLabel = *const fn (*Buffer, StringView) callconv(.c) void;
+    pub const Unmap = *const fn (*Buffer) callconv(.c) void;
+    pub const AddRef = *const fn (*Buffer) callconv(.c) void;
+    pub const Release = *const fn (*Buffer) callconv(.c) void;
 };
 
 extern fn wgpuBufferDestroy(buffer: *Buffer) void;
@@ -185,3 +184,4 @@ pub const Buffer = opaque {
         wgpuBufferRelease(self);
     }
 };
+

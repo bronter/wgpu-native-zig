@@ -12,14 +12,14 @@ pub const WGPUFlags = u64;
 // Status code returned (synchronously) from many operations.
 // Generally indicates an invalid input like an unknown enum value or OutStructChainError.
 pub const Status = enum(u32) {
-    success  = 0x00000001,
+    success = 0x00000001,
     @"error" = 0x00000002,
 };
 
 pub const OptionalBool = enum(u32) {
-    false        = 0x00000000,
-    true         = 0x00000001,
-    @"undefined" = 0x00000002,
+    false = 0x00000000,
+    true = 0x00000001,
+    undefined = 0x00000002,
 };
 
 // Used by both device and adapter
@@ -27,58 +27,58 @@ pub const OptionalBool = enum(u32) {
 // but idk if they should go in device.zig, adapter.zig, or their own separate file.
 // So they're going in the "miscellaneous" pile for now.
 pub const FeatureName = enum(u32) {
-    @"undefined"                                                  = 0x00000000,
-    depth_clip_control                                            = 0x00000001,
-    depth32_float_stencil8                                        = 0x00000002,
-    timestamp_query                                               = 0x00000003,
-    texture_compression_bc                                        = 0x00000004,
-    texture_compression_bc_sliced_3d                              = 0x00000005,
-    texture_compression_etc2                                      = 0x00000006,
-    texture_compression_astc                                      = 0x00000007,
-    texture_compression_astc_sliced_3d                            = 0x00000008,
-    indirect_first_instance                                       = 0x00000009,
-    shader_f16                                                    = 0x0000000A,
-    rg11b10_ufloat_renderable                                     = 0x0000000B,
-    bgra8_unorm_storage                                           = 0x0000000C,
-    float32_filterable                                            = 0x0000000D,
-    float32_blendable                                             = 0x0000000E,
-    clip_distances                                                = 0x0000000F,
-    dual_source_blending                                          = 0x00000010,
+    undefined = 0x00000000,
+    depth_clip_control = 0x00000001,
+    depth32_float_stencil8 = 0x00000002,
+    timestamp_query = 0x00000003,
+    texture_compression_bc = 0x00000004,
+    texture_compression_bc_sliced_3d = 0x00000005,
+    texture_compression_etc2 = 0x00000006,
+    texture_compression_astc = 0x00000007,
+    texture_compression_astc_sliced_3d = 0x00000008,
+    indirect_first_instance = 0x00000009,
+    shader_f16 = 0x0000000A,
+    rg11b10_ufloat_renderable = 0x0000000B,
+    bgra8_unorm_storage = 0x0000000C,
+    float32_filterable = 0x0000000D,
+    float32_blendable = 0x0000000E,
+    clip_distances = 0x0000000F,
+    dual_source_blending = 0x00000010,
 
     // wgpu-native extras
-    push_constants                                                = 0x00030001,
-    texture_adapter_specific_format_features                      = 0x00030002,
-    multi_draw_indirect                                           = 0x00030003,
-    multi_draw_indirect_count                                     = 0x00030004,
-    vertex_writable_storage                                       = 0x00030005,
-    texture_binding_array                                         = 0x00030006,
+    push_constants = 0x00030001,
+    texture_adapter_specific_format_features = 0x00030002,
+    multi_draw_indirect = 0x00030003,
+    multi_draw_indirect_count = 0x00030004,
+    vertex_writable_storage = 0x00030005,
+    texture_binding_array = 0x00030006,
     sampled_texture_and_storage_buffer_array_non_uniform_indexing = 0x00030007,
-    pipeline_statistics_query                                     = 0x00030008,
-    storage_resource_binding_array                                = 0x00030009,
-    partially_bound_binding_array                                 = 0x0003000A,
-    texture_format_16bit_norm                                     = 0x0003000B,
-    texture_compression_astc_hdr                                  = 0x0003000C,
-    mappable_primary_buffers                                      = 0x0003000E,
-    buffer_binding_array                                          = 0x0003000F,
+    pipeline_statistics_query = 0x00030008,
+    storage_resource_binding_array = 0x00030009,
+    partially_bound_binding_array = 0x0003000A,
+    texture_format_16bit_norm = 0x0003000B,
+    texture_compression_astc_hdr = 0x0003000C,
+    mappable_primary_buffers = 0x0003000E,
+    buffer_binding_array = 0x0003000F,
     uniform_buffer_and_storage_texture_array_non_uniform_indexing = 0x00030010,
-    spirv_shader_passthrough                                      = 0x00030017,
-    vertex_attribute_64bit                                        = 0x00030019,
-    texture_format_nv12                                           = 0x0003001A,
-    ray_tracing_acceleration_structure                            = 0x0003001B,
-    ray_query                                                     = 0x0003001C,
-    shader_f64                                                    = 0x0003001D,
-    shader_i16                                                    = 0x0003001E,
-    shader_primitive_index                                        = 0x0003001F,
-    shader_early_depth_test                                       = 0x00030020,
-    subgroup                                                      = 0x00030021,
-    subgroup_vertex                                               = 0x00030022,
-    subgroup_barrier                                              = 0x00030023,
-    timestamp_query_inside_encoders                               = 0x00030024,
-    timestamp_query_inside_passes                                 = 0x00030025,
+    spirv_shader_passthrough = 0x00030017,
+    vertex_attribute_64bit = 0x00030019,
+    texture_format_nv12 = 0x0003001A,
+    ray_tracing_acceleration_structure = 0x0003001B,
+    ray_query = 0x0003001C,
+    shader_f64 = 0x0003001D,
+    shader_i16 = 0x0003001E,
+    shader_primitive_index = 0x0003001F,
+    shader_early_depth_test = 0x00030020,
+    subgroup = 0x00030021,
+    subgroup_vertex = 0x00030022,
+    subgroup_barrier = 0x00030023,
+    timestamp_query_inside_encoders = 0x00030024,
+    timestamp_query_inside_passes = 0x00030025,
 };
 
 pub const SupportedFeaturesProcs = struct {
-    pub const FreeMembers = *const fn(SupportedFeatures) callconv(.C) void;
+    pub const FreeMembers = *const fn (SupportedFeatures) callconv(.c) void;
 };
 
 extern fn wgpuSupportedFeaturesFreeMembers(supported_features: SupportedFeatures) void;
@@ -94,21 +94,21 @@ pub const SupportedFeatures = extern struct {
 };
 
 pub const IndexFormat = enum(u32) {
-    @"undefined" = 0x00000000, // Indicates no value is passed for this argument.
-    uint16       = 0x00000001,
-    uint32       = 0x00000002,
+    undefined = 0x00000000, // Indicates no value is passed for this argument.
+    uint16 = 0x00000001,
+    uint32 = 0x00000002,
 };
 
 pub const CompareFunction = enum(u32) {
-    @"undefined"  = 0x00000000, // Indicates no value is passed for this argument
-    never         = 0x00000001,
-    less          = 0x00000002,
-    equal         = 0x00000003,
-    less_equal    = 0x00000004,
-    greater       = 0x00000005,
-    not_equal     = 0x00000006,
+    undefined = 0x00000000, // Indicates no value is passed for this argument
+    never = 0x00000001,
+    less = 0x00000002,
+    equal = 0x00000003,
+    less_equal = 0x00000004,
+    greater = 0x00000005,
+    not_equal = 0x00000006,
     greater_equal = 0x00000007,
-    always        = 0x00000008,
+    always = 0x00000008,
 };
 
 extern fn wgpuGetVersion() u32;
@@ -142,7 +142,7 @@ pub const StringView = extern struct {
     length: usize = WGPU_STRLEN,
 
     pub inline fn fromSlice(slice: []const u8) StringView {
-        return StringView {
+        return StringView{
             .data = slice.ptr,
             .length = slice.len,
         };
@@ -165,7 +165,7 @@ pub const StringView = extern struct {
 
 test "StringView can be constructed from slice" {
     const test_slice = "test";
-    try std.testing.expectEqualDeep(StringView {
+    try std.testing.expectEqualDeep(StringView{
         .data = test_slice.ptr,
         .length = test_slice.len,
     }, StringView.fromSlice("test"));
@@ -173,7 +173,7 @@ test "StringView can be constructed from slice" {
 
 test "slice can be constructed from normal StringView" {
     const test_slice = "test";
-    const sv = StringView {
+    const sv = StringView{
         .data = test_slice.ptr,
         .length = test_slice.len,
     };
@@ -183,7 +183,7 @@ test "slice can be constructed from normal StringView" {
 
 test "slice can be constructed from null-terminated StringView" {
     const test_slice = "test";
-    const sv = StringView {
+    const sv = StringView{
         .data = test_slice.ptr,
         .length = WGPU_STRLEN,
     };
@@ -192,7 +192,7 @@ test "slice can be constructed from null-terminated StringView" {
 }
 
 test "StringView.toSlice returns null if data is null" {
-    const sv = StringView {
+    const sv = StringView{
         .data = null,
         .length = WGPU_STRLEN,
     };

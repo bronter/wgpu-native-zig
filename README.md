@@ -119,7 +119,7 @@ b.getInstallStep().dependOn(&install_dll.step);
         message: StringView,
         userdata1: ?*anyopaque,
         userdata2: ?*anyopaque
-    ) callconv(.C) void {
+    ) callconv(.c) void {
         switch(status) {
             .success => {
                 const ud_adapter: **Adapter = @ptrCast(@alignCast(userdata1));

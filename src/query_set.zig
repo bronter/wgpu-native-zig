@@ -5,23 +5,23 @@ const SType = _chained_struct.SType;
 const StringView = @import("misc.zig").StringView;
 
 pub const QueryType = enum(u32) {
-    occlusion           = 0x00000001,
-    timestamp           = 0x00000002,
+    occlusion = 0x00000001,
+    timestamp = 0x00000002,
 
     // wgpu-native pipeline statistics
     pipeline_statistics = 0x00030000,
 };
 
 pub const PipelineStatisticName = enum(u32) {
-    vertex_shader_invocations   = 0x00000000,
-    clipper_invocations         = 0x00000001,
-    clipper_primitives_out      = 0x00000002,
+    vertex_shader_invocations = 0x00000000,
+    clipper_invocations = 0x00000001,
+    clipper_primitives_out = 0x00000002,
     fragment_shader_invocations = 0x00000003,
-    compute_shader_invocations  = 0x00000004,
+    compute_shader_invocations = 0x00000004,
 };
 
 pub const QuerySetDescriptorExtras = extern struct {
-    chain: ChainedStruct = ChainedStruct {
+    chain: ChainedStruct = ChainedStruct{
         .s_type = SType.query_set_descriptor_extras,
     },
     pipeline_statistics: [*]const PipelineStatisticName,
@@ -30,17 +30,13 @@ pub const QuerySetDescriptorExtras = extern struct {
 
 pub const QuerySetDescriptor = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
-    label: StringView = StringView {},
-    @"type": QueryType,
+    label: StringView = StringView{},
+    type: QueryType,
     count: u32,
 
-    pub inline fn withPipelineStatistics(
-        self: QuerySetDescriptor,
-        pipeline_statistic_count: usize,
-        pipeline_statistics: [*]const PipelineStatisticName
-    ) QuerySetDescriptor {
+    pub inline fn withPipelineStatistics(self: QuerySetDescriptor, pipeline_statistic_count: usize, pipeline_statistics: [*]const PipelineStatisticName) QuerySetDescriptor {
         var qsd = self;
-        qsd.next_in_chain = @ptrCast(&QuerySetDescriptorExtras {
+        qsd.next_in_chain = @ptrCast(&QuerySetDescriptorExtras{
             .pipeline_statistics = pipeline_statistics,
             .pipeline_statistic_count = pipeline_statistic_count,
         });
@@ -49,12 +45,12 @@ pub const QuerySetDescriptor = extern struct {
 };
 
 pub const QuerySetProcs = struct {
-    pub const Destroy = *const fn(*QuerySet) callconv(.C) void;
-    pub const GetCount = *const fn(*QuerySet) callconv(.C) u32;
-    pub const GetType = *const fn(*QuerySet) callconv(.C) QueryType;
-    pub const SetLabel = *const fn(*QuerySet, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*QuerySet) callconv(.C) void;
-    pub const Release = *const fn(*QuerySet) callconv(.C) void;
+    pub const Destroy = *const fn (*QuerySet) callconv(.c) void;
+    pub const GetCount = *const fn (*QuerySet) callconv(.c) u32;
+    pub const GetType = *const fn (*QuerySet) callconv(.c) QueryType;
+    pub const SetLabel = *const fn (*QuerySet, StringView) callconv(.c) void;
+    pub const AddRef = *const fn (*QuerySet) callconv(.c) void;
+    pub const Release = *const fn (*QuerySet) callconv(.c) void;
 };
 
 extern fn wgpuQuerySetDestroy(query_set: *QuerySet) void;
@@ -88,3 +84,4 @@ pub const QuerySet = opaque {
         wgpuQuerySetRelease(self);
     }
 };
+
