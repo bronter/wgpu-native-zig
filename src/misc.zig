@@ -78,7 +78,7 @@ pub const FeatureName = enum(u32) {
 };
 
 pub const SupportedFeaturesProcs = struct {
-    pub const FreeMembers = *const fn(SupportedFeatures) callconv(.C) void;
+    pub const FreeMembers = *const fn(SupportedFeatures) callconv(.c) void;
 };
 
 extern fn wgpuSupportedFeaturesFreeMembers(supported_features: SupportedFeatures) void;

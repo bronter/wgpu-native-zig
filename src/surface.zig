@@ -274,7 +274,7 @@ pub const SurfaceConfiguration = extern struct {
 };
 
 pub const SurfaceCapabilitiesProcs = struct {
-    pub const FreeMembers = *const fn(SurfaceCapabilities) callconv(.C) void;
+    pub const FreeMembers = *const fn(SurfaceCapabilities) callconv(.c) void;
 };
 
 extern fn wgpuSurfaceCapabilitiesFreeMembers(surface_capabilities: SurfaceCapabilities) void;
@@ -348,14 +348,14 @@ pub const SurfaceTexture = extern struct {
 };
 
 pub const SurfaceProcs = struct {
-    pub const Configure = *const fn(*Surface, *const SurfaceConfiguration) callconv(.C) void;
-    pub const GetCapabilities = *const fn(*Surface, *Adapter, *SurfaceCapabilities) callconv(.C) Status;
-    pub const GetCurrentTexture = *const fn(*Surface, *SurfaceTexture) callconv(.C) void;
-    pub const Present = *const fn(*Surface) callconv(.C) Status;
+    pub const Configure = *const fn(*Surface, *const SurfaceConfiguration) callconv(.c) void;
+    pub const GetCapabilities = *const fn(*Surface, *Adapter, *SurfaceCapabilities) callconv(.c) Status;
+    pub const GetCurrentTexture = *const fn(*Surface, *SurfaceTexture) callconv(.c) void;
+    pub const Present = *const fn(*Surface) callconv(.c) Status;
     pub const SetLabel = *const fn(*Surface, StringView) void;
-    pub const Unconfigure = *const fn(*Surface) callconv(.C) void;
-    pub const AddRef = *const fn(*Surface) callconv(.C) void;
-    pub const Release = *const fn(*Surface) callconv(.C) void;
+    pub const Unconfigure = *const fn(*Surface) callconv(.c) void;
+    pub const AddRef = *const fn(*Surface) callconv(.c) void;
+    pub const Release = *const fn(*Surface) callconv(.c) void;
 };
 
 extern fn wgpuSurfaceConfigure(surface: *Surface, config: *const SurfaceConfiguration) void;
