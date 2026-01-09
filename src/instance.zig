@@ -125,7 +125,7 @@ pub const WGSLLanguageFeatureName = enum(u32) {
 };
 
 pub const SupportedWGSLLanguageFeaturesProcs = struct {
-    pub const FreeMembers = *const fn(SupportedWGSLLanguageFeatures) callconv(.C) void;
+    pub const FreeMembers = *const fn(SupportedWGSLLanguageFeatures) callconv(.c) void;
 };
 
 extern fn wgpuSupportedWGSLLanguageFeaturesFreeMembers(supported_wgsl_language_features: SupportedWGSLLanguageFeatures) void;
@@ -142,21 +142,21 @@ pub const SupportedWGSLLanguageFeatures = extern struct {
 };
 
 pub const InstanceProcs = struct {
-    pub const CreateInstance = *const fn(?*const InstanceDescriptor) callconv(.C) ?*Instance;
-    pub const GetCapabilities = *const fn(*InstanceCapabilities) callconv(.C) Status;
+    pub const CreateInstance = *const fn(?*const InstanceDescriptor) callconv(.c) ?*Instance;
+    pub const GetCapabilities = *const fn(*InstanceCapabilities) callconv(.c) Status;
 
-    pub const CreateSurface = *const fn(*Instance, *const SurfaceDescriptor) callconv(.C) ?*Surface;
-    pub const GetWGSLLanguageFeatures = *const fn(*Instance, *SupportedWGSLLanguageFeatures) callconv(.C) Status;
-    pub const HasWGSLLanguageFeature = *const fn(*Instance, WGSLLanguageFeatureName) callconv(.C) WGPUBool;
-    pub const ProcessEvents = *const fn(*Instance) callconv(.C) void;
-    pub const RequestAdapter = *const fn(*Instance, ?*const RequestAdapterOptions, RequestAdapterCallbackInfo) callconv(.C) Future;
-    pub const WaitAny = *const fn(*Instance, usize, ?[*] FutureWaitInfo, u64) callconv(.C) WaitStatus;
-    pub const InstanceAddRef = *const fn(*Instance) callconv(.C) void;
-    pub const InstanceRelease = *const fn(*Instance) callconv(.C) void;
+    pub const CreateSurface = *const fn(*Instance, *const SurfaceDescriptor) callconv(.c) ?*Surface;
+    pub const GetWGSLLanguageFeatures = *const fn(*Instance, *SupportedWGSLLanguageFeatures) callconv(.c) Status;
+    pub const HasWGSLLanguageFeature = *const fn(*Instance, WGSLLanguageFeatureName) callconv(.c) WGPUBool;
+    pub const ProcessEvents = *const fn(*Instance) callconv(.c) void;
+    pub const RequestAdapter = *const fn(*Instance, ?*const RequestAdapterOptions, RequestAdapterCallbackInfo) callconv(.c) Future;
+    pub const WaitAny = *const fn(*Instance, usize, ?[*] FutureWaitInfo, u64) callconv(.c) WaitStatus;
+    pub const InstanceAddRef = *const fn(*Instance) callconv(.c) void;
+    pub const InstanceRelease = *const fn(*Instance) callconv(.c) void;
 
     // wgpu-native procs?
-    // pub const GenerateReport = *const fn(*Instance, *GlobalReport) callconv(.C) void;
-    // pub const EnumerateAdapters = *const fn(*Instance, ?*const EnumerateAdapterOptions, ?[*]Adapter) callconv(.C) usize;
+    // pub const GenerateReport = *const fn(*Instance, *GlobalReport) callconv(.c) void;
+    // pub const EnumerateAdapters = *const fn(*Instance, ?*const EnumerateAdapterOptions, ?[*]Adapter) callconv(.c) usize;
 };
 
 extern fn wgpuGetInstanceCapabilities(capabilities: *InstanceCapabilities) Status;
@@ -245,7 +245,7 @@ pub const Instance = opaque {
         wgpuInstanceProcessEvents(self);
     }
 
-    fn defaultAdapterCallback(status: RequestAdapterStatus, adapter: ?*Adapter, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+    fn defaultAdapterCallback(status: RequestAdapterStatus, adapter: ?*Adapter, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
         const ud_response: *RequestAdapterResponse = @ptrCast(@alignCast(userdata1));
         ud_response.* = RequestAdapterResponse {
             .status = status,
