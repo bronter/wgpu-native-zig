@@ -150,7 +150,7 @@ pub const CompilationInfo = extern struct {
     messages: [*]const CompilationMessage,
 };
 
-pub const CompilationInfoCallback = *const fn(status: CompilationInfoRequestStatus, compilationInfo: ?*const CompilationInfo, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void;
+pub const CompilationInfoCallback = *const fn(status: CompilationInfoRequestStatus, compilationInfo: ?*const CompilationInfo, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void;
 
 pub const CompilationInfoCallbackInfo = extern struct {
     next_in_chain: ?*const ChainedStruct = null,
@@ -164,10 +164,10 @@ pub const CompilationInfoCallbackInfo = extern struct {
 };
 
 pub const ShaderModuleProcs = struct {
-    pub const GetCompilationInfo = *const fn(*ShaderModule, CompilationInfoCallbackInfo) callconv(.C) Future;
-    pub const SetLabel = *const fn(*ShaderModule, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*ShaderModule) callconv(.C) void;
-    pub const Release = *const fn(*ShaderModule) callconv(.C) void;
+    pub const GetCompilationInfo = *const fn(*ShaderModule, CompilationInfoCallbackInfo) callconv(.c) Future;
+    pub const SetLabel = *const fn(*ShaderModule, StringView) callconv(.c) void;
+    pub const AddRef = *const fn(*ShaderModule) callconv(.c) void;
+    pub const Release = *const fn(*ShaderModule) callconv(.c) void;
 };
 
 extern fn wgpuShaderModuleGetCompilationInfo(shader_module: *ShaderModule, callback_info: CompilationInfoCallbackInfo) Future;

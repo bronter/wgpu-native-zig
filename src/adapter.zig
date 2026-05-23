@@ -110,7 +110,7 @@ pub const RequestAdapterCallback = *const fn(
     message: StringView,
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque,
-) callconv(.C) void;
+) callconv(.c) void;
 
 pub const RequestAdapterResponse = struct {
     status: RequestAdapterStatus,
@@ -119,7 +119,7 @@ pub const RequestAdapterResponse = struct {
 };
 
 pub const AdapterInfoProcs = struct {
-    pub const FreeMembers = *const fn(AdapterInfo) callconv(.C) void;
+    pub const FreeMembers = *const fn(AdapterInfo) callconv(.c) void;
 };
 
 extern fn wgpuAdapterInfoFreeMembers(adapter_info: AdapterInfo) void;
@@ -141,13 +141,13 @@ pub const AdapterInfo = extern struct {
 };
 
 pub const AdapterProcs = struct {
-    pub const GetFeatures = *const fn(*Adapter, *SupportedFeatures) callconv(.C) void;
-    pub const GetLimits = *const fn(*Adapter, *Limits) callconv(.C) Status;
-    pub const GetInfo = *const fn(*Adapter, *AdapterInfo) callconv(.C) Status;
-    pub const HasFeature = *const fn(*Adapter, FeatureName) callconv(.C) WGPUBool;
-    pub const RequestDevice = *const fn(*Adapter, ?*const DeviceDescriptor, RequestDeviceCallbackInfo) callconv(.C) Future;
-    pub const AddRef = *const fn(*Adapter) callconv(.C) void;
-    pub const Release = *const fn(*Adapter) callconv(.C) void;
+    pub const GetFeatures = *const fn(*Adapter, *SupportedFeatures) callconv(.c) void;
+    pub const GetLimits = *const fn(*Adapter, *Limits) callconv(.c) Status;
+    pub const GetInfo = *const fn(*Adapter, *AdapterInfo) callconv(.c) Status;
+    pub const HasFeature = *const fn(*Adapter, FeatureName) callconv(.c) WGPUBool;
+    pub const RequestDevice = *const fn(*Adapter, ?*const DeviceDescriptor, RequestDeviceCallbackInfo) callconv(.c) Future;
+    pub const AddRef = *const fn(*Adapter) callconv(.c) void;
+    pub const Release = *const fn(*Adapter) callconv(.c) void;
 };
 
 extern fn wgpuAdapterGetFeatures(adapter: *Adapter, features: *SupportedFeatures) void;
@@ -172,7 +172,7 @@ pub const Adapter = opaque{
         return wgpuAdapterHasFeature(self, feature) != 0;
     }
 
-    fn defaultDeviceCallback(status: RequestDeviceStatus, device: ?*Device, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void {
+    fn defaultDeviceCallback(status: RequestDeviceStatus, device: ?*Device, message: StringView, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void {
         const ud_response: *RequestDeviceResponse = @ptrCast(@alignCast(userdata1));
         ud_response.* = RequestDeviceResponse {
             .status = status,
@@ -186,7 +186,7 @@ pub const Adapter = opaque{
 
     // This is a synchronous wrapper that handles asynchronous (callback) logic.
     // It uses polling to see when the request has been fulfilled, so needs a polling interval parameter.
-    pub fn requestDeviceSync(self: *Adapter, instance: *Instance, descriptor: ?*const DeviceDescriptor, polling_interval_nanoseconds: u64) RequestDeviceResponse {
+    pub fn requestDeviceSync(self: *Adapter, instance: *Instance, descriptor: ?*const DeviceDescriptor, io: std.Io, polling_interval: std.Io.Duration) RequestDeviceResponse {
         var response: RequestDeviceResponse = undefined;
         var completed = false;
         const callback_info = RequestDeviceCallbackInfo {
@@ -201,7 +201,7 @@ pub const Adapter = opaque{
         _ = device_future;
         instance.processEvents();
         while(!completed) {
-            std.Thread.sleep(polling_interval_nanoseconds);
+            io.sleep(polling_interval, std.Io.Clock.cpu_thread) catch {}; // is this the correct clock?
             instance.processEvents();
         }
 
@@ -223,12 +223,12 @@ test "can request device" {
     const testing = @import("std").testing;
 
     const instance = Instance.create(null);
-    const adapter_response = instance.?.requestAdapterSync(null, 200_000_000);
+    const adapter_response = instance.?.requestAdapterSync(null, testing.io, std.Io.Duration.fromMilliseconds(200));
     const adapter: ?*Adapter = switch(adapter_response.status) {
         .success => adapter_response.adapter,
         else => null,
     };
-    const device_response = adapter.?.requestDeviceSync(instance.?, null, 200_000_000);
+    const device_response = adapter.?.requestDeviceSync(instance.?, null, testing.io, std.Io.Duration.fromMilliseconds(200));
     const device: ?*Device = switch(device_response.status) {
         .success => device_response.device,
         else => null

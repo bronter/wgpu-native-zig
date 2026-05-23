@@ -56,9 +56,9 @@ pub const PipelineLayoutDescriptor = extern struct {
 };
 
 pub const PipelineLayoutProcs = struct {
-    pub const SetLabel = *const fn(*PipelineLayout, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*PipelineLayout) callconv(.C) void;
-    pub const Release = *const fn(*PipelineLayout) callconv(.C) void;
+    pub const SetLabel = *const fn(*PipelineLayout, StringView) callconv(.c) void;
+    pub const AddRef = *const fn(*PipelineLayout) callconv(.c) void;
+    pub const Release = *const fn(*PipelineLayout) callconv(.c) void;
 };
 
 extern fn wgpuPipelineLayoutSetLabel(pipeline_layout: *PipelineLayout, label: StringView) void;
@@ -128,13 +128,13 @@ pub const CreateComputePipelineAsyncCallback = *const fn(
     message: StringView,
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque,
-) callconv(.C) void;
+) callconv(.c) void;
 
 pub const ComputePipelineProcs = struct {
-    pub const GetBindGroupLayout = *const fn(*ComputePipeline, u32) callconv(.C) ?*BindGroupLayout;
-    pub const SetLabel = *const fn(*ComputePipeline, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*ComputePipeline) callconv(.C) void;
-    pub const Release = *const fn(*ComputePipeline) callconv(.C) void;
+    pub const GetBindGroupLayout = *const fn(*ComputePipeline, u32) callconv(.c) ?*BindGroupLayout;
+    pub const SetLabel = *const fn(*ComputePipeline, StringView) callconv(.c) void;
+    pub const AddRef = *const fn(*ComputePipeline) callconv(.c) void;
+    pub const Release = *const fn(*ComputePipeline) callconv(.c) void;
 };
 
 extern fn wgpuComputePipelineGetBindGroupLayout(compute_pipeline: *ComputePipeline, group_index: u32) ?*BindGroupLayout;
@@ -425,10 +425,10 @@ pub const RenderPipelineDescriptor = extern struct {
 };
 
 pub const RenderPipelineProcs = struct {
-    pub const GetBindGroupLayout = *const fn(*RenderPipeline, u32) callconv(.C) ?*BindGroupLayout;
-    pub const SetLabel = *const fn(*RenderPipeline, StringView) callconv(.C) void;
-    pub const AddRef = *const fn(*RenderPipeline) callconv(.C) void;
-    pub const Release = *const fn(*RenderPipeline) callconv(.C) void;
+    pub const GetBindGroupLayout = *const fn(*RenderPipeline, u32) callconv(.c) ?*BindGroupLayout;
+    pub const SetLabel = *const fn(*RenderPipeline, StringView) callconv(.c) void;
+    pub const AddRef = *const fn(*RenderPipeline) callconv(.c) void;
+    pub const Release = *const fn(*RenderPipeline) callconv(.c) void;
 };
 
 extern fn wgpuRenderPipelineGetBindGroupLayout(render_pipeline: *RenderPipeline, group_index: u32) ?*BindGroupLayout;
@@ -472,4 +472,4 @@ pub const CreateRenderPipelineAsyncCallback = *const fn(
     message: StringView,
     userdata1: ?*anyopaque,
     userdata2: ?*anyopaque,
-) callconv(.C) void;
+) callconv(.c) void;

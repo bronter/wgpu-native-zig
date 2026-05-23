@@ -38,19 +38,19 @@ pub const QueueWorkDoneCallbackInfo = extern struct {
     userdata2: ?*anyopaque = null,
 };
 
-pub const QueueWorkDoneCallback = *const fn(status: WorkDoneStatus, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.C) void;
+pub const QueueWorkDoneCallback = *const fn(status: WorkDoneStatus, userdata1: ?*anyopaque, userdata2: ?*anyopaque) callconv(.c) void;
 
 pub const QueueProcs = struct {
-    pub const OnSubmittedWorkDone = *const fn(*Queue, QueueWorkDoneCallbackInfo) callconv(.C) Future;
-    pub const SetLabel = *const fn(*Queue, StringView) callconv(.C) void;
-    pub const Submit = *const fn(*Queue, usize, [*]const *const CommandBuffer) callconv(.C) void;
-    pub const WriteBuffer = *const fn(*Queue, Buffer, u64, *const anyopaque, usize) callconv(.C) void;
-    pub const WriteTexture = *const fn(*Queue, *const TexelCopyTextureInfo, *const anyopaque, usize, *const TexelCopyBufferLayout, *const Extent3D) callconv(.C) void;
-    pub const AddRef = *const fn(*Queue) callconv(.C) void;
-    pub const Release = *const fn(*Queue) callconv(.C) void;
+    pub const OnSubmittedWorkDone = *const fn(*Queue, QueueWorkDoneCallbackInfo) callconv(.c) Future;
+    pub const SetLabel = *const fn(*Queue, StringView) callconv(.c) void;
+    pub const Submit = *const fn(*Queue, usize, [*]const *const CommandBuffer) callconv(.c) void;
+    pub const WriteBuffer = *const fn(*Queue, Buffer, u64, *const anyopaque, usize) callconv(.c) void;
+    pub const WriteTexture = *const fn(*Queue, *const TexelCopyTextureInfo, *const anyopaque, usize, *const TexelCopyBufferLayout, *const Extent3D) callconv(.c) void;
+    pub const AddRef = *const fn(*Queue) callconv(.c) void;
+    pub const Release = *const fn(*Queue) callconv(.c) void;
 
     // wgpu-native procs?
-    // pub const SubmitForIndex = *const fn(*Queue, usize, [*]const *const CommandBuffer) callconv(.C) SubmissionIndex;
+    // pub const SubmitForIndex = *const fn(*Queue, usize, [*]const *const CommandBuffer) callconv(.c) SubmissionIndex;
 };
 
 extern fn wgpuQueueOnSubmittedWorkDone(queue: *Queue, callback_info: QueueWorkDoneCallbackInfo) Future;

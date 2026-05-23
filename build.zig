@@ -1,46 +1,40 @@
 const std = @import("std");
 
-fn link_windows_system_libraries(comptime T: type, mod: *T, is_gnu: bool) void {
-    const linkSystemLibrary = switch (T) {
-        std.Build.Module => std.Build.Module.linkSystemLibrary,
-        std.Build.Step.Compile => std.Build.Step.Compile.linkSystemLibrary2,
-        else => @compileError("Provided type must either be std.Build.Module or std.Build.Step.Compile"),
-    };
-
+fn link_windows_system_libraries(mod: *std.Build.Module, is_gnu: bool) void {
     if (is_gnu) {
         // For gnu, the linker needs the d3dcompiler dll since it can't find a suitable static lib
         // (I'd guess it tries to search for something like "libd3dcompiler.a" instead of "d3dcompiler.lib").
-        linkSystemLibrary(mod, "d3dcompiler_47", .{});
+        mod.linkSystemLibrary("d3dcompiler_47", .{});
 
         // This seems to have something to do with the windows-result crate in wgpu-native's dependencies
-        linkSystemLibrary(mod, "api-ms-win-core-winrt-error-l1-1-0", .{});
+        mod.linkSystemLibrary("api-ms-win-core-winrt-error-l1-1-0", .{});
     } else {
-        linkSystemLibrary(mod, "d3dcompiler", .{});
+        mod.linkSystemLibrary("d3dcompiler", .{});
 
         // GetClientRect is unresolved unless we link this for msvc
-        linkSystemLibrary(mod, "user32", .{});
+        mod.linkSystemLibrary("user32", .{});
 
-        linkSystemLibrary(mod, "RuntimeObject", .{});
+        mod.linkSystemLibrary("RuntimeObject", .{});
     }
-    linkSystemLibrary(mod, "opengl32", .{});
-    linkSystemLibrary(mod, "gdi32", .{});
+    mod.linkSystemLibrary("opengl32", .{});
+    mod.linkSystemLibrary("gdi32", .{});
 
     // COM-related
-    linkSystemLibrary(mod, "OleAut32", .{});
-    linkSystemLibrary(mod, "Ole32", .{});
+    mod.linkSystemLibrary("OleAut32", .{});
+    mod.linkSystemLibrary("Ole32", .{});
 
     // Apparently these are needed because of rust stdlib
-    linkSystemLibrary(mod, "ws2_32", .{});
-    linkSystemLibrary(mod, "userenv", .{});
+    mod.linkSystemLibrary("ws2_32", .{});
+    mod.linkSystemLibrary("userenv", .{});
 
     // Needed by windows-rs (wgpu-native dependency)
-    linkSystemLibrary(mod, "propsys", .{});
+    mod.linkSystemLibrary("propsys", .{});
 }
 
 fn link_mac_frameworks(mod: *std.Build.Step.Compile) void {
-    mod.linkFramework("Foundation");
-    mod.linkFramework("QuartzCore");
-    mod.linkFramework("Metal");
+    mod.root_module.linkFramework("Foundation", .{});
+    mod.root_module.linkFramework("QuartzCore", .{});
+    mod.root_module.linkFramework("Metal", .{});
 }
 
 const WGPUBuildContext = struct {
@@ -142,8 +136,8 @@ const WGPUBuildContext = struct {
                     if (link_mode == .static) {
                         libwgpu_path = wgpu_dep.path("lib/wgpu_native.lib");
 
-                        link_windows_system_libraries(std.Build.Module, wgpu_mod, false);
-                        link_windows_system_libraries(std.Build.Module, wgpu_c_mod, false);
+                        link_windows_system_libraries(wgpu_mod, false);
+                        link_windows_system_libraries(wgpu_c_mod, false);
                     } else {
                         libwgpu_path = wgpu_dep.path("lib/wgpu_native.dll.lib");
 
@@ -162,8 +156,8 @@ const WGPUBuildContext = struct {
                     if (link_mode == .static) {
                         libwgpu_path = wgpu_dep.path("lib/libwgpu_native.a");
 
-                        link_windows_system_libraries(std.Build.Module, wgpu_mod, true);
-                        link_windows_system_libraries(std.Build.Module, wgpu_c_mod, true);
+                        link_windows_system_libraries(wgpu_mod, true);
+                        link_windows_system_libraries(wgpu_c_mod, true);
                     } else {
                         libwgpu_path = wgpu_dep.path("lib/libwgpu_native.dll.a");
 
@@ -218,8 +212,8 @@ const WGPUBuildContext = struct {
 
 fn dynamic_link(context: *const WGPUBuildContext, c: *std.Build.Step.Compile, cmd: *std.Build.Step.Run) void {
     if (!context.is_windows) {
-        c.addLibraryPath(context.wgpu_dep.path("lib"));
-        c.linkSystemLibrary2("wgpu_native", .{});
+        c.root_module.addLibraryPath(context.wgpu_dep.path("lib"));
+        c.root_module.linkSystemLibrary("wgpu_native", .{});
     }
     cmd.addPathDir(context.install_lib_dir);
 }
@@ -292,12 +286,12 @@ fn unit_tests(b: *std.Build, context: *const WGPUBuildContext) void {
         });
         handle_rt(context, t);
         if (context.libwgpu_path != null) {
-            t.addObjectFile(context.libwgpu_path.?);
+            t.root_module.addObjectFile(context.libwgpu_path.?);
         }
         if (context.is_windows) {
-            t.linkLibC();
+            t.root_module.link_libc = true;
         } else {
-            t.linkLibCpp();
+            t.root_module.link_libcpp = true;
         }
 
         const run_test = b.addRunArtifact(t);
@@ -310,12 +304,12 @@ fn unit_tests(b: *std.Build, context: *const WGPUBuildContext) void {
             dynamic_link(context, t, run_test);
         } else if (context.is_windows) {
             if (context.target.result.abi == .gnu) {
-                link_windows_system_libraries(std.Build.Step.Compile, t, true);
+                link_windows_system_libraries(t.root_module, true);
 
                 // TODO: Find out why this is only required here; seems suspicious
-                t.linkSystemLibrary2("unwind", .{});
+                t.root_module.linkSystemLibrary("unwind", .{});
             } else {
-                link_windows_system_libraries(std.Build.Step.Compile, t, false);
+                link_windows_system_libraries(t.root_module, false);
             }
         }
 

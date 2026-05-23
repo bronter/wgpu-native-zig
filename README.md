@@ -119,7 +119,7 @@ b.getInstallStep().dependOn(&install_dll.step);
         message: StringView,
         userdata1: ?*anyopaque,
         userdata2: ?*anyopaque
-    ) callconv(.C) void {
+    ) callconv(.c) void {
         switch(status) {
             .success => {
                 const ud_adapter: **Adapter = @ptrCast(@alignCast(userdata1));
@@ -148,14 +148,14 @@ b.getInstallStep().dependOn(&install_dll.step);
 
     instance.processEvents();
     while(!completed) {
-      std.Thread.sleep(200_000_000);
+      io.sleep(std.Io.Duration.fromMilliseconds(200), std.Io.Clock.cpu_thread) catch {};
       instance.processEvents();
     }
     ```
     whereas the non-callback version looks like
     ```zig
-    // The wrapper methods use polling, so 200_000_000 is the polling interval in nanoseconds.
-    const response = instance.requestAdapterSync(null, 200_000_000);
+    // The wrapper methods use polling, waiting the passed in duration between polling attempts
+    const response = instance.requestAdapterSync(null, io, std.Io.Duration.fromMilliseconds(200));
 
     const adapter_ptr: ?*Adapter = switch (response.status) {
         .success => response.adapter,
